@@ -1,0 +1,32 @@
+{
+  "lessons": [
+    {
+      "id": 1,
+      "title": "Basics 1",
+      "words": [
+        { "tigrinya": "selam", "english": "hello" },
+        { "tigrinya": "kemey", "english": "how" },
+        { "tigrinya": "hasab", "english": "think" },
+        { "tigrinya": "ewa", "english": "yes" },
+        { "tigrinya": "aye", "english": "no" },
+        { "tigrinya": "mai", "english": "water" },
+        { "tigrinya": "hbti", "english": "bread" },
+        { "tigrinya": "amsakum", "english": "good evening" }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Basics 2",
+      "words": [
+        { "tigrinya": "yekanyeley", "english": "thank you" },
+        { "tigrinya": "abzuh", "english": "friend" },
+        { "tigrinya": "geza", "english": "house" },
+        { "tigrinya": "shai", "english": "tea" },
+        { "tigrinya": "sebay", "english": "man" },
+        { "tigrinya": "sebayti", "english": "woman" },
+        { "tigrinya": "hzbi", "english": "people" },
+        { "tigrinya": "tsbuk", "english": "beautiful" }
+      ]
+    }
+  ]
+}
