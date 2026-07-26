@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function BuildSentenceExercise({ exercise, checked, onChange }) {
+export default function BuildSentenceExercise({ exercise, checked, onChange, shake }) {
   const [selected, setSelected] = useState([]); // array of tile objects in chosen order
 
   useEffect(() => {
@@ -33,22 +33,22 @@ export default function BuildSentenceExercise({ exercise, checked, onChange }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 40 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.35 }}
+      animate={shake ? { opacity: 1, x: [0, -10, 10, -6, 6, 0] } : { opacity: 1, x: 0 }}
+      transition={{ duration: shake ? 0.4 : 0.35 }}
       className="flex flex-col gap-6"
     >
       <div>
-        <p className="text-sm font-bold mb-2" style={{ color: "var(--color-duo-text-light)" }}>
+        <p className="text-sm font-bold mb-2" style={{ color: "var(--color-brand-ink-light)" }}>
           Translate this sentence
         </p>
-        <h2 className="text-2xl sm:text-3xl font-extrabold" style={{ color: "var(--color-duo-text)" }}>
+        <h2 className="text-2xl sm:text-3xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
           {exercise.englishPrompt}
         </h2>
       </div>
 
       <div
         className="min-h-16 border-b-2 flex flex-wrap gap-2 pb-3"
-        style={{ borderColor: "var(--color-duo-gray)" }}
+        style={{ borderColor: "var(--color-brand-line)" }}
       >
         <AnimatePresence>
           {selected.map((tile) => (
@@ -61,10 +61,26 @@ export default function BuildSentenceExercise({ exercise, checked, onChange }) {
               onClick={() => removeTile(tile)}
               className="btn-3d rounded-xl px-4 py-2 font-bold"
               style={{
-                background: checked ? (isCorrect ? "#D7FFB8" : "#FFDFE0") : "white",
-                border: `2px solid ${checked ? (isCorrect ? "#58CC02" : "#FF4B4B") : "var(--color-duo-blue)"}`,
-                color: "var(--color-duo-text)",
-                boxShadow: `0 3px 0 ${checked ? (isCorrect ? "#58CC02" : "#FF4B4B") : "var(--color-duo-blue)"}`,
+                background: checked
+                  ? isCorrect
+                    ? "var(--color-brand-teal-light)"
+                    : "var(--color-brand-red-light)"
+                  : "white",
+                border: `2px solid ${
+                  checked
+                    ? isCorrect
+                      ? "var(--color-brand-teal)"
+                      : "var(--color-brand-red)"
+                    : "var(--color-brand-coral)"
+                }`,
+                color: "var(--color-brand-ink)",
+                boxShadow: `0 3px 0 ${
+                  checked
+                    ? isCorrect
+                      ? "var(--color-brand-teal)"
+                      : "var(--color-brand-red)"
+                    : "var(--color-brand-coral)"
+                }`,
               }}
             >
               {tile.text}

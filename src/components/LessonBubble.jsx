@@ -20,7 +20,7 @@ function StarIcon() {
 
 function LockIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="#B7B7B7">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="#D8C4AC">
       <path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V7zm3 8a2 2 0 110 4 2 2 0 010-4z" />
     </svg>
   );
@@ -33,22 +33,22 @@ export default function LessonBubble({ lesson, status, index, onClick }) {
   const isCurrent = status === "current";
 
   const bg = isCompleted
-    ? "#FFC800"
+    ? "linear-gradient(160deg, #FFD766, #FFC93C)"
     : isCurrent
-    ? "#58CC02"
-    : "#E5E5E5";
+    ? "linear-gradient(160deg, #FF8163, #FF6B4A)"
+    : "#EFE3D3";
   const shadow = isCompleted
-    ? "#E6B400"
+    ? "#E0A800"
     : isCurrent
-    ? "#58A700"
-    : "#B7B7B7";
+    ? "#E04F2F"
+    : "#D8C4AC";
 
   return (
     <div className="flex flex-col items-center" style={{ transform: `translateX(${offset}px)` }}>
       <motion.button
         onClick={() => !isLocked && onClick(lesson)}
         disabled={isLocked}
-        className="btn-3d rounded-full flex items-center justify-center"
+        className="btn-3d rounded-[28px] flex items-center justify-center"
         style={{
           width: 84,
           height: 84,
@@ -61,7 +61,7 @@ export default function LessonBubble({ lesson, status, index, onClick }) {
       >
         {isCompleted ? <CrownIcon /> : isLocked ? <LockIcon /> : <StarIcon />}
       </motion.button>
-      <span className="mt-2 text-xs font-bold text-duo-text-light" style={{ color: "var(--color-duo-text-light)" }}>
+      <span className="mt-2 text-xs font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
         {lesson.title}
       </span>
     </div>

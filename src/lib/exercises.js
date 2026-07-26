@@ -1,5 +1,6 @@
-// Exercise types generated automatically from a lesson's word list.
-// Edit `src/data/lessons.json` to add content — no code changes needed.
+// Exercise types generated automatically from a lesson's word + sentence
+// lists. Edit `src/data/lessons.json` to add content — no code changes
+// needed here.
 
 let uid = 0;
 function nextId(prefix) {
@@ -30,6 +31,7 @@ function makeMultipleChoice(word, pool) {
   const options = shuffle([word, ...distractors]).map((w) => ({
     id: nextId("opt"),
     text: w.tigrinya,
+    audio: w.audio,
     isCorrect: w.tigrinya === word.tigrinya,
   }));
   return {
@@ -55,8 +57,28 @@ function makeReverseChoice(word, pool) {
     type: "reverse-choice",
     promptLabel: "Select the meaning of",
     promptText: word.tigrinya,
+    promptAudio: word.audio,
     options,
     correctText: word.english,
+  };
+}
+
+function makePictureChoice(word, pool) {
+  const distractorPool = pool.filter((w) => w.tigrinya !== word.tigrinya);
+  const distractors = sample(distractorPool, Math.min(3, distractorPool.length));
+  const options = shuffle([word, ...distractors]).map((w) => ({
+    id: nextId("opt"),
+    text: w.tigrinya,
+    audio: w.audio,
+    isCorrect: w.tigrinya === word.tigrinya,
+  }));
+  return {
+    id: nextId("ex"),
+    type: "picture-choice",
+    promptLabel: "Which word matches this picture?",
+    promptImage: word.image,
+    options,
+    correctText: word.tigrinya,
   };
 }
 
@@ -65,9 +87,10 @@ function makeTapPairs(words) {
     id: nextId("pair"),
     tigrinya: w.tigrinya,
     english: w.english,
+    audio: w.audio,
   }));
   const left = shuffle(
-    pairs.map((p) => ({ id: nextId("tileL"), pairId: p.id, text: p.tigrinya })),
+    pairs.map((p) => ({ id: nextId("tileL"), pairId: p.id, text: p.tigrinya, audio: p.audio })),
   );
   const right = shuffle(
     pairs.map((p) => ({ id: nextId("tileR"), pairId: p.id, text: p.english })),
@@ -81,13 +104,11 @@ function makeTapPairs(words) {
   };
 }
 
-function makeBuildSentence(words, pool) {
-  const correctTokens = words.map((w) => w.tigrinya);
-  const englishPrompt = capitalize(words.map((w) => w.english).join(" "));
-  const distractorPool = pool.filter((w) => !words.includes(w));
-  const distractors = sample(distractorPool, Math.min(2, distractorPool.length)).map(
-    (w) => w.tigrinya,
-  );
+function makeBuildSentence(sentence, words) {
+  const correctTokens = sentence.tigrinya.split(" ").filter(Boolean);
+  const englishPrompt = capitalize(sentence.english);
+  const wordPool = words.map((w) => w.tigrinya).filter((t) => !correctTokens.includes(t));
+  const distractors = sample(wordPool, Math.min(2, wordPool.length));
   const tiles = shuffle([...correctTokens, ...distractors]).map((text) => ({
     id: nextId("tile"),
     text,
@@ -97,43 +118,80 @@ function makeBuildSentence(words, pool) {
     type: "build-sentence",
     englishPrompt,
     correctTokens,
+    correctText: sentence.tigrinya,
+    sentenceAudio: sentence.audio,
     tiles,
   };
 }
 
-const EXERCISE_ROTATION = [
-  "mc",
-  "reverse",
-  "mc",
-  "reverse",
-  "pairs",
-  "mc",
-  "reverse",
-  "sentence",
-  "reverse",
-  "sentence",
-];
+function interleave(buckets) {
+  const result = [];
+  let added = true;
+  while (added) {
+    added = false;
+    for (const bucket of buckets) {
+      if (bucket.length) {
+        result.push(bucket.shift());
+        added = true;
+      }
+    }
+  }
+  return result;
+}
 
 export function generateLessonExercises(lesson) {
   const words = lesson.words;
-  const pool = words;
+  const sentences = lesson.sentences || [];
+  const imageWords = words.filter((w) => w.image);
+
   const shuffledWords = shuffle(words);
-  let cursor = 0;
+  let wordCursor = 0;
   const nextWord = () => {
-    const word = shuffledWords[cursor % shuffledWords.length];
-    cursor += 1;
+    const word = shuffledWords[wordCursor % shuffledWords.length];
+    wordCursor += 1;
     return word;
   };
 
-  const exercises = EXERCISE_ROTATION.map((type) => {
-    if (type === "mc") return makeMultipleChoice(nextWord(), pool);
-    if (type === "reverse") return makeReverseChoice(nextWord(), pool);
-    if (type === "pairs")
-      return makeTapPairs(sample(words, Math.min(4, words.length)));
-    if (type === "sentence")
-      return makeBuildSentence(sample(words, Math.min(2, words.length)), pool);
-    return null;
-  }).filter(Boolean);
+  const shuffledImageWords = shuffle(imageWords);
+  let imageCursor = 0;
+  const nextImageWord = () => {
+    const word = shuffledImageWords[imageCursor % shuffledImageWords.length];
+    imageCursor += 1;
+    return word;
+  };
+
+  const target = 10;
+  const sentenceCount = Math.min(sentences.length, 2);
+  const pairsCount = words.length >= 4 ? 1 : 0;
+  const pictureCount = imageWords.length >= 3 ? 2 : 0;
+  const remaining = Math.max(0, target - sentenceCount - pairsCount - pictureCount);
+  const mcCount = Math.ceil(remaining / 2);
+  const reverseCount = remaining - mcCount;
+
+  const mcBucket = Array.from({ length: mcCount }, () => "mc");
+  const reverseBucket = Array.from({ length: reverseCount }, () => "reverse");
+  const pictureBucket = Array.from({ length: pictureCount }, () => "picture");
+  const pairsBucket = Array.from({ length: pairsCount }, () => "pairs");
+  const sentenceBucket = Array.from({ length: sentenceCount }, () => "sentence");
+
+  const rotation = interleave([mcBucket, reverseBucket, pictureBucket, pairsBucket, sentenceBucket]);
+  const shuffledSentences = shuffle(sentences);
+  let sentenceCursor = 0;
+
+  const exercises = rotation
+    .map((type) => {
+      if (type === "mc") return makeMultipleChoice(nextWord(), words);
+      if (type === "reverse") return makeReverseChoice(nextWord(), words);
+      if (type === "picture") return makePictureChoice(nextImageWord(), imageWords);
+      if (type === "pairs") return makeTapPairs(sample(words, Math.min(4, words.length)));
+      if (type === "sentence") {
+        const sentence = shuffledSentences[sentenceCursor % shuffledSentences.length];
+        sentenceCursor += 1;
+        return makeBuildSentence(sentence, words);
+      }
+      return null;
+    })
+    .filter(Boolean);
 
   return exercises;
 }

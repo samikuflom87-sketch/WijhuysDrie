@@ -3,10 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import lessonsData from "../data/lessons.json";
 import { generateLessonExercises } from "../lib/exercises";
+import { randomMascot, randomLine } from "../data/mascots";
 import TopBar from "../components/TopBar";
 import AnswerBanner from "../components/AnswerBanner";
 import Button from "../components/Button";
 import Mascot from "../components/Mascot";
+import Confetti from "../components/Confetti";
 import ChoiceExercise from "../components/exercises/ChoiceExercise";
 import BuildSentenceExercise from "../components/exercises/BuildSentenceExercise";
 import TapPairsExercise from "../components/exercises/TapPairsExercise";
@@ -15,12 +17,7 @@ import XPCounter from "../components/XPCounter";
 const XP_PER_CORRECT = 10;
 const MAX_HEARTS = 5;
 
-const ENCOURAGEMENTS = [
-  "Amazing work!",
-  "You're on fire!",
-  "Great job learning Tigrinya!",
-  "Keep it up, superstar!",
-];
+const CHOICE_TYPES = new Set(["multiple-choice", "reverse-choice", "picture-choice"]);
 
 export default function LessonScreen({ onCompleteLesson }) {
   const { id } = useParams();
@@ -40,7 +37,11 @@ export default function LessonScreen({ onCompleteLesson }) {
   const [buildAnswer, setBuildAnswer] = useState([]);
   const [checked, setChecked] = useState(false);
   const [bannerStatus, setBannerStatus] = useState(null); // null | 'correct' | 'wrong'
+  const [bannerMascot, setBannerMascot] = useState("zaki");
+  const [bannerMessage, setBannerMessage] = useState("");
+  const [shake, setShake] = useState(false);
   const [phase, setPhase] = useState("playing"); // playing | failed | complete
+  const [endMascot] = useState(() => randomMascot());
 
   if (!lesson) {
     return (
@@ -83,18 +84,30 @@ export default function LessonScreen({ onCompleteLesson }) {
     }
   }
 
+  function showBanner(isCorrect) {
+    const mascot = randomMascot();
+    const line = randomLine(mascot, isCorrect ? "correct" : "wrong");
+    setBannerMascot(mascot.id);
+    setBannerMessage(line);
+    setBannerStatus(isCorrect ? "correct" : "wrong");
+    if (!isCorrect) {
+      setShake(true);
+      setTimeout(() => setShake(false), 400);
+      loseHeart();
+    }
+  }
+
   function handleCheck() {
     if (checked) return;
     let isCorrect = false;
-    if (current.type === "multiple-choice" || current.type === "reverse-choice") {
+    if (CHOICE_TYPES.has(current.type)) {
       const opt = current.options.find((o) => o.id === selectedId);
       isCorrect = Boolean(opt?.isCorrect);
     } else if (current.type === "build-sentence") {
       isCorrect = JSON.stringify(buildAnswer) === JSON.stringify(current.correctTokens);
     }
     setChecked(true);
-    setBannerStatus(isCorrect ? "correct" : "wrong");
-    if (!isCorrect) loseHeart();
+    showBanner(isCorrect);
   }
 
   function handleBannerContinue() {
@@ -116,16 +129,16 @@ export default function LessonScreen({ onCompleteLesson }) {
 
   if (phase === "failed") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-duo-bg)" }}>
-        <Mascot mood="sad" size={140} />
-        <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-duo-text)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
+        <Mascot mascotId={endMascot.id} mood="sad" size={140} />
+        <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
           Out of hearts!
         </h1>
-        <p className="font-bold" style={{ color: "var(--color-duo-text-light)" }}>
-          Don't worry, you can try this lesson again.
+        <p className="font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
+          {randomLine(endMascot, "wrong")}
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
-          <Button variant="green" className="w-full uppercase tracking-wide" onClick={() => navigate(0)}>
+          <Button variant="coral" className="w-full uppercase tracking-wide" onClick={() => navigate(0)}>
             Try Again
           </Button>
           <Button variant="white" className="w-full uppercase tracking-wide" onClick={() => navigate("/")}>
@@ -137,36 +150,39 @@ export default function LessonScreen({ onCompleteLesson }) {
   }
 
   if (phase === "complete") {
-    const message = ENCOURAGEMENTS[lessonId % ENCOURAGEMENTS.length];
+    const message = randomLine(endMascot, "complete");
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-duo-bg)" }}>
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 14 }}
-        >
-          <Mascot mood="excited" size={150} />
-        </motion.div>
-        <h1 className="text-3xl font-extrabold" style={{ color: "var(--color-duo-text)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
+        <div className="relative">
+          <Confetti count={30} />
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 14 }}
+          >
+            <Mascot mascotId={endMascot.id} mood="excited" size={150} />
+          </motion.div>
+        </div>
+        <h1 className="text-3xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
           Lesson Complete!
         </h1>
-        <p className="font-bold text-lg" style={{ color: "var(--color-duo-text-light)" }}>
+        <p className="font-bold text-lg" style={{ color: "var(--color-brand-ink-light)" }}>
           {message}
         </p>
-        <div className="bg-white rounded-2xl border-2 px-8 py-5 flex items-center gap-3" style={{ borderColor: "var(--color-duo-gray)" }}>
+        <div className="bg-white rounded-2xl border-2 px-8 py-5 flex items-center gap-3" style={{ borderColor: "var(--color-brand-line)" }}>
           <span className="text-2xl">⭐</span>
-          <span className="text-3xl font-extrabold" style={{ color: "#FFC800" }}>
+          <span className="text-3xl font-extrabold" style={{ color: "var(--color-brand-yellow-dark)" }}>
             +<XPCounter value={xp} />
           </span>
-          <span className="font-bold" style={{ color: "var(--color-duo-text-light)" }}>
+          <span className="font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
             XP
           </span>
         </div>
-        <div className="flex items-center gap-2 font-bold" style={{ color: "#FFC800" }}>
+        <div className="flex items-center gap-2 font-bold" style={{ color: "var(--color-brand-yellow-dark)" }}>
           <span>👑</span>
           <span>Crown earned!</span>
         </div>
-        <Button variant="green" className="w-full max-w-xs uppercase tracking-wide" onClick={() => navigate("/")}>
+        <Button variant="coral" className="w-full max-w-xs uppercase tracking-wide" onClick={() => navigate("/")}>
           Continue
         </Button>
       </div>
@@ -174,18 +190,19 @@ export default function LessonScreen({ onCompleteLesson }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-duo-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
       <TopBar progressPct={progressPct} hearts={hearts} />
 
       <div className="flex-1 max-w-md w-full mx-auto px-4 py-8 pb-40">
         <AnimatePresence mode="wait">
           <motion.div key={current.id}>
-            {(current.type === "multiple-choice" || current.type === "reverse-choice") && (
+            {CHOICE_TYPES.has(current.type) && (
               <ChoiceExercise
                 exercise={current}
                 selectedId={selectedId}
                 checked={checked}
                 onSelect={(id) => !checked && setSelectedId(id)}
+                shake={shake}
               />
             )}
             {current.type === "build-sentence" && (
@@ -193,6 +210,7 @@ export default function LessonScreen({ onCompleteLesson }) {
                 exercise={current}
                 checked={checked}
                 onChange={setBuildAnswer}
+                shake={shake}
               />
             )}
             {current.type === "tap-pairs" && (
@@ -207,10 +225,10 @@ export default function LessonScreen({ onCompleteLesson }) {
       </div>
 
       {current.type !== "tap-pairs" && !bannerStatus && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white px-4 py-4 border-t-2" style={{ borderColor: "var(--color-duo-gray)" }}>
+        <div className="fixed bottom-0 left-0 right-0 bg-white px-4 py-4 border-t-2" style={{ borderColor: "var(--color-brand-line)" }}>
           <div className="max-w-md mx-auto">
             <Button
-              variant="green"
+              variant="coral"
               className="w-full uppercase tracking-wide"
               disabled={!canCheck}
               onClick={handleCheck}
@@ -224,6 +242,8 @@ export default function LessonScreen({ onCompleteLesson }) {
       <AnswerBanner
         status={bannerStatus}
         correctText={current.correctText}
+        mascotId={bannerMascot}
+        message={bannerMessage}
         onContinue={handleBannerContinue}
       />
     </div>

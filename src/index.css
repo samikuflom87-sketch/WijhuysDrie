@@ -1,25 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Nunito", system-ui, sans-serif;
-  --font-display: "Baloo 2", "Nunito", system-ui, sans-serif;
+  --font-sans: "Quicksand", system-ui, sans-serif;
+  --font-display: "Baloo 2", "Quicksand", system-ui, sans-serif;
 
-  --color-duo-green: #58cc02;
-  --color-duo-green-dark: #58a700;
-  --color-duo-green-light: #d7ffb8;
-  --color-duo-blue: #1cb0f6;
-  --color-duo-blue-dark: #1899d6;
-  --color-duo-red: #ff4b4b;
-  --color-duo-red-dark: #ea2b2b;
-  --color-duo-yellow: #ffc800;
-  --color-duo-yellow-dark: #e6b400;
-  --color-duo-purple: #ce82ff;
-  --color-duo-purple-dark: #a568cc;
-  --color-duo-gray: #e5e5e5;
-  --color-duo-gray-dark: #b7b7b7;
-  --color-duo-text: #4b4b4b;
-  --color-duo-text-light: #777777;
-  --color-duo-bg: #f7f7f7;
+  --color-brand-coral: #ff6b4a;
+  --color-brand-coral-dark: #e04f2f;
+  --color-brand-coral-light: #ffe4da;
+  --color-brand-yellow: #ffc93c;
+  --color-brand-yellow-dark: #e0a800;
+  --color-brand-yellow-light: #fff1c9;
+  --color-brand-teal: #00a19d;
+  --color-brand-teal-dark: #007b78;
+  --color-brand-teal-light: #d3f3f1;
+  --color-brand-red: #e5484d;
+  --color-brand-red-dark: #c53338;
+  --color-brand-red-light: #ffe1e2;
+  --color-brand-cream: #fff6ec;
+  --color-brand-line: #f0e2d3;
+  --color-brand-line-dark: #d8c4ac;
+  --color-brand-ink: #4a3527;
+  --color-brand-ink-light: #8a7461;
 }
 
 * {
@@ -35,8 +36,8 @@ body,
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: var(--color-duo-bg);
-  color: var(--color-duo-text);
+  background: var(--color-brand-cream);
+  color: var(--color-brand-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: none;
@@ -52,7 +53,7 @@ button {
   font-family: inherit;
 }
 
-/* Duolingo-style pressable button: bottom shadow edge that presses down on click */
+/* Chunky pressable button: bottom shadow edge that collapses on click */
 .btn-3d {
   position: relative;
   border: none;
@@ -71,75 +72,84 @@ button {
   opacity: 0.5;
 }
 
-.btn-green {
-  background: var(--color-duo-green);
-  box-shadow: 0 4px 0 var(--color-duo-green-dark);
+.btn-coral {
+  background: linear-gradient(160deg, #ff8163, var(--color-brand-coral));
+  box-shadow: 0 4px 0 var(--color-brand-coral-dark);
   color: white;
 }
-.btn-green:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-duo-green-dark);
+.btn-coral:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--color-brand-coral-dark);
+}
+
+.btn-teal {
+  background: linear-gradient(160deg, #1fc0bc, var(--color-brand-teal));
+  box-shadow: 0 4px 0 var(--color-brand-teal-dark);
+  color: white;
+}
+.btn-teal:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--color-brand-teal-dark);
+}
+
+.btn-yellow {
+  background: linear-gradient(160deg, #ffd766, var(--color-brand-yellow));
+  box-shadow: 0 4px 0 var(--color-brand-yellow-dark);
+  color: var(--color-brand-ink);
+}
+.btn-yellow:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--color-brand-yellow-dark);
+}
+
+.btn-red {
+  background: linear-gradient(160deg, #ee6a6e, var(--color-brand-red));
+  box-shadow: 0 4px 0 var(--color-brand-red-dark);
+  color: white;
+}
+.btn-red:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--color-brand-red-dark);
 }
 
 .btn-white {
   background: white;
-  color: var(--color-duo-blue);
-  box-shadow: 0 4px 0 var(--color-duo-gray);
-  border: 2px solid var(--color-duo-gray);
+  color: var(--color-brand-coral-dark);
+  box-shadow: 0 4px 0 var(--color-brand-line-dark);
+  border: 2px solid var(--color-brand-line);
 }
 .btn-white:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-duo-gray);
-}
-
-.btn-blue {
-  background: var(--color-duo-blue);
-  box-shadow: 0 4px 0 var(--color-duo-blue-dark);
-  color: white;
-}
-.btn-blue:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-duo-blue-dark);
-}
-
-.btn-red {
-  background: var(--color-duo-red);
-  box-shadow: 0 4px 0 var(--color-duo-red-dark);
-  color: white;
-}
-.btn-red:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-duo-red-dark);
+  box-shadow: 0 0 0 var(--color-brand-line-dark);
 }
 
 .btn-outline {
   background: white;
-  box-shadow: 0 4px 0 var(--color-duo-gray);
-  border: 2px solid var(--color-duo-gray);
-  color: var(--color-duo-text);
+  box-shadow: 0 4px 0 var(--color-brand-line);
+  border: 2px solid var(--color-brand-line);
+  color: var(--color-brand-ink);
 }
 .btn-outline:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-duo-gray);
+  box-shadow: 0 0 0 var(--color-brand-line);
 }
 
 .btn-outline.selected {
-  background: #ddf4ff;
-  border-color: var(--color-duo-blue);
-  color: var(--color-duo-blue-dark);
-  box-shadow: 0 4px 0 var(--color-duo-blue);
+  background: var(--color-brand-coral-light);
+  border-color: var(--color-brand-coral);
+  color: var(--color-brand-coral-dark);
+  box-shadow: 0 4px 0 var(--color-brand-coral);
 }
 .btn-outline.selected:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-duo-blue);
+  box-shadow: 0 0 0 var(--color-brand-coral);
 }
 
 .btn-outline.correct {
-  background: var(--color-duo-green-light);
-  border-color: var(--color-duo-green);
-  color: var(--color-duo-green-dark);
-  box-shadow: 0 4px 0 var(--color-duo-green);
+  background: var(--color-brand-teal-light);
+  border-color: var(--color-brand-teal);
+  color: var(--color-brand-teal-dark);
+  box-shadow: 0 4px 0 var(--color-brand-teal);
 }
 
 .btn-outline.wrong {
-  background: #ffdfe0;
-  border-color: var(--color-duo-red);
-  color: var(--color-duo-red-dark);
-  box-shadow: 0 4px 0 var(--color-duo-red);
+  background: var(--color-brand-red-light);
+  border-color: var(--color-brand-red);
+  color: var(--color-brand-red-dark);
+  box-shadow: 0 4px 0 var(--color-brand-red);
 }
 
 /* scrollbar tidy */
@@ -147,6 +157,6 @@ button {
   width: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-duo-gray-dark);
+  background: var(--color-brand-line-dark);
   border-radius: 8px;
 }

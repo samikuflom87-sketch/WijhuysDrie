@@ -1,4 +1,4 @@
-const STORAGE_KEY = "tigrinya-app-progress";
+const STORAGE_KEY = "habesha-steps-progress";
 
 export const DAILY_GOAL_XP = 20;
 

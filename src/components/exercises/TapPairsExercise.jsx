@@ -38,10 +38,9 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
   }, [selectedLeft, selectedRight]);
 
   function tileClass(tile, isSelected) {
-    if (wrongIds.has(tile.id))
-      return "bg-[#FFDFE0] border-[#FF4B4B] text-[#EA2B2B]";
-    if (isSelected) return "bg-[#DDF4FF] border-[#1CB0F6] text-[#1899D6]";
-    return "bg-white border-duo-gray text-duo-text";
+    if (wrongIds.has(tile.id)) return "bg-brand-red-light border-brand-red text-brand-red-dark";
+    if (isSelected) return "bg-brand-coral-light border-brand-coral text-brand-coral-dark";
+    return "bg-white border-brand-line text-brand-ink";
   }
 
   return (
@@ -52,7 +51,7 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
       className="flex flex-col gap-6"
     >
       <div>
-        <p className="text-sm font-bold mb-2" style={{ color: "var(--color-duo-text-light)" }}>
+        <p className="text-sm font-bold mb-2" style={{ color: "var(--color-brand-ink-light)" }}>
           Tap the matching pairs
         </p>
       </div>
@@ -76,7 +75,7 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
                       tile,
                       isSelected,
                     )}`}
-                    style={{ boxShadow: "0 3px 0 var(--color-duo-gray)" }}
+                    style={{ boxShadow: "0 3px 0 var(--color-brand-line)" }}
                   >
                     {tile.text}
                   </motion.button>
@@ -103,7 +102,7 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
                       tile,
                       isSelected,
                     )}`}
-                    style={{ boxShadow: "0 3px 0 var(--color-duo-gray)" }}
+                    style={{ boxShadow: "0 3px 0 var(--color-brand-line)" }}
                   >
                     {tile.text}
                   </motion.button>

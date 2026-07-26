@@ -12,7 +12,7 @@ export default function TopBar({ progressPct, hearts, onExit }) {
           onClick={onExit || (() => navigate("/"))}
           aria-label="Exit lesson"
           className="text-2xl font-bold"
-          style={{ color: "var(--color-duo-gray-dark)" }}
+          style={{ color: "var(--color-brand-line-dark)" }}
         >
           ✕
         </button>

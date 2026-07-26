@@ -1,6 +1,7 @@
 const VARIANT_CLASS = {
-  green: "btn-green",
-  blue: "btn-blue",
+  coral: "btn-coral",
+  teal: "btn-teal",
+  yellow: "btn-yellow",
   red: "btn-red",
   white: "btn-white",
   outline: "btn-outline",
@@ -8,7 +9,7 @@ const VARIANT_CLASS = {
 
 export default function Button({
   children,
-  variant = "green",
+  variant = "coral",
   className = "",
   state, // "selected" | "correct" | "wrong"
   ...props
