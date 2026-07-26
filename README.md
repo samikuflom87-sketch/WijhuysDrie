@@ -1,6 +1,6 @@
 # Habesha Steps
 
-A gamified web app for learning Tigrinya (Latin transliteration — no Ge'ez script). Original visual identity: warm coral, sunny yellow, and deep teal, with three original mascots (Zaki, Nardos, and Bemnet). Built with React, Vite, Tailwind CSS, and Framer Motion. All progress is stored in `localStorage` — there is no backend.
+A gamified web app for learning Tigrinya (Latin transliteration — no Ge'ez script). Original visual identity: warm coral, sunny yellow, and deep teal, with five original mascots (Zaki, Nardos, Bemnet, Saba, and Tesfa). One of them accompanies you through each lesson — visible during exercises, not just after you answer — and reacts to correct/wrong answers in its own voice. Built with React, Vite, Tailwind CSS, and Framer Motion. All progress is stored in `localStorage` — there is no backend.
 
 ## Running it
 
@@ -49,6 +49,8 @@ Field notes:
 
 Add new lessons/words/sentences to this file and the app automatically regenerates all five exercise types (multiple choice, reverse choice, picture choice, tap-the-pairs, build-the-sentence) — no code changes needed. A lesson only gets picture-choice exercises if it has at least 3 words with images, and only gets build-the-sentence exercises if `sentences` is non-empty. Lessons unlock in order (`id` order); each `id` must be unique.
 
+All 50 words across the 5 lessons currently have an `image`, so every lesson gets picture-choice exercises. `src/components/Illustration.jsx` has two families of icons: literal pictograms for concrete nouns (people, food, numbers) and badge-style icon glyphs for abstract phrases (yes/no, please, where, when, etc.) — reuse an existing key or add a new `case` for new vocabulary.
+
 ## Adding audio recordings
 
 Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `audio` field (e.g. `selam.mp3` for `/audio/selam.mp3`). No code changes needed — the speaker buttons will start working automatically.
@@ -56,10 +58,10 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 ## Project structure
 
 - `src/data/lessons.json` — lesson/word/sentence content (edit this to add vocabulary)
-- `src/data/mascots.js` — Zaki, Nardos, and Bemnet's personalities and message banks
+- `src/data/mascots.js` — the five mascots' personalities and message banks (greetings, correct/wrong reactions, lesson-complete lines)
 - `src/lib/exercises.js` — generates all 5 exercise types from lesson content
 - `src/lib/storage.js` / `src/hooks/useProgress.js` — localStorage-backed XP/streak/crown progress
-- `src/components/Mascot.jsx` — the three original SVG mascots
+- `src/components/Mascot.jsx` — the five original SVG mascots
 - `src/components/Illustration.jsx` — original SVG pictograms for picture-choice exercises
 - `src/components/SpeakerButton.jsx` — plays a word's audio file, fails silently if missing
 - `src/components/Confetti.jsx` — correct-answer particle burst

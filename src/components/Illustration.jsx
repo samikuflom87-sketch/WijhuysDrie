@@ -184,6 +184,188 @@ function FoodPlate() {
   );
 }
 
+function SymbolBadge({ bg, children }) {
+  return (
+    <g>
+      <circle cx="50" cy="50" r="38" fill={bg} />
+      {children}
+    </g>
+  );
+}
+
+function SpeechBubble({ symbol = "?", bg = TEAL }) {
+  return (
+    <g>
+      <path
+        d="M14 40 A34 26 0 0 1 48 14 A34 26 0 0 1 82 40 A34 26 0 0 1 52 66 L36 78 L40 62 A34 26 0 0 1 14 40 Z"
+        fill={bg}
+      />
+      <text x="46" y="50" fontSize="30" fontWeight="800" fill={CREAM} textAnchor="middle" fontFamily="Baloo 2, sans-serif">
+        {symbol}
+      </text>
+    </g>
+  );
+}
+
+function WaveHand({ color = TAN }) {
+  return (
+    <g transform="rotate(-8 50 50)">
+      <rect x="34" y="60" width="30" height="24" rx="12" fill={CORAL} />
+      <path
+        d="M36 62 L36 26 a6 6 0 0 1 12 0 L48 20 a6 6 0 0 1 12 0 L60 24 a6 6 0 0 1 12 0 L72 40 L72 62 Z"
+        fill={color}
+      />
+      <path d="M14 30 Q10 22 16 16" stroke={CORAL} strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.6" />
+      <path d="M20 22 Q16 12 24 6" stroke={CORAL} strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.6" />
+    </g>
+  );
+}
+
+function ThumbsUp() {
+  return (
+    <g>
+      <rect x="34" y="52" width="32" height="34" rx="8" fill={CORAL} />
+      <path
+        d="M40 52 L40 34 Q40 22 50 18 Q56 16 54 26 L52 38 L70 38 Q78 38 76 46 L72 68 Q70 78 60 78 L40 78 Z"
+        fill={TAN}
+      />
+    </g>
+  );
+}
+
+function PointingHand() {
+  return (
+    <g transform="rotate(-20 50 50)">
+      <rect x="30" y="58" width="26" height="22" rx="10" fill={CORAL} />
+      <path
+        d="M32 60 L32 28 a6 6 0 0 1 12 0 L44 60 Z"
+        fill={TAN}
+      />
+      <rect x="30" y="52" width="14" height="14" rx="6" fill={TAN} />
+      <rect x="26" y="46" width="12" height="14" rx="6" fill={TAN} />
+    </g>
+  );
+}
+
+function HeartIllustration() {
+  return (
+    <path
+      d="M50 74 C24 56 18 36 32 26 C42 19 50 28 50 34 C50 28 58 19 68 26 C82 36 76 56 50 74 Z"
+      fill={CORAL}
+    />
+  );
+}
+
+function SmileyFace({ worried = false }) {
+  return (
+    <g>
+      <circle cx="38" cy="46" r="4" fill={INK} />
+      <circle cx="62" cy="46" r="4" fill={INK} />
+      {worried ? (
+        <>
+          <path d="M30 36 l10 5 M70 36 l-10 5" stroke={INK} strokeWidth="3" strokeLinecap="round" />
+          <path d="M38 62 Q50 54 62 62" stroke={INK} strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        </>
+      ) : (
+        <path d="M36 58 Q50 72 64 58" stroke={INK} strokeWidth="3.5" strokeLinecap="round" fill="none" />
+      )}
+    </g>
+  );
+}
+
+function FoldedHands() {
+  return (
+    <g>
+      <path
+        d="M50 30 L28 46 a8 8 0 0 0 -2 10 L26 78 a6 6 0 0 0 10 4 L50 66 Z"
+        fill={TAN}
+      />
+      <path
+        d="M50 30 L72 46 a8 8 0 0 1 2 10 L74 78 a6 6 0 0 1 -10 4 L50 66 Z"
+        fill="#E8B778"
+      />
+      <circle cx="50" cy="26" r="6" fill={YELLOW} />
+    </g>
+  );
+}
+
+function OfferHand() {
+  return (
+    <g>
+      <rect x="24" y="64" width="52" height="16" rx="8" fill={TAN} />
+      <path d="M24 64 Q50 50 76 64" fill={TAN} />
+      <rect x="40" y="30" width="20" height="20" rx="4" fill={CORAL} />
+      <path d="M40 38 L60 38" stroke={CREAM} strokeWidth="2.5" />
+      <path d="M50 30 L50 50" stroke={CREAM} strokeWidth="2.5" />
+    </g>
+  );
+}
+
+function MapPin() {
+  return (
+    <g>
+      <path
+        d="M50 12 C32 12 20 26 20 42 C20 64 50 88 50 88 C50 88 80 64 80 42 C80 26 68 12 50 12 Z"
+        fill={CORAL}
+      />
+      <circle cx="50" cy="42" r="14" fill={CREAM} />
+    </g>
+  );
+}
+
+function ClockIllustration() {
+  return (
+    <g>
+      <circle cx="50" cy="52" r="34" fill={CREAM} stroke={INK} strokeWidth="3" />
+      <circle cx="50" cy="52" r="3" fill={INK} />
+      <path d="M50 52 L50 30" stroke={INK} strokeWidth="4" strokeLinecap="round" />
+      <path d="M50 52 L66 58" stroke={INK} strokeWidth="4" strokeLinecap="round" />
+      <rect x="42" y="10" width="16" height="8" rx="3" fill={TEAL} />
+    </g>
+  );
+}
+
+function PriceTag() {
+  return (
+    <g transform="rotate(-25 50 50)">
+      <path
+        d="M26 26 L58 26 L80 48 Q84 52 80 56 L60 76 Q56 80 52 76 L26 50 Z"
+        fill={YELLOW}
+        stroke={INK}
+        strokeWidth="2.5"
+      />
+      <circle cx="38" cy="38" r="5" fill={CREAM} />
+    </g>
+  );
+}
+
+function Shrug() {
+  return (
+    <g>
+      <circle cx="50" cy="38" r="18" fill={TAN} />
+      <path d="M32 28 a18 16 0 0 1 36 0 v-3 a18 14 0 0 0 -36 0 Z" fill={INK} />
+      <circle cx="44" cy="40" r="2.2" fill={INK} />
+      <circle cx="56" cy="40" r="2.2" fill={INK} />
+      <path d="M42 48 L58 48" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
+      <text x="18" y="66" fontSize="20" fontWeight="800" fill={TEAL} fontFamily="Baloo 2, sans-serif">
+        ?
+      </text>
+      <text x="72" y="30" fontSize="16" fontWeight="800" fill={CORAL} fontFamily="Baloo 2, sans-serif">
+        ?
+      </text>
+    </g>
+  );
+}
+
+function StarBadgeIllustration() {
+  return (
+    <path
+      d="M50 16 L60 40 L86 42 L66 58 L72 84 L50 70 L28 84 L34 58 L14 42 L40 40 Z"
+      fill={YELLOW}
+    />
+  );
+}
+
 function NumberDots({ count }) {
   const rows = count > 5 ? 2 : 1;
   const dots = [];
@@ -277,6 +459,103 @@ export default function Illustration({ name, size = 96, className = "" }) {
         break;
       case "food":
         content = <FoodPlate />;
+        break;
+      case "wave":
+        content = <WaveHand />;
+        break;
+      case "bye-man":
+        content = (
+          <g>
+            <ScaledPerson scale={0.8} dx={-6} hair="short" bodyColor={TEAL} />
+            <g transform="translate(30 -6) scale(0.55)">
+              <WaveHand />
+            </g>
+          </g>
+        );
+        break;
+      case "ask-man":
+        content = (
+          <g>
+            <ScaledPerson scale={0.78} dx={-8} hair="short" bodyColor={TEAL} />
+            <g transform="translate(24 4) scale(0.55)">
+              <SpeechBubble symbol="?" bg={CORAL} />
+            </g>
+          </g>
+        );
+        break;
+      case "ask-woman":
+        content = (
+          <g>
+            <ScaledPerson scale={0.78} dx={-8} hair="bun" bodyColor={CORAL} />
+            <g transform="translate(24 4) scale(0.55)">
+              <SpeechBubble symbol="?" bg={TEAL} />
+            </g>
+          </g>
+        );
+        break;
+      case "thumbsup":
+        content = <ThumbsUp />;
+        break;
+      case "heart":
+        content = <HeartIllustration />;
+        break;
+      case "check":
+        content = (
+          <SymbolBadge bg={TEAL}>
+            <path d="M32 52 L44 64 L70 36" stroke={CREAM} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </SymbolBadge>
+        );
+        break;
+      case "cross":
+        content = (
+          <SymbolBadge bg={CORAL}>
+            <path d="M36 36 L64 64 M64 36 L36 64" stroke={CREAM} strokeWidth="8" strokeLinecap="round" />
+          </SymbolBadge>
+        );
+        break;
+      case "chat":
+        content = <SpeechBubble symbol="…" bg={CORAL} />;
+        break;
+      case "what":
+        content = <SpeechBubble symbol="?" bg={TEAL} />;
+        break;
+      case "smile":
+        content = (
+          <SymbolBadge bg={YELLOW}>
+            <SmileyFace />
+          </SymbolBadge>
+        );
+        break;
+      case "sorry":
+        content = (
+          <SymbolBadge bg={TEAL_LIGHT}>
+            <SmileyFace worried />
+          </SymbolBadge>
+        );
+        break;
+      case "hands":
+        content = <FoldedHands />;
+        break;
+      case "offer":
+        content = <OfferHand />;
+        break;
+      case "pin":
+        content = <MapPin />;
+        break;
+      case "clock":
+        content = <ClockIllustration />;
+        break;
+      case "price":
+        content = <PriceTag />;
+        break;
+      case "point":
+        content = <PointingHand />;
+        break;
+      case "shrug":
+        content = <Shrug />;
+        break;
+      case "star":
+        content = <StarBadgeIllustration />;
         break;
       default:
         content = null;

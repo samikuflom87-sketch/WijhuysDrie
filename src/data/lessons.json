@@ -5,16 +5,16 @@
       "title": "Greetings",
       "theme": "greetings",
       "words": [
-        { "tigrinya": "selam", "english": "hello", "audio": "/audio/selam.mp3", "image": null, "verify": false },
-        { "tigrinya": "kemey ilka?", "english": "how are you? (to a man)", "audio": "/audio/kemey-ilka.mp3", "image": null, "verify": true },
-        { "tigrinya": "kemey ilki?", "english": "how are you? (to a woman)", "audio": "/audio/kemey-ilki.mp3", "image": null, "verify": true },
-        { "tigrinya": "tsebuk", "english": "good / fine", "audio": "/audio/tsebuk.mp3", "image": null, "verify": true },
-        { "tigrinya": "yekeniyeley", "english": "thank you", "audio": "/audio/yekeniyeley.mp3", "image": null, "verify": false },
-        { "tigrinya": "ewe", "english": "yes", "audio": "/audio/ewe.mp3", "image": null, "verify": false },
-        { "tigrinya": "aykonen", "english": "no", "audio": "/audio/aykonen.mp3", "image": null, "verify": true },
-        { "tigrinya": "dehando?", "english": "how's it going?", "audio": "/audio/dehando.mp3", "image": null, "verify": true },
-        { "tigrinya": "dehan", "english": "fine / well", "audio": "/audio/dehan.mp3", "image": null, "verify": true },
-        { "tigrinya": "dehan kun", "english": "goodbye (to a man)", "audio": "/audio/dehan-kun.mp3", "image": null, "verify": true }
+        { "tigrinya": "selam", "english": "hello", "audio": "/audio/selam.mp3", "image": "wave", "verify": false },
+        { "tigrinya": "kemey ilka?", "english": "how are you? (to a man)", "audio": "/audio/kemey-ilka.mp3", "image": "ask-man", "verify": true },
+        { "tigrinya": "kemey ilki?", "english": "how are you? (to a woman)", "audio": "/audio/kemey-ilki.mp3", "image": "ask-woman", "verify": true },
+        { "tigrinya": "tsebuk", "english": "good / fine", "audio": "/audio/tsebuk.mp3", "image": "thumbsup", "verify": true },
+        { "tigrinya": "yekeniyeley", "english": "thank you", "audio": "/audio/yekeniyeley.mp3", "image": "heart", "verify": false },
+        { "tigrinya": "ewe", "english": "yes", "audio": "/audio/ewe.mp3", "image": "check", "verify": false },
+        { "tigrinya": "aykonen", "english": "no", "audio": "/audio/aykonen.mp3", "image": "cross", "verify": true },
+        { "tigrinya": "dehando?", "english": "how's it going?", "audio": "/audio/dehando.mp3", "image": "chat", "verify": true },
+        { "tigrinya": "dehan", "english": "fine / well", "audio": "/audio/dehan.mp3", "image": "smile", "verify": true },
+        { "tigrinya": "dehan kun", "english": "goodbye (to a man)", "audio": "/audio/dehan-kun.mp3", "image": "bye-man", "verify": true }
       ],
       "sentences": [
         { "tigrinya": "selam, kemey ilka?", "english": "hello, how are you?", "audio": "/audio/s-selam-kemey.mp3", "verify": true },
@@ -84,16 +84,16 @@
       "title": "Everyday phrases",
       "theme": "everyday",
       "words": [
-        { "tigrinya": "ewaeta", "english": "please", "audio": "/audio/ewaeta.mp3", "image": null, "verify": true },
-        { "tigrinya": "yikreta", "english": "sorry / excuse me", "audio": "/audio/yikreta.mp3", "image": null, "verify": true },
-        { "tigrinya": "nay", "english": "here / take this", "audio": "/audio/nay.mp3", "image": null, "verify": true },
-        { "tigrinya": "ntay?", "english": "what?", "audio": "/audio/ntay.mp3", "image": null, "verify": true },
-        { "tigrinya": "abey?", "english": "where?", "audio": "/audio/abey.mp3", "image": null, "verify": true },
-        { "tigrinya": "mecha?", "english": "when?", "audio": "/audio/mecha.mp3", "image": null, "verify": true },
-        { "tigrinya": "kndey?", "english": "how much?", "audio": "/audio/kndey.mp3", "image": null, "verify": true },
-        { "tigrinya": "deliye", "english": "I want", "audio": "/audio/deliye.mp3", "image": null, "verify": true },
-        { "tigrinya": "ayfelten", "english": "I don't know", "audio": "/audio/ayfelten.mp3", "image": null, "verify": true },
-        { "tigrinya": "gobez", "english": "well done / good job", "audio": "/audio/gobez.mp3", "image": null, "verify": true }
+        { "tigrinya": "ewaeta", "english": "please", "audio": "/audio/ewaeta.mp3", "image": "hands", "verify": true },
+        { "tigrinya": "yikreta", "english": "sorry / excuse me", "audio": "/audio/yikreta.mp3", "image": "sorry", "verify": true },
+        { "tigrinya": "nay", "english": "here / take this", "audio": "/audio/nay.mp3", "image": "offer", "verify": true },
+        { "tigrinya": "ntay?", "english": "what?", "audio": "/audio/ntay.mp3", "image": "what", "verify": true },
+        { "tigrinya": "abey?", "english": "where?", "audio": "/audio/abey.mp3", "image": "pin", "verify": true },
+        { "tigrinya": "mecha?", "english": "when?", "audio": "/audio/mecha.mp3", "image": "clock", "verify": true },
+        { "tigrinya": "kndey?", "english": "how much?", "audio": "/audio/kndey.mp3", "image": "price", "verify": true },
+        { "tigrinya": "deliye", "english": "I want", "audio": "/audio/deliye.mp3", "image": "point", "verify": true },
+        { "tigrinya": "ayfelten", "english": "I don't know", "audio": "/audio/ayfelten.mp3", "image": "shrug", "verify": true },
+        { "tigrinya": "gobez", "english": "well done / good job", "audio": "/audio/gobez.mp3", "image": "star", "verify": true }
       ],
       "sentences": [
         { "tigrinya": "kndey iyu?", "english": "how much is it?", "audio": "/audio/s-kndey-iyu.mp3", "verify": true }

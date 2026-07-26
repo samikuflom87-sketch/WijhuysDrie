@@ -37,11 +37,10 @@ export default function LessonScreen({ onCompleteLesson }) {
   const [buildAnswer, setBuildAnswer] = useState([]);
   const [checked, setChecked] = useState(false);
   const [bannerStatus, setBannerStatus] = useState(null); // null | 'correct' | 'wrong'
-  const [bannerMascot, setBannerMascot] = useState("zaki");
   const [bannerMessage, setBannerMessage] = useState("");
   const [shake, setShake] = useState(false);
   const [phase, setPhase] = useState("playing"); // playing | failed | complete
-  const [endMascot] = useState(() => randomMascot());
+  const [companion] = useState(() => randomMascot());
 
   if (!lesson) {
     return (
@@ -85,9 +84,7 @@ export default function LessonScreen({ onCompleteLesson }) {
   }
 
   function showBanner(isCorrect) {
-    const mascot = randomMascot();
-    const line = randomLine(mascot, isCorrect ? "correct" : "wrong");
-    setBannerMascot(mascot.id);
+    const line = randomLine(companion, isCorrect ? "correct" : "wrong");
     setBannerMessage(line);
     setBannerStatus(isCorrect ? "correct" : "wrong");
     if (!isCorrect) {
@@ -130,12 +127,12 @@ export default function LessonScreen({ onCompleteLesson }) {
   if (phase === "failed") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
-        <Mascot mascotId={endMascot.id} mood="sad" size={140} />
+        <Mascot mascotId={companion.id} mood="sad" size={140} />
         <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
           Out of hearts!
         </h1>
         <p className="font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
-          {randomLine(endMascot, "wrong")}
+          {randomLine(companion, "wrong")}
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <Button variant="coral" className="w-full uppercase tracking-wide" onClick={() => navigate(0)}>
@@ -150,7 +147,7 @@ export default function LessonScreen({ onCompleteLesson }) {
   }
 
   if (phase === "complete") {
-    const message = randomLine(endMascot, "complete");
+    const message = randomLine(companion, "complete");
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
         <div className="relative">
@@ -160,7 +157,7 @@ export default function LessonScreen({ onCompleteLesson }) {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 14 }}
           >
-            <Mascot mascotId={endMascot.id} mood="excited" size={150} />
+            <Mascot mascotId={companion.id} mood="excited" size={150} />
           </motion.div>
         </div>
         <h1 className="text-3xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
@@ -224,6 +221,21 @@ export default function LessonScreen({ onCompleteLesson }) {
         </AnimatePresence>
       </div>
 
+      {!bannerStatus && (
+        <div className="fixed inset-x-0 z-20 pointer-events-none" style={{ bottom: current.type === "tap-pairs" ? 16 : 96 }}>
+          <div className="max-w-md mx-auto relative h-0">
+            <motion.div
+              className="absolute right-4 bottom-0"
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 220, damping: 18 }}
+            >
+              <Mascot mascotId={companion.id} mood="neutral" size={56} />
+            </motion.div>
+          </div>
+        </div>
+      )}
+
       {current.type !== "tap-pairs" && !bannerStatus && (
         <div className="fixed bottom-0 left-0 right-0 bg-white px-4 py-4 border-t-2" style={{ borderColor: "var(--color-brand-line)" }}>
           <div className="max-w-md mx-auto">
@@ -242,7 +254,7 @@ export default function LessonScreen({ onCompleteLesson }) {
       <AnswerBanner
         status={bannerStatus}
         correctText={current.correctText}
-        mascotId={bannerMascot}
+        mascotId={companion.id}
         message={bannerMessage}
         onContinue={handleBannerContinue}
       />

@@ -177,10 +177,90 @@ function BemnetShape({ mood, uid }) {
   );
 }
 
+function SabaShape({ mood, uid }) {
+  const gradId = `sabaGrad-${uid}`;
+  const eyeGap = 13;
+  const cy = 64;
+  return (
+    <>
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#F0C892" />
+          <stop offset="1" stopColor="#D8A968" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M60 8 C58 8 57 12 57 16 M60 8 C62 8 63 12 63 16"
+        stroke="#8A6A3F"
+        strokeWidth="3"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <ellipse cx="53" cy="14" rx="7" ry="5" fill="#00A19D" transform="rotate(-25 53 14)" />
+      <ellipse cx="67" cy="14" rx="7" ry="5" fill="#1FC0BC" transform="rotate(25 67 14)" />
+
+      <circle cx="60" cy={cy} r="34" fill={`url(#${gradId})`} />
+      <circle cx="60" cy={cy - 26} r="8" fill={`url(#${gradId})`} />
+
+      <Face mood={mood} cx={60} cy={cy} eyeGap={eyeGap} />
+
+      {/* glasses */}
+      <circle cx={60 - eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
+      <circle cx={60 + eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
+      <path d={`M${60 - eyeGap + 11} ${cy} L${60 + eyeGap - 11} ${cy}`} stroke="#4A3527" strokeWidth="2.5" />
+      <path d={`M${60 - eyeGap - 11} ${cy - 2} L${60 - eyeGap - 18} ${cy - 6}`} stroke="#4A3527" strokeWidth="2.5" strokeLinecap="round" />
+      <path d={`M${60 + eyeGap + 11} ${cy - 2} L${60 + eyeGap + 18} ${cy - 6}`} stroke="#4A3527" strokeWidth="2.5" strokeLinecap="round" />
+    </>
+  );
+}
+
+function TesfaShape({ mood, uid }) {
+  const isHappy = mood === "happy" || mood === "excited";
+  const gradId = `tesfaGrad-${uid}`;
+  return (
+    <>
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#FFA98F" />
+          <stop offset="1" stopColor="#FF6B4A" />
+        </linearGradient>
+      </defs>
+      <motion.ellipse
+        cx="26"
+        cy="52"
+        rx="13"
+        ry="20"
+        fill="#FFE4DA"
+        style={{ transformOrigin: "38px 46px" }}
+        animate={isHappy ? { rotate: [-6, 6, -6] } : { rotate: -6 }}
+        transition={{ duration: 0.7, repeat: isHappy ? Infinity : 0, repeatType: "mirror" }}
+      />
+      <motion.ellipse
+        cx="94"
+        cy="52"
+        rx="13"
+        ry="20"
+        fill="#FFE4DA"
+        style={{ transformOrigin: "82px 46px" }}
+        animate={isHappy ? { rotate: [6, -6, 6] } : { rotate: 6 }}
+        transition={{ duration: 0.7, repeat: isHappy ? Infinity : 0, repeatType: "mirror" }}
+      />
+      <path
+        d="M60 92 C18 64 22 28 46 22 C55 20 60 30 60 38 C60 30 65 20 74 22 C98 28 102 64 60 92 Z"
+        fill={`url(#${gradId})`}
+      />
+      <ellipse cx="60" cy="56" rx="28" ry="24" fill="#FFF6EC" opacity="0.92" />
+      <Face mood={mood} cx={60} cy={54} eyeGap={12} />
+    </>
+  );
+}
+
 const SHAPES = {
   zaki: ZakiShape,
   nardos: NardosShape,
   bemnet: BemnetShape,
+  saba: SabaShape,
+  tesfa: TesfaShape,
 };
 
 export default function Mascot({ mascotId = "zaki", mood = "neutral", size = 120, className = "" }) {

@@ -1,4 +1,4 @@
-// Three original mascots for Habesha Steps. Each has a distinct personality
+// Five original mascots for Habesha Steps. Each has a distinct personality
 // that comes through in the wording of their messages.
 
 export const MASCOTS = [
@@ -82,6 +82,60 @@ export const MASCOTS = [
     complete: [
       "We should get you a tiny trophy. A tiny one. I'll look into it.",
       "Lesson: defeated. You: victorious. Me: proud and slightly hungry.",
+    ],
+  },
+  {
+    id: "saba",
+    name: "Saba",
+    tagline: "The curious, studious one",
+    color: "sand",
+    greetings: [
+      "Oh, you're here! I was just reviewing yesterday's words. Shall we add more?",
+      "Curious what today's lesson holds? Me too. Let's find out.",
+      "I love this part — new words, new little discoveries. Ready?",
+    ],
+    correct: [
+      "Exactly right — and now that word is yours to keep.",
+      "Yes! Notice how that one just clicked?",
+      "Correct. That's one more piece of the puzzle in place.",
+      "Nicely reasoned. You're building real understanding.",
+    ],
+    wrong: [
+      "Not this time — but now you know, which is the whole point.",
+      "Close reasoning, wrong word. Let's file this one away for next time.",
+      "Hm, not quite — but a good guess tells me you're paying attention.",
+      "That one's tricky. Worth a second look later.",
+    ],
+    complete: [
+      "Look at everything you picked up today. Genuinely impressive.",
+      "That's a solid set of new words filed away. Well earned.",
+    ],
+  },
+  {
+    id: "tesfa",
+    name: "Tesfa",
+    tagline: "The gentle, supportive one",
+    color: "coral-soft",
+    greetings: [
+      "Hi, friend. So glad you came back today.",
+      "I'm right here with you — let's take this one step at a time.",
+      "Whenever you're ready, I've got you. Let's begin.",
+    ],
+    correct: [
+      "You did that! I'm really proud of you.",
+      "Yes! See, you knew it all along.",
+      "Beautiful. You're doing so well.",
+      "That's it — you're getting stronger with every word.",
+    ],
+    wrong: [
+      "It's okay, truly. This is how everyone learns.",
+      "No worries at all — I'm still cheering for you.",
+      "That one didn't land, and that's completely fine. Onward, together.",
+      "Don't be hard on yourself — you're doing great overall.",
+    ],
+    complete: [
+      "I'm so proud of you for finishing this. Truly.",
+      "You showed up and did the work today. That matters.",
     ],
   },
 ];
