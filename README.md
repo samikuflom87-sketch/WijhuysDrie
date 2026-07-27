@@ -31,7 +31,9 @@ A **"?" hint button** is available on most exercises — it reveals the taught w
 
 ## Exercise types
 
-Multiple choice, reverse (Tigrinya → English), picture choice, listening (audio → pick the word), type-what-you-hear, type-the-translation (typed answers are forgiving of case/spacing/punctuation), tap-the-pairs, build-the-sentence, and odd-one-out (spot the word from a different lesson's theme). Each lesson only gets the types its content supports — e.g. no picture-choice without enough imaged words, no build-the-sentence without a `sentences` list, no odd-one-out for a single-lesson set.
+Multiple choice, reverse (Tigrinya → English), picture choice, listening (audio → pick the word), type-what-you-hear, type-the-translation (typed answers are forgiving of case/spacing/punctuation), tap-the-pairs, build-the-sentence, odd-one-out (spot the word from a different lesson's theme), and speaking practice. Each lesson only gets the types its content supports — e.g. no picture-choice without enough imaged words, no build-the-sentence without a `sentences` list, no odd-one-out for a single-lesson set.
+
+**Speaking practice** asks the learner to record themselves saying a word, using the browser's speech recognition. No browser's speech recognizer understands Tigrinya — only mainstream languages like English — so this can only ever be a rough, approximate guess, never a real pronunciation grade. Because of that, it's labeled "beta" in the UI and is designed to never punish the learner: a "miss" here never costs a heart, never blocks progress, and never sends the word to review — the rough match only picks between two encouraging messages. Needs microphone permission and a browser with `SpeechRecognition` support (Chrome); it degrades to a friendly "not supported" message elsewhere.
 
 ## Spaced repetition & Review sessions
 
@@ -92,6 +94,7 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/data/badges.js` — achievement definitions and unlock conditions
 - `src/lib/exercises.js` — generates all 9 exercise types + intro-word splitting from lesson content
 - `src/lib/tts.js` — browser text-to-speech fallback used by every speaker button when no real recording exists yet
+- `src/lib/speech.js` — browser speech recognition + rough similarity match used by the speaking-practice exercise
 - `src/lib/wordStats.js` / `src/hooks/useWordStats.js` — per-word spaced-repetition tracking
 - `src/lib/storage.js` / `src/hooks/useProgress.js` — XP/levels/streak/freeze/badges/daily-goal progress
 - `src/lib/settings.js` / `src/context/SettingsContext.jsx` — sound/reduced-motion preferences, available app-wide

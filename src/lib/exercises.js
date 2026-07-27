@@ -185,6 +185,19 @@ function makeTypeAnswer(lessonId, word, mode) {
   };
 }
 
+function makeSpeakAnswer(lessonId, word) {
+  return {
+    id: nextId("ex"),
+    type: "speak-answer",
+    promptLabel: "Say this word in Tigrinya",
+    promptText: word.english,
+    correctAnswer: word.tigrinya,
+    correctText: word.tigrinya,
+    hintWord: word,
+    wordIds: [wordId(owningLessonId(word, lessonId), word.tigrinya)],
+  };
+}
+
 function makeTapPairs(lessonId, words) {
   const pairs = words.map((w) => ({
     id: nextId("pair"),
@@ -328,6 +341,7 @@ export function generateLessonExercises(lesson, allLessons = [lesson]) {
     pairs: words.length >= 4 ? 1 : 0,
     sentence: Math.min(sentences.length, 2),
     oddOneOut: canOddOneOut ? 1 : 0,
+    speak: words.length >= 1 ? 1 : 0,
   };
 
   const buckets = [
@@ -340,6 +354,7 @@ export function generateLessonExercises(lesson, allLessons = [lesson]) {
     Array.from({ length: counts.pairs }, () => "pairs"),
     Array.from({ length: counts.sentence }, () => "sentence"),
     Array.from({ length: counts.oddOneOut }, () => "oddOneOut"),
+    Array.from({ length: counts.speak }, () => "speak"),
   ];
 
   const rotation = interleave(buckets);
@@ -361,6 +376,7 @@ export function generateLessonExercises(lesson, allLessons = [lesson]) {
         return makeBuildSentence(sentence, words);
       }
       if (type === "oddOneOut") return makeOddOneOut(lesson, allLessons);
+      if (type === "speak") return makeSpeakAnswer(lesson.id, nextWord());
       return null;
     })
     .filter(Boolean);

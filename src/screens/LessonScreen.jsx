@@ -23,6 +23,7 @@ import ChoiceExercise from "../components/exercises/ChoiceExercise";
 import BuildSentenceExercise from "../components/exercises/BuildSentenceExercise";
 import TapPairsExercise from "../components/exercises/TapPairsExercise";
 import TypeAnswerExercise from "../components/exercises/TypeAnswerExercise";
+import SpeakAnswerExercise from "../components/exercises/SpeakAnswerExercise";
 import XPCounter from "../components/XPCounter";
 import { useSound } from "../hooks/useSound";
 
@@ -111,6 +112,7 @@ export default function LessonScreen({
   const [buildAnswer, setBuildAnswer] = useState([]);
   const [typedAnswer, setTypedAnswer] = useState("");
   const [typeRetryUsed, setTypeRetryUsed] = useState(false);
+  const [speakResult, setSpeakResult] = useState(null); // { transcript, matched } | null
   const [checked, setChecked] = useState(false);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [hintOpen, setHintOpen] = useState(false);
@@ -164,6 +166,7 @@ export default function LessonScreen({
     setBuildAnswer([]);
     setTypedAnswer("");
     setTypeRetryUsed(false);
+    setSpeakResult(null);
     setChecked(false);
     setHintOpen(false);
     setHintUsed(false);
@@ -242,7 +245,12 @@ export default function LessonScreen({
   }
 
   function showBanner(isCorrect) {
-    let line = randomLine(companion, isCorrect ? "correct" : "wrong");
+    let line =
+      current.type === "speak-answer"
+        ? speakResult?.matched
+          ? "🎤 Sounds right! Nice pronunciation."
+          : "🎤 Nice try! Keep practicing that one — pronunciation-checking here is only a rough guess."
+        : randomLine(companion, isCorrect ? "correct" : "wrong");
     if (isCorrect) {
       const nextStreak = comboStreak + 1;
       setComboStreak(nextStreak);
@@ -288,6 +296,11 @@ export default function LessonScreen({
         setTimeout(() => setShake(false), 400);
         return;
       }
+    } else if (current.type === "speak-answer") {
+      // No browser can truly judge Tigrinya pronunciation, so a "miss" here
+      // is never trustworthy enough to cost a heart or send the word to
+      // review — it only changes which encouraging message is shown.
+      isCorrect = true;
     }
     setChecked(true);
     recordWords(isCorrect);
@@ -327,6 +340,8 @@ export default function LessonScreen({
     ? buildAnswer.length === current.correctTokens.length
     : current.type === "type-answer"
     ? typedAnswer.trim().length > 0
+    : current.type === "speak-answer"
+    ? Boolean(speakResult)
     : Boolean(selectedId);
 
   const progressPct =
@@ -520,6 +535,14 @@ export default function LessonScreen({
                 exercise={current}
                 onWrong={handlePairsWrong}
                 onDone={handlePairsDone}
+              />
+            )}
+            {current.type === "speak-answer" && (
+              <SpeakAnswerExercise
+                exercise={current}
+                checked={checked}
+                onResult={setSpeakResult}
+                shake={shake}
               />
             )}
           </motion.div>
