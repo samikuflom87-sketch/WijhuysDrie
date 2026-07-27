@@ -29,15 +29,48 @@ export function ttsSupported() {
 
 export function speakText(text) {
   if (!text || !ttsSupported()) return;
-  window.speechSynthesis.cancel();
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  // Chrome silently suspends its speech engine after ~15s of tab
+  // inactivity; resume() before speaking wakes it back up so the next
+  // utterance isn't dropped (a well-known Chrome speechSynthesis bug).
+  synth.resume();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 0.85;
   utterance.pitch = 1;
   const voice = pickVoice();
   if (voice) utterance.voice = voice;
-  window.speechSynthesis.speak(utterance);
+  synth.speak(utterance);
 }
 
 export function cancelSpeech() {
   if (ttsSupported()) window.speechSynthesis.cancel();
+}
+
+// Used by the Settings "test sound" diagnostic so a non-technical user can
+// see in the app itself whether their browser has any voice installed at
+// all, instead of needing devtools.
+export function voiceCount() {
+  return cachedVoices.length;
+}
+
+export function speakWithReport(text, onEvent) {
+  if (!ttsSupported()) {
+    onEvent("unsupported");
+    return;
+  }
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  synth.resume();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.85;
+  const voice = pickVoice();
+  if (voice) utterance.voice = voice;
+  utterance.onstart = () => onEvent("started");
+  utterance.onerror = () => onEvent("error");
+  utterance.onend = () => onEvent("ended");
+  synth.speak(utterance);
+  // If neither onstart nor onerror fires within a couple seconds, the
+  // engine likely has no voice to speak with at all.
+  setTimeout(() => onEvent("timeout-check"), 2500);
 }

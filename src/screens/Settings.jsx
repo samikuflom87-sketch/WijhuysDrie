@@ -4,6 +4,7 @@ import { useSettingsContext } from "../context/SettingsContext";
 import { DAILY_GOAL_OPTIONS } from "../lib/storage";
 import Button from "../components/Button";
 import { useSound } from "../hooks/useSound";
+import { speakWithReport } from "../lib/tts";
 
 function ToggleSwitch({ on, onToggle, label }) {
   const sound = useSound();
@@ -46,7 +47,23 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
   const navigate = useNavigate();
   const { settings, updateSetting } = useSettingsContext();
   const [confirmingReset, setConfirmingReset] = useState(false);
+  const [voiceTestResult, setVoiceTestResult] = useState(null);
   const sound = useSound();
+
+  function testVoice() {
+    setVoiceTestResult("checking");
+    let started = false;
+    speakWithReport("selam", (event) => {
+      if (event === "unsupported") {
+        setVoiceTestResult("unsupported");
+      } else if (event === "started") {
+        started = true;
+        setVoiceTestResult("started");
+      } else if ((event === "error" || event === "timeout-check") && !started) {
+        setVoiceTestResult("no-voice");
+      }
+    });
+  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
@@ -84,6 +101,33 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
             on={settings.reducedMotion}
             onToggle={() => updateSetting("reducedMotion", !settings.reducedMotion)}
           />
+          <Button
+            variant="white"
+            className="w-full uppercase tracking-wide"
+            onClick={() => {
+              sound.click();
+              testVoice();
+            }}
+          >
+            Test word pronunciation
+          </Button>
+          {voiceTestResult === "checking" && (
+            <p className="text-sm font-bold px-1" style={{ color: "var(--color-brand-ink-light)" }}>
+              Listening for a moment...
+            </p>
+          )}
+          {voiceTestResult === "started" && (
+            <p className="text-sm font-bold px-1" style={{ color: "var(--color-brand-teal-dark)" }}>
+              🔊 If you just heard "selam", pronunciation is working on this device.
+            </p>
+          )}
+          {(voiceTestResult === "no-voice" || voiceTestResult === "unsupported") && (
+            <p className="text-sm font-bold px-1" style={{ color: "var(--color-brand-red-dark)" }}>
+              This browser has no built-in reading voice, so word pronunciation stays silent
+              here — the app's other sounds still work fine. Try Google Chrome, or check your
+              device's text-to-speech settings.
+            </p>
+          )}
         </section>
 
         <section className="flex flex-col gap-3">
