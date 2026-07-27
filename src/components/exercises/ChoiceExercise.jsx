@@ -6,6 +6,9 @@ import Illustration from "../Illustration";
 export default function ChoiceExercise({ exercise, selectedId, checked, onSelect, shake }) {
   const isPicture = exercise.type === "picture-choice";
   const isReverse = exercise.type === "reverse-choice";
+  const isListening = exercise.type === "listening";
+  const isOddOneOut = exercise.type === "odd-one-out";
+  const hasTextPrompt = !isPicture && !isListening && !isOddOneOut;
 
   return (
     <motion.div
@@ -27,7 +30,16 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
               <Illustration name={exercise.promptImage} size={120} />
             </div>
           </div>
-        ) : (
+        ) : isListening ? (
+          <div className="flex justify-center py-2">
+            <SpeakerButton
+              src={exercise.promptAudio}
+              size={48}
+              className="bg-brand-coral-light text-brand-coral"
+              label="Play the word"
+            />
+          </div>
+        ) : hasTextPrompt ? (
           <div className="flex items-center gap-2">
             <h2 className="text-2xl sm:text-3xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
               {isReverse ? `"${exercise.promptText}"` : `'${exercise.promptText}'`}
@@ -36,7 +48,7 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
               <SpeakerButton src={exercise.promptAudio} className="text-brand-coral" />
             )}
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

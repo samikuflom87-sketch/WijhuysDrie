@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import lessonsData from "../data/lessons.json";
-import { isLessonCompleted, isLessonUnlocked, DAILY_GOAL_XP } from "../lib/storage";
+import { isLessonCompleted, isLessonUnlocked, getLevelInfo } from "../lib/storage";
+import { lessonAccuracy, pickReviewWords } from "../lib/wordStats";
 import { randomMascot, randomLine } from "../data/mascots";
 import LessonBubble from "../components/LessonBubble";
 import StatPill from "../components/StatPill";
@@ -10,11 +11,16 @@ import Mascot from "../components/Mascot";
 import ProgressBar from "../components/ProgressBar";
 import XPCounter from "../components/XPCounter";
 
-export default function Home({ progress }) {
+export default function Home({ progress, wordStats }) {
   const navigate = useNavigate();
   const lessons = lessonsData.lessons;
   const greeter = useMemo(() => randomMascot(), []);
   const greeting = useMemo(() => randomLine(greeter, "greetings"), [greeter]);
+  const levelInfo = getLevelInfo(progress.xp);
+  const hasReviewWords = useMemo(
+    () => pickReviewWords(wordStats, lessons, 1).length > 0,
+    [wordStats, lessons],
+  );
 
   function statusFor(lesson) {
     if (isLessonCompleted(progress, lesson.id)) return "completed";
@@ -22,7 +28,7 @@ export default function Home({ progress }) {
     return "locked";
   }
 
-  const goalPct = Math.min(100, (progress.todayXp / progress.dailyGoal) * 100);
+  const goalPct = Math.min(100, (progress.todayLessons / progress.dailyGoalLessons) * 100);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
@@ -34,9 +40,16 @@ export default function Home({ progress }) {
           <h1 className="font-display font-extrabold text-lg text-white tracking-tight">
             Habesha Steps
           </h1>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <StatPill icon="🔥" value={progress.streak} color="white" />
+            {progress.streakFreezes > 0 && <StatPill icon="🧊" value={progress.streakFreezes} color="white" />}
             <StatPill icon="⭐" value={<XPCounter value={progress.xp} />} color="white" />
+            <button onClick={() => navigate("/achievements")} aria-label="Achievements" className="text-xl">
+              🏆
+            </button>
+            <button onClick={() => navigate("/settings")} aria-label="Settings" className="text-xl">
+              ⚙️
+            </button>
           </div>
         </div>
       </header>
@@ -60,17 +73,42 @@ export default function Home({ progress }) {
           </div>
         </motion.div>
 
+        <div className="bg-white rounded-2xl p-4 flex items-center justify-between" style={{ border: "2px solid var(--color-brand-line)" }}>
+          <div>
+            <p className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+              Level {levelInfo.level}
+            </p>
+            <p className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
+              {levelInfo.rank}
+            </p>
+          </div>
+          {levelInfo.xpForNextLevel && (
+            <p className="text-xs font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
+              {levelInfo.xpIntoLevel} / {levelInfo.xpForNextLevel} XP
+            </p>
+          )}
+        </div>
+
         <div className="bg-white rounded-2xl p-4" style={{ border: "2px solid var(--color-brand-line)" }}>
           <div className="flex justify-between items-center mb-2">
             <span className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
               Daily Goal
             </span>
             <span className="text-sm font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
-              {Math.min(progress.todayXp, progress.dailyGoal)} / {DAILY_GOAL_XP} XP
+              {Math.min(progress.todayLessons, progress.dailyGoalLessons)} / {progress.dailyGoalLessons} lessons
             </span>
           </div>
           <ProgressBar value={goalPct} />
         </div>
+
+        {hasReviewWords && (
+          <button
+            onClick={() => navigate("/review")}
+            className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide"
+          >
+            🔁 Review words you've missed
+          </button>
+        )}
       </div>
 
       <motion.div
@@ -85,6 +123,7 @@ export default function Home({ progress }) {
             lesson={lesson}
             index={i}
             status={statusFor(lesson)}
+            accuracy={lessonAccuracy(wordStats, lesson)}
             onClick={(l) => navigate(`/lesson/${l.id}`)}
           />
         ))}

@@ -2,45 +2,101 @@ import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import lessonsData from "../data/lessons.json";
-import { generateLessonExercises } from "../lib/exercises";
+import { generateLessonExercises, splitIntroWords, normalizeAnswer } from "../lib/exercises";
 import { randomMascot, randomLine } from "../data/mascots";
+import { applyLessonComplete } from "../lib/storage";
+import { checkBadges } from "../data/badges";
+import { pickReviewWords, wordId } from "../lib/wordStats";
 import TopBar from "../components/TopBar";
 import AnswerBanner from "../components/AnswerBanner";
 import Button from "../components/Button";
 import Mascot from "../components/Mascot";
 import Confetti from "../components/Confetti";
+import Flashcard from "../components/Flashcard";
+import HintReveal from "../components/HintReveal";
 import ChoiceExercise from "../components/exercises/ChoiceExercise";
 import BuildSentenceExercise from "../components/exercises/BuildSentenceExercise";
 import TapPairsExercise from "../components/exercises/TapPairsExercise";
+import TypeAnswerExercise from "../components/exercises/TypeAnswerExercise";
 import XPCounter from "../components/XPCounter";
 
 const XP_PER_CORRECT = 10;
+const XP_PER_REVIEW_CORRECT = 5;
 const MAX_HEARTS = 5;
+const REVIEW_SESSION_SIZE = 8;
 
-const CHOICE_TYPES = new Set(["multiple-choice", "reverse-choice", "picture-choice"]);
+const CHOICE_TYPES = new Set([
+  "multiple-choice",
+  "reverse-choice",
+  "picture-choice",
+  "listening",
+  "odd-one-out",
+]);
 
-export default function LessonScreen({ onCompleteLesson }) {
+export default function LessonScreen({
+  progress,
+  wordStats,
+  onCompleteLesson,
+  onIntroduceWord,
+  onRecordAttempt,
+  onUnlockBadges,
+  isReview = false,
+}) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const lessonId = Number(id);
-  const lesson = lessonsData.lessons.find((l) => l.id === lessonId);
+  const lessonId = isReview ? "review" : Number(id);
+  const allLessons = lessonsData.lessons;
+
+  const lesson = useMemo(() => {
+    if (isReview) {
+      const words = pickReviewWords(wordStats, allLessons, REVIEW_SESSION_SIZE);
+      return { id: "review", title: "Review Session", theme: null, words, sentences: [] };
+    }
+    return allLessons.find((l) => l.id === lessonId) || null;
+    // Intentionally excludes wordStats: the review word list is frozen for
+    // the whole session so mid-session stat updates don't reshuffle it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lessonId, isReview]);
+
+  const introWords = useMemo(() => {
+    if (!lesson) return [];
+    if (isReview) return [];
+    return splitIntroWords(lesson, wordStats);
+    // Intentionally excludes wordStats: this list must stay frozen while
+    // the intro phase walks through it one "Got it" at a time, or marking a
+    // word introduced mid-phase would shrink the list under introIndex.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lesson, isReview]);
 
   const exercises = useMemo(
-    () => (lesson ? generateLessonExercises(lesson) : []),
-    [lesson],
+    () => (lesson ? generateLessonExercises(lesson, allLessons) : []),
+    [lesson, allLessons],
   );
 
-  const [index, setIndex] = useState(0);
+  const [phase, setPhase] = useState(introWords.length > 0 ? "intro" : "practice");
+  const [introIndex, setIntroIndex] = useState(0);
+  const [mainQueue, setMainQueue] = useState(exercises);
+  const [reviewQueue, setReviewQueue] = useState([]);
+  const [resolvedCount, setResolvedCount] = useState(0);
+  const [practiceStats, setPracticeStats] = useState({ attempts: 0, correct: 0 });
+
   const [hearts, setHearts] = useState(MAX_HEARTS);
   const [xp, setXp] = useState(0);
   const [selectedId, setSelectedId] = useState(null);
   const [buildAnswer, setBuildAnswer] = useState([]);
+  const [typedAnswer, setTypedAnswer] = useState("");
   const [checked, setChecked] = useState(false);
+  const [lastCorrect, setLastCorrect] = useState(false);
+  const [hintOpen, setHintOpen] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
   const [bannerStatus, setBannerStatus] = useState(null); // null | 'correct' | 'wrong'
   const [bannerMessage, setBannerMessage] = useState("");
   const [shake, setShake] = useState(false);
-  const [phase, setPhase] = useState("playing"); // playing | failed | complete
   const [companion] = useState(() => randomMascot());
+  const [newBadges, setNewBadges] = useState([]);
+
+  const totalToResolve = exercises.length;
+  const current = phase === "review" ? reviewQueue[0] : mainQueue[0];
 
   if (!lesson) {
     return (
@@ -50,8 +106,32 @@ export default function LessonScreen({ onCompleteLesson }) {
     );
   }
 
-  const current = exercises[index];
-  const progressPct = (index / exercises.length) * 100;
+  if (isReview && lesson.words.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
+        <Mascot mascotId="nardos" mood="neutral" size={130} />
+        <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
+          Nothing to review yet
+        </h1>
+        <p className="font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
+          Complete a lesson first, and words you've practiced will show up here for review.
+        </p>
+        <Button variant="coral" className="w-full max-w-xs uppercase tracking-wide" onClick={() => navigate("/")}>
+          Back to Home
+        </Button>
+      </div>
+    );
+  }
+
+  function resetPerExerciseState() {
+    setSelectedId(null);
+    setBuildAnswer([]);
+    setTypedAnswer("");
+    setChecked(false);
+    setHintOpen(false);
+    setHintUsed(false);
+    setBannerStatus(null);
+  }
 
   function loseHeart() {
     setHearts((h) => {
@@ -63,23 +143,54 @@ export default function LessonScreen({ onCompleteLesson }) {
     });
   }
 
+  function recordWords(isCorrect) {
+    for (const id of current.wordIds) {
+      onRecordAttempt(id, isCorrect);
+    }
+  }
+
   function finishLesson(finalXp) {
+    const predicted = applyLessonComplete(progress, lessonId, finalXp);
+    const { newlyUnlocked } = checkBadges(predicted, wordStats, allLessons);
     onCompleteLesson(lessonId, finalXp);
+    if (newlyUnlocked.length > 0) onUnlockBadges(newlyUnlocked.map((b) => b.id));
+    setNewBadges(newlyUnlocked);
     setPhase("complete");
   }
 
-  function advance(xpDelta) {
-    const newXp = xp + xpDelta;
-    setXp(newXp);
-    setSelectedId(null);
-    setBuildAnswer([]);
-    setChecked(false);
-    setBannerStatus(null);
+  function advance(xpDelta, isCorrect) {
+    setXp((x) => x + xpDelta);
+    resetPerExerciseState();
 
-    if (index + 1 >= exercises.length) {
-      finishLesson(newXp);
-    } else {
-      setIndex((i) => i + 1);
+    if (phase === "practice") {
+      setPracticeStats((s) => ({ attempts: s.attempts + 1, correct: s.correct + (isCorrect ? 1 : 0) }));
+      if (isCorrect) {
+        setResolvedCount((c) => c + 1);
+        const nextMain = mainQueue.slice(1);
+        setMainQueue(nextMain);
+        if (nextMain.length === 0) {
+          if (reviewQueue.length > 0) setPhase("review");
+          else finishLesson(xp + xpDelta);
+        }
+      } else {
+        const retry = { ...current, id: `${current.id}-retry-${Date.now()}` };
+        setReviewQueue((q) => [...q, retry]);
+        const nextMain = mainQueue.slice(1);
+        setMainQueue(nextMain);
+        if (nextMain.length === 0) {
+          setPhase("review");
+        }
+      }
+    } else if (phase === "review") {
+      const nextReview = reviewQueue.slice(1);
+      if (isCorrect) {
+        setResolvedCount((c) => c + 1);
+        setReviewQueue(nextReview);
+        if (nextReview.length === 0) finishLesson(xp + xpDelta);
+      } else {
+        const retry = { ...current, id: `${current.id}-retry-${Date.now()}` };
+        setReviewQueue([...nextReview, retry]);
+      }
     }
   }
 
@@ -87,6 +198,7 @@ export default function LessonScreen({ onCompleteLesson }) {
     const line = randomLine(companion, isCorrect ? "correct" : "wrong");
     setBannerMessage(line);
     setBannerStatus(isCorrect ? "correct" : "wrong");
+    setLastCorrect(isCorrect);
     if (!isCorrect) {
       setShake(true);
       setTimeout(() => setShake(false), 400);
@@ -95,20 +207,25 @@ export default function LessonScreen({ onCompleteLesson }) {
   }
 
   function handleCheck() {
-    if (checked) return;
+    if (checked || !current) return;
     let isCorrect = false;
     if (CHOICE_TYPES.has(current.type)) {
       const opt = current.options.find((o) => o.id === selectedId);
       isCorrect = Boolean(opt?.isCorrect);
     } else if (current.type === "build-sentence") {
       isCorrect = JSON.stringify(buildAnswer) === JSON.stringify(current.correctTokens);
+    } else if (current.type === "type-answer") {
+      isCorrect = normalizeAnswer(typedAnswer) === normalizeAnswer(current.correctAnswer);
     }
     setChecked(true);
+    recordWords(isCorrect);
     showBanner(isCorrect);
   }
 
   function handleBannerContinue() {
-    advance(bannerStatus === "correct" ? XP_PER_CORRECT : 0);
+    const baseXp = bannerStatus === "correct" ? (phase === "review" ? XP_PER_REVIEW_CORRECT : XP_PER_CORRECT) : 0;
+    const xpDelta = hintUsed ? 0 : baseXp;
+    advance(xpDelta, bannerStatus === "correct");
   }
 
   function handlePairsWrong() {
@@ -116,13 +233,47 @@ export default function LessonScreen({ onCompleteLesson }) {
   }
 
   function handlePairsDone() {
-    advance(XP_PER_CORRECT);
+    for (const id of current.wordIds) onRecordAttempt(id, true);
+    advance(hintUsed ? 0 : phase === "review" ? XP_PER_REVIEW_CORRECT : XP_PER_CORRECT, true);
   }
 
-  const canCheck =
-    current?.type === "build-sentence"
-      ? buildAnswer.length === current.correctTokens.length
-      : Boolean(selectedId);
+  const canCheck = !current
+    ? false
+    : current.type === "build-sentence"
+    ? buildAnswer.length === current.correctTokens.length
+    : current.type === "type-answer"
+    ? typedAnswer.trim().length > 0
+    : Boolean(selectedId);
+
+  // --- Intro (teach-before-test) ---
+  if (phase === "intro") {
+    const word = introWords[introIndex];
+    return (
+      <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
+        <TopBar progressPct={(introIndex / introWords.length) * 100} hearts={MAX_HEARTS} onExit={() => navigate("/")} />
+        <div className="flex-1 max-w-md w-full mx-auto px-4 py-8 flex items-center justify-center">
+          <AnimatePresence mode="wait">
+            <Flashcard
+              key={word.tigrinya}
+              word={word}
+              index={introIndex}
+              total={introWords.length}
+              onGotIt={() => {
+                onIntroduceWord(wordId(lesson.id, word.tigrinya));
+                if (introIndex + 1 >= introWords.length) {
+                  setPhase("practice");
+                } else {
+                  setIntroIndex((i) => i + 1);
+                }
+              }}
+            />
+          </AnimatePresence>
+        </div>
+      </div>
+    );
+  }
+
+  const progressPct = totalToResolve > 0 ? (resolvedCount / totalToResolve) * 100 : 100;
 
   if (phase === "failed") {
     return (
@@ -148,8 +299,10 @@ export default function LessonScreen({ onCompleteLesson }) {
 
   if (phase === "complete") {
     const message = randomLine(companion, "complete");
+    const accuracyPct =
+      practiceStats.attempts > 0 ? Math.round((practiceStats.correct / practiceStats.attempts) * 100) : 100;
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
         <div className="relative">
           <Confetti count={30} />
           <motion.div
@@ -157,28 +310,55 @@ export default function LessonScreen({ onCompleteLesson }) {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 14 }}
           >
-            <Mascot mascotId={companion.id} mood="excited" size={150} />
+            <Mascot mascotId={companion.id} mood="excited" size={140} />
           </motion.div>
         </div>
         <h1 className="text-3xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
-          Lesson Complete!
+          {isReview ? "Review Complete!" : "Lesson Complete!"}
         </h1>
         <p className="font-bold text-lg" style={{ color: "var(--color-brand-ink-light)" }}>
           {message}
         </p>
-        <div className="bg-white rounded-2xl border-2 px-8 py-5 flex items-center gap-3" style={{ borderColor: "var(--color-brand-line)" }}>
-          <span className="text-2xl">⭐</span>
-          <span className="text-3xl font-extrabold" style={{ color: "var(--color-brand-yellow-dark)" }}>
-            +<XPCounter value={xp} />
-          </span>
-          <span className="font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
-            XP
-          </span>
+
+        <div className="flex gap-3">
+          <div className="bg-white rounded-2xl border-2 px-5 py-4 flex flex-col items-center" style={{ borderColor: "var(--color-brand-line)" }}>
+            <span className="text-2xl font-extrabold" style={{ color: "var(--color-brand-yellow-dark)" }}>
+              +<XPCounter value={xp} />
+            </span>
+            <span className="text-xs font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
+              XP
+            </span>
+          </div>
+          <div className="bg-white rounded-2xl border-2 px-5 py-4 flex flex-col items-center" style={{ borderColor: "var(--color-brand-line)" }}>
+            <span className="text-2xl font-extrabold" style={{ color: "var(--color-brand-teal-dark)" }}>
+              {accuracyPct}%
+            </span>
+            <span className="text-xs font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
+              Accuracy
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 font-bold" style={{ color: "var(--color-brand-yellow-dark)" }}>
-          <span>👑</span>
-          <span>Crown earned!</span>
-        </div>
+
+        {!isReview && (
+          <div className="flex items-center gap-2 font-bold" style={{ color: "var(--color-brand-yellow-dark)" }}>
+            <span>👑</span>
+            <span>Crown earned!</span>
+          </div>
+        )}
+
+        {newBadges.length > 0 && (
+          <div className="flex flex-col items-center gap-1 rounded-2xl px-5 py-3" style={{ background: "var(--color-brand-yellow-light)" }}>
+            <p className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+              New badge unlocked
+            </p>
+            {newBadges.map((b) => (
+              <p key={b.id} className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
+                {b.icon} {b.name}
+              </p>
+            ))}
+          </div>
+        )}
+
         <Button variant="coral" className="w-full max-w-xs uppercase tracking-wide" onClick={() => navigate("/")}>
           Continue
         </Button>
@@ -190,7 +370,26 @@ export default function LessonScreen({ onCompleteLesson }) {
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
       <TopBar progressPct={progressPct} hearts={hearts} />
 
-      <div className="flex-1 max-w-md w-full mx-auto px-4 py-8 pb-40">
+      {phase === "review" && (
+        <div className="max-w-md w-full mx-auto px-4 pt-3">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-center" style={{ color: "var(--color-brand-coral-dark)" }}>
+            Review — let's lock these in
+          </p>
+        </div>
+      )}
+
+      <div className="flex-1 max-w-md w-full mx-auto px-4 py-6 pb-40">
+        <div className="flex justify-end mb-2">
+          <HintReveal
+            word={current.hintWord}
+            open={hintOpen}
+            onToggle={() => {
+              if (checked) return;
+              setHintOpen((o) => !o);
+              setHintUsed(true);
+            }}
+          />
+        </div>
         <AnimatePresence mode="wait">
           <motion.div key={current.id}>
             {CHOICE_TYPES.has(current.type) && (
@@ -198,7 +397,7 @@ export default function LessonScreen({ onCompleteLesson }) {
                 exercise={current}
                 selectedId={selectedId}
                 checked={checked}
-                onSelect={(id) => !checked && setSelectedId(id)}
+                onSelect={(optId) => !checked && setSelectedId(optId)}
                 shake={shake}
               />
             )}
@@ -207,6 +406,15 @@ export default function LessonScreen({ onCompleteLesson }) {
                 exercise={current}
                 checked={checked}
                 onChange={setBuildAnswer}
+                shake={shake}
+              />
+            )}
+            {current.type === "type-answer" && (
+              <TypeAnswerExercise
+                exercise={current}
+                checked={checked}
+                isCorrect={lastCorrect}
+                onChange={setTypedAnswer}
                 shake={shake}
               />
             )}
@@ -255,7 +463,7 @@ export default function LessonScreen({ onCompleteLesson }) {
         status={bannerStatus}
         correctText={current.correctText}
         mascotId={companion.id}
-        message={bannerMessage}
+        message={hintUsed && bannerStatus === "correct" ? `${bannerMessage} (no XP — hint used)` : bannerMessage}
         onContinue={handleBannerContinue}
       />
     </div>

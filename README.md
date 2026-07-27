@@ -18,6 +18,35 @@ npm run build
 npm run preview
 ```
 
+## How a lesson works
+
+1. **Intro** — every word in the lesson you haven't been taught yet (tracked per-word in localStorage) shows as a flashcard: Tigrinya, English, picture, audio, and an optional usage note. Tap "Got it" to move on. Already-known words skip straight to practice.
+2. **Practice** — a mix of 9 exercise types (below), auto-generated from the lesson's words/sentences.
+3. **Review** — anything you got wrong in practice comes back at the end and repeats until you get it right.
+4. **Celebration** — XP earned, accuracy %, crown, and any newly unlocked badge.
+
+A **"?" hint button** is available on most exercises — it reveals the taught word's meaning and audio without ending the question, but that question earns no XP if used.
+
+## Exercise types
+
+Multiple choice, reverse (Tigrinya → English), picture choice, listening (audio → pick the word), type-what-you-hear, type-the-translation (typed answers are forgiving of case/spacing/punctuation), tap-the-pairs, build-the-sentence, and odd-one-out (spot the word from a different lesson's theme). Each lesson only gets the types its content supports — e.g. no picture-choice without enough imaged words, no build-the-sentence without a `sentences` list, no odd-one-out for a single-lesson set.
+
+## Spaced repetition & Review sessions
+
+Every word tracks times-seen/times-correct/last-practiced in localStorage. The Home screen's **"Review words you've missed"** button (appears once you've practiced at least one word) builds a session from your lowest-accuracy, longest-untouched words across *all* lessons — skips the intro phase since you've already been taught them.
+
+## Gamification
+
+- XP levels with rank names (Curious Beginner → Habesha Master), shown on Home.
+- Daily goal measured in **lessons/day** (Casual 1 / Regular 3 / Serious 5), set in Settings.
+- Streak with an earnable streak-freeze (awarded every 7-day streak, caps at 3) that auto-covers exactly one missed day.
+- A badges/achievements screen (`/achievements`) — first lesson, all lessons, streak milestones, words-taught milestones, XP milestones, earning a freeze.
+- Each lesson node on Home shows an accuracy ring (green/yellow/coral by how well you know it), separate from its locked/unlocked/crowned state.
+
+## Settings
+
+`/settings` — sound on/off, reduced-motion toggle (turns off mascot idle loops and confetti), daily goal picker, and a two-step "reset all progress" (clears XP, word stats, and preferences).
+
 ## Adding content
 
 All lesson content lives in `src/data/lessons.json`. Each lesson has a title, a `words` list, and an optional `sentences` list:
@@ -30,7 +59,7 @@ All lesson content lives in `src/data/lessons.json`. Each lesson has a title, a 
       "title": "Greetings",
       "theme": "greetings",
       "words": [
-        { "tigrinya": "selam", "english": "hello", "audio": "/audio/selam.mp3", "image": null, "verify": false }
+        { "tigrinya": "selam", "english": "hello", "audio": "/audio/selam.mp3", "image": "wave", "verify": false, "note": "A friendly all-purpose greeting." }
       ],
       "sentences": [
         { "tigrinya": "selam, kemey ilka?", "english": "hello, how are you?", "audio": "/audio/s-selam-kemey.mp3", "verify": true }
@@ -42,28 +71,34 @@ All lesson content lives in `src/data/lessons.json`. Each lesson has a title, a 
 
 Field notes:
 
-- `audio` — path to an `.mp3` under `public/audio/`. Each word/sentence gets a speaker button that plays it. Missing files fail silently (no crash) until you record and drop in the real files.
-- `image` — an illustration key (e.g. `"father"`, `"water"`, `"num3"`). Words with a non-null image can appear in **picture-choice** exercises. See `src/components/Illustration.jsx` for the full list of supported keys — add a new `case` there if you introduce a new key.
-- `verify` — marks a translation that hasn't been confirmed by a native speaker. The app never edits or removes this flag; it's for your own tracking.
-- `sentences` — used to auto-generate **build-the-sentence** exercises. Leave the array empty (`[]`) to skip that exercise type for a lesson.
+- `audio` — path to an `.mp3` under `public/audio/`. Every speaker button plays it; missing files fail silently (no crash) until you record and drop in the real files.
+- `image` — an illustration key (e.g. `"father"`, `"water"`, `"num3"`, `"wave"`). Words with a non-null image can appear in picture-choice exercises. See `src/components/Illustration.jsx` for the full list — add a new `case` there for a new key.
+- `note` — optional short usage tip shown on the word's intro flashcard. Omit it if you don't need one.
+- `verify` — marks a translation not yet confirmed by a native speaker. The app never edits, removes, or "corrects" this flag or the surrounding text — it's purely for your own tracking.
+- `sentences` — used to auto-generate build-the-sentence exercises. Leave the array empty (`[]`) to skip that exercise type for a lesson.
 
-Add new lessons/words/sentences to this file and the app automatically regenerates all five exercise types (multiple choice, reverse choice, picture choice, tap-the-pairs, build-the-sentence) — no code changes needed. A lesson only gets picture-choice exercises if it has at least 3 words with images, and only gets build-the-sentence exercises if `sentences` is non-empty. Lessons unlock in order (`id` order); each `id` must be unique.
-
-All 50 words across the 5 lessons currently have an `image`, so every lesson gets picture-choice exercises. `src/components/Illustration.jsx` has two families of icons: literal pictograms for concrete nouns (people, food, numbers) and badge-style icon glyphs for abstract phrases (yes/no, please, where, when, etc.) — reuse an existing key or add a new `case` for new vocabulary.
+Add new lessons/words/sentences and everything — intro flashcards, all 9 exercise types, review sessions, spaced repetition — regenerates automatically. No code changes needed. Lessons unlock in order (`id` order); each `id` must be unique.
 
 ## Adding audio recordings
 
-Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `audio` field (e.g. `selam.mp3` for `/audio/selam.mp3`). No code changes needed — the speaker buttons will start working automatically.
+Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `audio` field (e.g. `selam.mp3` for `/audio/selam.mp3`). No code changes needed — the speaker buttons start working automatically.
 
 ## Project structure
 
 - `src/data/lessons.json` — lesson/word/sentence content (edit this to add vocabulary)
-- `src/data/mascots.js` — the five mascots' personalities and message banks (greetings, correct/wrong reactions, lesson-complete lines)
-- `src/lib/exercises.js` — generates all 5 exercise types from lesson content
-- `src/lib/storage.js` / `src/hooks/useProgress.js` — localStorage-backed XP/streak/crown progress
+- `src/data/mascots.js` — the five mascots' personalities and message banks
+- `src/data/badges.js` — achievement definitions and unlock conditions
+- `src/lib/exercises.js` — generates all 9 exercise types + intro-word splitting from lesson content
+- `src/lib/wordStats.js` / `src/hooks/useWordStats.js` — per-word spaced-repetition tracking
+- `src/lib/storage.js` / `src/hooks/useProgress.js` — XP/levels/streak/freeze/badges/daily-goal progress
+- `src/lib/settings.js` / `src/context/SettingsContext.jsx` — sound/reduced-motion preferences, available app-wide
 - `src/components/Mascot.jsx` — the five original SVG mascots
 - `src/components/Illustration.jsx` — original SVG pictograms for picture-choice exercises
+- `src/components/Flashcard.jsx` — the intro "teach before test" card
+- `src/components/HintReveal.jsx` — the in-exercise "?" hint
+- `src/components/ProgressRing.jsx` — per-lesson accuracy ring on Home
 - `src/components/SpeakerButton.jsx` — plays a word's audio file, fails silently if missing
 - `src/components/Confetti.jsx` — correct-answer particle burst
-- `src/screens/Home.jsx` — the learning path (lesson nodes, streak, XP, daily goal, mascot greeting)
-- `src/screens/LessonScreen.jsx` — exercise flow, hearts, end-of-lesson celebration
+- `src/screens/Home.jsx` — learning path, streak/XP/level, daily goal, Review button
+- `src/screens/LessonScreen.jsx` — intro → practice → review → celebration flow
+- `src/screens/Settings.jsx` / `src/screens/Achievements.jsx`

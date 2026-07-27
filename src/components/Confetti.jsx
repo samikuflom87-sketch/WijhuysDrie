@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import { useSettingsContext } from "../context/SettingsContext";
 
 const COLORS = ["#FF6B4A", "#FFC93C", "#00A19D", "#FF8163", "#1FC0BC"];
 
 export default function Confetti({ count = 22 }) {
+  const { settings } = useSettingsContext();
   const particles = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => {
@@ -21,6 +23,8 @@ export default function Confetti({ count = 22 }) {
       }),
     [count],
   );
+
+  if (settings.reducedMotion) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible z-40">

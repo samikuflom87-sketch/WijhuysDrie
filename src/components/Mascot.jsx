@@ -1,5 +1,6 @@
 import { useId } from "react";
 import { motion } from "framer-motion";
+import { useSettingsContext } from "../context/SettingsContext";
 
 const BODY_ANIMATIONS = {
   happy: { scale: [1, 1.1, 1], rotate: [0, -4, 4, 0] },
@@ -65,8 +66,8 @@ function Face({ mood, cx, cy, eyeGap = 13, eyeY = 0 }) {
   );
 }
 
-function ZakiShape({ mood, uid }) {
-  const isHappy = mood === "happy" || mood === "excited";
+function ZakiShape({ mood, uid, reducedMotion }) {
+  const isHappy = (mood === "happy" || mood === "excited") && !reducedMotion;
   const petals = [0, 60, 120, 180, 240, 300];
   const gradId = `zakiGrad-${uid}`;
   return (
@@ -124,8 +125,9 @@ function NardosShape({ mood, uid }) {
   );
 }
 
-function BemnetShape({ mood, uid }) {
+function BemnetShape({ mood, uid, reducedMotion }) {
   const isHappy = mood === "happy" || mood === "excited";
+  const animateLoop = isHappy && !reducedMotion;
   const gradId = `bemnetGrad-${uid}`;
   return (
     <>
@@ -143,9 +145,9 @@ function BemnetShape({ mood, uid }) {
         stroke="#E0A800"
         strokeWidth="3"
         strokeLinecap="round"
-        animate={isHappy ? { rotate: [-8, 8, -8] } : {}}
+        animate={animateLoop ? { rotate: [-8, 8, -8] } : {}}
         style={{ transformOrigin: "45px 28px" }}
-        transition={{ duration: 0.5, repeat: isHappy ? Infinity : 0, repeatType: "mirror" }}
+        transition={{ duration: 0.5, repeat: animateLoop ? Infinity : 0, repeatType: "mirror" }}
       />
       <circle cx="38" cy="12" r="5" fill="#FFC93C" />
       <motion.line
@@ -156,9 +158,9 @@ function BemnetShape({ mood, uid }) {
         stroke="#E0A800"
         strokeWidth="3"
         strokeLinecap="round"
-        animate={isHappy ? { rotate: [8, -8, 8] } : {}}
+        animate={animateLoop ? { rotate: [8, -8, 8] } : {}}
         style={{ transformOrigin: "75px 28px" }}
-        transition={{ duration: 0.5, repeat: isHappy ? Infinity : 0, repeatType: "mirror" }}
+        transition={{ duration: 0.5, repeat: animateLoop ? Infinity : 0, repeatType: "mirror" }}
       />
       <circle cx="82" cy="12" r="5" fill="#FFC93C" />
 
@@ -214,8 +216,8 @@ function SabaShape({ mood, uid }) {
   );
 }
 
-function TesfaShape({ mood, uid }) {
-  const isHappy = mood === "happy" || mood === "excited";
+function TesfaShape({ mood, uid, reducedMotion }) {
+  const isHappy = (mood === "happy" || mood === "excited") && !reducedMotion;
   const gradId = `tesfaGrad-${uid}`;
   return (
     <>
@@ -266,16 +268,18 @@ const SHAPES = {
 export default function Mascot({ mascotId = "zaki", mood = "neutral", size = 120, className = "" }) {
   const Shape = SHAPES[mascotId] || ZakiShape;
   const uid = useId();
+  const { settings } = useSettingsContext();
+  const reducedMotion = settings.reducedMotion;
 
   return (
     <motion.div
       className={className}
       style={{ width: size, height: size }}
-      animate={BODY_ANIMATIONS[mood] || BODY_ANIMATIONS.neutral}
+      animate={reducedMotion ? {} : BODY_ANIMATIONS[mood] || BODY_ANIMATIONS.neutral}
       transition={{ duration: 0.6, ease: "easeInOut" }}
     >
       <svg viewBox="0 0 120 120" width={size} height={size}>
-        <Shape mood={mood} uid={uid} />
+        <Shape mood={mood} uid={uid} reducedMotion={reducedMotion} />
       </svg>
     </motion.div>
   );

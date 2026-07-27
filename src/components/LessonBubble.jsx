@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useSettingsContext } from "../context/SettingsContext";
+import ProgressRing from "./ProgressRing";
 
 const OFFSET_PATTERN = [0, 64, 96, 64, 0, -64, -96, -64];
 
@@ -26,7 +28,8 @@ function LockIcon() {
   );
 }
 
-export default function LessonBubble({ lesson, status, index, onClick }) {
+export default function LessonBubble({ lesson, status, index, accuracy, onClick }) {
+  const { settings } = useSettingsContext();
   const offset = OFFSET_PATTERN[index % OFFSET_PATTERN.length];
   const isLocked = status === "locked";
   const isCompleted = status === "completed";
@@ -43,24 +46,32 @@ export default function LessonBubble({ lesson, status, index, onClick }) {
     ? "#E04F2F"
     : "#D8C4AC";
 
+  const showRing = accuracy !== null && accuracy !== undefined;
+  const ringColor = accuracy >= 0.8 ? "var(--color-brand-teal)" : accuracy >= 0.5 ? "var(--color-brand-yellow-dark)" : "var(--color-brand-coral)";
+
   return (
     <div className="flex flex-col items-center" style={{ transform: `translateX(${offset}px)` }}>
-      <motion.button
-        onClick={() => !isLocked && onClick(lesson)}
-        disabled={isLocked}
-        className="btn-3d rounded-[28px] flex items-center justify-center"
-        style={{
-          width: 84,
-          height: 84,
-          background: bg,
-          boxShadow: `0 6px 0 ${shadow}`,
-        }}
-        whileHover={!isLocked ? { scale: 1.05 } : {}}
-        animate={isCurrent ? { y: [0, -6, 0] } : {}}
-        transition={isCurrent ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" } : {}}
-      >
-        {isCompleted ? <CrownIcon /> : isLocked ? <LockIcon /> : <StarIcon />}
-      </motion.button>
+      <div className="relative" style={{ width: 96, height: 96 }}>
+        {showRing && <ProgressRing pct={accuracy} size={96} color={ringColor} />}
+        <motion.button
+          onClick={() => !isLocked && onClick(lesson)}
+          disabled={isLocked}
+          className="btn-3d rounded-[28px] flex items-center justify-center absolute"
+          style={{
+            width: 84,
+            height: 84,
+            top: 6,
+            left: 6,
+            background: bg,
+            boxShadow: `0 6px 0 ${shadow}`,
+          }}
+          whileHover={!isLocked ? { scale: 1.05 } : {}}
+          animate={isCurrent && !settings.reducedMotion ? { y: [0, -6, 0] } : {}}
+          transition={isCurrent && !settings.reducedMotion ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" } : {}}
+        >
+          {isCompleted ? <CrownIcon /> : isLocked ? <LockIcon /> : <StarIcon />}
+        </motion.button>
+      </div>
       <span className="mt-2 text-xs font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
         {lesson.title}
       </span>
