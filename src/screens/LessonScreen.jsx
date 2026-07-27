@@ -31,6 +31,16 @@ const XP_PER_REVIEW_CORRECT = 5;
 const XP_PER_TEACH_QUIZ = 5;
 const MAX_HEARTS = 5;
 const REVIEW_SESSION_SIZE = 8;
+const COMBO_BONUS_XP = 5;
+
+function comboMessageFor(streak) {
+  if (streak === 3) return "🔥 3 in a row! You're on fire!";
+  if (streak === 5) return "🔥 5 in a row! Amazing!";
+  if (streak === 8) return "🔥 8 in a row! Unstoppable!";
+  if (streak === 12) return "🔥 12 in a row! Incredible!";
+  if (streak >= 16 && streak % 8 === 0) return `🔥 ${streak} in a row! Legendary!`;
+  return null;
+}
 
 const CHOICE_TYPES = new Set([
   "multiple-choice",
@@ -100,6 +110,7 @@ export default function LessonScreen({
   const [selectedId, setSelectedId] = useState(null);
   const [buildAnswer, setBuildAnswer] = useState([]);
   const [typedAnswer, setTypedAnswer] = useState("");
+  const [typeRetryUsed, setTypeRetryUsed] = useState(false);
   const [checked, setChecked] = useState(false);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [hintOpen, setHintOpen] = useState(false);
@@ -109,6 +120,8 @@ export default function LessonScreen({
   const [shake, setShake] = useState(false);
   const [companion] = useState(() => randomMascot());
   const [newBadges, setNewBadges] = useState([]);
+  const [comboStreak, setComboStreak] = useState(0);
+  const [comboBonus, setComboBonus] = useState(0);
 
   const totalToResolve = exercises.length;
   const teachStep = phase === "teaching" ? teachingSequence[teachIndex] : null;
@@ -150,10 +163,12 @@ export default function LessonScreen({
     setSelectedId(null);
     setBuildAnswer([]);
     setTypedAnswer("");
+    setTypeRetryUsed(false);
     setChecked(false);
     setHintOpen(false);
     setHintUsed(false);
     setBannerStatus(null);
+    setComboBonus(0);
   }
 
   function loseHeart() {
@@ -227,7 +242,18 @@ export default function LessonScreen({
   }
 
   function showBanner(isCorrect) {
-    const line = randomLine(companion, isCorrect ? "correct" : "wrong");
+    let line = randomLine(companion, isCorrect ? "correct" : "wrong");
+    if (isCorrect) {
+      const nextStreak = comboStreak + 1;
+      setComboStreak(nextStreak);
+      const comboMsg = comboMessageFor(nextStreak);
+      if (comboMsg) {
+        line = comboMsg;
+        setComboBonus(COMBO_BONUS_XP);
+      }
+    } else {
+      setComboStreak(0);
+    }
     setBannerMessage(line);
     setBannerStatus(isCorrect ? "correct" : "wrong");
     setLastCorrect(isCorrect);
@@ -253,6 +279,15 @@ export default function LessonScreen({
       isCorrect = JSON.stringify(buildAnswer) === JSON.stringify(current.correctTokens);
     } else if (current.type === "type-answer") {
       isCorrect = normalizeAnswer(typedAnswer) === normalizeAnswer(current.correctAnswer);
+      // A typo isn't the same as not knowing the word — give one gentle
+      // free retry before it counts as a real miss.
+      if (!isCorrect && !typeRetryUsed) {
+        setTypeRetryUsed(true);
+        sound.wrong();
+        setShake(true);
+        setTimeout(() => setShake(false), 400);
+        return;
+      }
     }
     setChecked(true);
     recordWords(isCorrect);
@@ -268,17 +303,22 @@ export default function LessonScreen({
         : phase === "review"
         ? XP_PER_REVIEW_CORRECT
         : XP_PER_CORRECT;
-    const xpDelta = hintUsed ? 0 : baseXp;
+    const xpDelta = hintUsed ? 0 : baseXp + comboBonus;
     advance(xpDelta, bannerStatus === "correct");
   }
 
   function handlePairsWrong() {
+    setComboStreak(0);
     loseHeart();
   }
 
   function handlePairsDone() {
     for (const id of current.wordIds) onRecordAttempt(id, true);
-    advance(hintUsed ? 0 : phase === "review" ? XP_PER_REVIEW_CORRECT : XP_PER_CORRECT, true);
+    const nextStreak = comboStreak + 1;
+    setComboStreak(nextStreak);
+    const bonus = comboMessageFor(nextStreak) ? COMBO_BONUS_XP : 0;
+    const baseXp = phase === "review" ? XP_PER_REVIEW_CORRECT : XP_PER_CORRECT;
+    advance(hintUsed ? 0 : baseXp + bonus, true);
   }
 
   const canCheck = !current
@@ -304,7 +344,7 @@ export default function LessonScreen({
       .filter((s) => s.kind === "teach").length;
     return (
       <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
-        <TopBar progressPct={progressPct} hearts={MAX_HEARTS} onExit={() => navigate("/")} />
+        <TopBar progressPct={progressPct} hearts={MAX_HEARTS} combo={comboStreak} onExit={() => navigate("/")} />
         <div className="flex-1 max-w-md w-full mx-auto px-4 py-8 flex items-center justify-center">
           <AnimatePresence mode="wait">
             <Flashcard
@@ -326,12 +366,12 @@ export default function LessonScreen({
   if (phase === "failed") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
-        <Mascot mascotId={companion.id} mood="sad" size={140} />
+        <Mascot mascotId={companion.id} mood="neutral" size={140} />
         <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
-          Out of hearts!
+          Let's try that again
         </h1>
         <p className="font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
-          {randomLine(companion, "wrong")}
+          {randomLine(companion, "outOfHearts")}
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <Button variant="coral" className="w-full uppercase tracking-wide" onClick={() => navigate(0)}>
@@ -416,7 +456,7 @@ export default function LessonScreen({
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
-      <TopBar progressPct={progressPct} hearts={hearts} />
+      <TopBar progressPct={progressPct} hearts={hearts} combo={comboStreak} />
 
       {phase === "teaching" && (
         <div className="max-w-md w-full mx-auto px-4 pt-3">
@@ -472,6 +512,7 @@ export default function LessonScreen({
                 isCorrect={lastCorrect}
                 onChange={setTypedAnswer}
                 shake={shake}
+                showRetryHint={typeRetryUsed && !checked}
               />
             )}
             {current.type === "tap-pairs" && (

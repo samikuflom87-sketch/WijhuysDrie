@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import SpeakerButton from "../SpeakerButton";
 
-export default function TypeAnswerExercise({ exercise, checked, isCorrect, onChange, shake }) {
+export default function TypeAnswerExercise({ exercise, checked, isCorrect, onChange, shake, showRetryHint }) {
   const [value, setValue] = useState("");
 
   useEffect(() => {
@@ -43,30 +43,49 @@ export default function TypeAnswerExercise({ exercise, checked, isCorrect, onCha
         )}
       </div>
 
-      <input
-        type="text"
-        value={value}
-        disabled={checked}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Type in Tigrinya..."
-        autoCapitalize="off"
-        autoCorrect="off"
-        spellCheck="false"
-        className="w-full rounded-2xl border-2 px-4 py-3.5 font-bold text-lg outline-none"
-        style={{
-          borderColor: checked
-            ? isCorrect
-              ? "var(--color-brand-teal)"
-              : "var(--color-brand-red)"
-            : "var(--color-brand-line)",
-          background: checked
-            ? isCorrect
-              ? "var(--color-brand-teal-light)"
-              : "var(--color-brand-red-light)"
-            : "white",
-          color: "var(--color-brand-ink)",
-        }}
-      />
+      <div>
+        <input
+          type="text"
+          value={value}
+          disabled={checked}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Type in Tigrinya..."
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck="false"
+          className="w-full rounded-2xl border-2 px-4 py-3.5 font-bold text-lg outline-none"
+          style={{
+            borderColor: checked
+              ? isCorrect
+                ? "var(--color-brand-teal)"
+                : "var(--color-brand-red)"
+              : showRetryHint
+              ? "var(--color-brand-yellow-dark)"
+              : "var(--color-brand-line)",
+            background: checked
+              ? isCorrect
+                ? "var(--color-brand-teal-light)"
+                : "var(--color-brand-red-light)"
+              : showRetryHint
+              ? "var(--color-brand-yellow-light)"
+              : "white",
+            color: "var(--color-brand-ink)",
+          }}
+        />
+        <AnimatePresence>
+          {showRetryHint && (
+            <motion.p
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-sm font-bold mt-2"
+              style={{ color: "var(--color-brand-yellow-dark)" }}
+            >
+              ✏️ Not quite — double-check your spelling and try again!
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }

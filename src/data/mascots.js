@@ -29,6 +29,10 @@ export const MASCOTS = [
       "That lesson didn't stand a chance against you!",
       "We're just getting started — let's keep this streak alive!",
     ],
+    outOfHearts: [
+      "Okay, quick regroup! Let's hit this one again — you've got more in you.",
+      "Pit stop! Reload and let's go again, even faster this time.",
+    ],
   },
   {
     id: "nardos",
@@ -55,6 +59,10 @@ export const MASCOTS = [
     complete: [
       "You showed real patience today. It shows.",
       "A calm mind learns best — and you proved it.",
+    ],
+    outOfHearts: [
+      "Let's pause here. A short break, then we go again — no rush at all.",
+      "This is just a natural stopping point. Come back whenever you're ready.",
     ],
   },
   {
@@ -83,6 +91,10 @@ export const MASCOTS = [
       "We should get you a tiny trophy. A tiny one. I'll look into it.",
       "Lesson: defeated. You: victorious. Me: proud and slightly hungry.",
     ],
+    outOfHearts: [
+      "Plot twist: this is just round two waiting to happen. Let's go again!",
+      "Even my snacks needed a intermission. Let's jump back in!",
+    ],
   },
   {
     id: "saba",
@@ -110,6 +122,10 @@ export const MASCOTS = [
       "Look at everything you picked up today. Genuinely impressive.",
       "That's a solid set of new words filed away. Well earned.",
     ],
+    outOfHearts: [
+      "Interesting — that tells us exactly which words need another look. Let's dig back in.",
+      "A good researcher just gathers more data and tries again. Ready when you are.",
+    ],
   },
   {
     id: "tesfa",
@@ -136,6 +152,10 @@ export const MASCOTS = [
     complete: [
       "I'm so proud of you for finishing this. Truly.",
       "You showed up and did the work today. That matters.",
+    ],
+    outOfHearts: [
+      "Hey, no rush — let's just breathe and try this lesson again together.",
+      "You showed up and tried, and that's what counts. Let's go once more, at your pace.",
     ],
   },
 ];

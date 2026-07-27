@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import ProgressBar from "./ProgressBar";
 import Hearts from "./Hearts";
 import { useSound } from "../hooks/useSound";
 
-export default function TopBar({ progressPct, hearts, onExit }) {
+export default function TopBar({ progressPct, hearts, combo = 0, onExit }) {
   const navigate = useNavigate();
   const sound = useSound();
 
@@ -24,6 +25,20 @@ export default function TopBar({ progressPct, hearts, onExit }) {
         <div className="flex-1">
           <ProgressBar value={progressPct} />
         </div>
+        <AnimatePresence>
+          {combo >= 2 && (
+            <motion.div
+              key={combo}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              className="flex items-center gap-0.5 font-extrabold text-sm shrink-0"
+              style={{ color: "var(--color-brand-coral-dark)" }}
+            >
+              🔥{combo}
+            </motion.div>
+          )}
+        </AnimatePresence>
         <Hearts count={hearts} />
       </div>
     </div>
