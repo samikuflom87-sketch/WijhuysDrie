@@ -1,14 +1,19 @@
 import { AnimatePresence, motion } from "framer-motion";
 import SpeakerButton from "./SpeakerButton";
+import { useSound } from "../hooks/useSound";
 
 export default function HintReveal({ word, open, onToggle }) {
+  const sound = useSound();
   if (!word) return null;
 
   return (
     <div className="flex flex-col items-end gap-2">
       <button
         type="button"
-        onClick={onToggle}
+        onClick={() => {
+          sound.click();
+          onToggle();
+        }}
         aria-label="Show hint"
         className="btn-3d rounded-full flex items-center justify-center font-extrabold"
         style={{

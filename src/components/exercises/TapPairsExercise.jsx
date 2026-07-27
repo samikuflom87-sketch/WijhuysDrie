@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSound } from "../../hooks/useSound";
 
 export default function TapPairsExercise({ exercise, onWrong, onDone }) {
+  const sound = useSound();
   const [matchedPairIds, setMatchedPairIds] = useState(new Set());
   const [selectedLeft, setSelectedLeft] = useState(null);
   const [selectedRight, setSelectedRight] = useState(null);
@@ -17,15 +19,20 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
   useEffect(() => {
     if (!selectedLeft || !selectedRight) return;
     if (selectedLeft.pairId === selectedRight.pairId) {
+      sound.pop();
       const nextMatched = new Set(matchedPairIds);
       nextMatched.add(selectedLeft.pairId);
       setMatchedPairIds(nextMatched);
       setSelectedLeft(null);
       setSelectedRight(null);
       if (nextMatched.size === exercise.pairs.length) {
-        setTimeout(() => onDone(), 500);
+        setTimeout(() => {
+          sound.correct();
+          onDone();
+        }, 500);
       }
     } else {
+      sound.wrong();
       setWrongIds(new Set([selectedLeft.id, selectedRight.id]));
       onWrong();
       setTimeout(() => {
@@ -70,7 +77,10 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
                     transition={{ duration: 0.25 }}
-                    onClick={() => setSelectedLeft(tile)}
+                    onClick={() => {
+                      sound.click();
+                      setSelectedLeft(tile);
+                    }}
                     className={`btn-3d rounded-xl border-2 py-3 px-3 font-bold text-sm sm:text-base transition-colors ${tileClass(
                       tile,
                       isSelected,
@@ -97,7 +107,10 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
                     transition={{ duration: 0.25 }}
-                    onClick={() => setSelectedRight(tile)}
+                    onClick={() => {
+                      sound.click();
+                      setSelectedRight(tile);
+                    }}
                     className={`btn-3d rounded-xl border-2 py-3 px-3 font-bold text-sm sm:text-base transition-colors ${tileClass(
                       tile,
                       isSelected,

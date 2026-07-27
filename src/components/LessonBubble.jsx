@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useSettingsContext } from "../context/SettingsContext";
+import { useSound } from "../hooks/useSound";
 import ProgressRing from "./ProgressRing";
 
 const OFFSET_PATTERN = [0, 64, 96, 64, 0, -64, -96, -64];
@@ -30,6 +31,7 @@ function LockIcon() {
 
 export default function LessonBubble({ lesson, status, index, accuracy, onClick }) {
   const { settings } = useSettingsContext();
+  const sound = useSound();
   const offset = OFFSET_PATTERN[index % OFFSET_PATTERN.length];
   const isLocked = status === "locked";
   const isCompleted = status === "completed";
@@ -54,7 +56,11 @@ export default function LessonBubble({ lesson, status, index, accuracy, onClick 
       <div className="relative" style={{ width: 96, height: 96 }}>
         {showRing && <ProgressRing pct={accuracy} size={96} color={ringColor} />}
         <motion.button
-          onClick={() => !isLocked && onClick(lesson)}
+          onClick={() => {
+            if (isLocked) return;
+            sound.click();
+            onClick(lesson);
+          }}
           disabled={isLocked}
           className="btn-3d rounded-[28px] flex items-center justify-center absolute"
           style={{

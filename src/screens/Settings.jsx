@@ -3,11 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useSettingsContext } from "../context/SettingsContext";
 import { DAILY_GOAL_OPTIONS } from "../lib/storage";
 import Button from "../components/Button";
+import { useSound } from "../hooks/useSound";
 
 function ToggleSwitch({ on, onToggle, label }) {
+  const sound = useSound();
   return (
     <button
-      onClick={onToggle}
+      onClick={() => {
+        sound.click();
+        onToggle();
+      }}
       className="flex items-center justify-between w-full rounded-2xl bg-white px-4 py-3.5"
       style={{ border: "2px solid var(--color-brand-line)" }}
     >
@@ -41,6 +46,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
   const navigate = useNavigate();
   const { settings, updateSetting } = useSettingsContext();
   const [confirmingReset, setConfirmingReset] = useState(false);
+  const sound = useSound();
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
@@ -49,7 +55,14 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
         style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
       >
         <div className="max-w-md mx-auto flex items-center gap-4 px-4 py-3">
-          <button onClick={() => navigate("/")} aria-label="Back" className="text-2xl font-bold text-white">
+          <button
+            onClick={() => {
+              sound.click();
+              navigate("/");
+            }}
+            aria-label="Back"
+            className="text-2xl font-bold text-white"
+          >
             ✕
           </button>
           <h1 className="font-display font-extrabold text-lg text-white">Settings</h1>
@@ -84,7 +97,10 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
               return (
                 <button
                   key={opt.key}
-                  onClick={() => onUpdateProgressField("dailyGoalLessons", value)}
+                  onClick={() => {
+                    sound.click();
+                    onUpdateProgressField("dailyGoalLessons", value);
+                  }}
                   className="rounded-2xl px-2 py-3 flex flex-col items-center gap-0.5"
                   style={{
                     background: active ? "var(--color-brand-coral-light)" : "white",

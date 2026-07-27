@@ -10,9 +10,11 @@ import StatPill from "../components/StatPill";
 import Mascot from "../components/Mascot";
 import ProgressBar from "../components/ProgressBar";
 import XPCounter from "../components/XPCounter";
+import { useSound } from "../hooks/useSound";
 
 export default function Home({ progress, wordStats }) {
   const navigate = useNavigate();
+  const sound = useSound();
   const lessons = lessonsData.lessons;
   const greeter = useMemo(() => randomMascot(), []);
   const greeting = useMemo(() => randomLine(greeter, "greetings"), [greeter]);
@@ -44,10 +46,24 @@ export default function Home({ progress, wordStats }) {
             <StatPill icon="🔥" value={progress.streak} color="white" />
             {progress.streakFreezes > 0 && <StatPill icon="🧊" value={progress.streakFreezes} color="white" />}
             <StatPill icon="⭐" value={<XPCounter value={progress.xp} />} color="white" />
-            <button onClick={() => navigate("/achievements")} aria-label="Achievements" className="text-xl">
+            <button
+              onClick={() => {
+                sound.click();
+                navigate("/achievements");
+              }}
+              aria-label="Achievements"
+              className="text-xl"
+            >
               🏆
             </button>
-            <button onClick={() => navigate("/settings")} aria-label="Settings" className="text-xl">
+            <button
+              onClick={() => {
+                sound.click();
+                navigate("/settings");
+              }}
+              aria-label="Settings"
+              className="text-xl"
+            >
               ⚙️
             </button>
           </div>
@@ -103,7 +119,10 @@ export default function Home({ progress, wordStats }) {
 
         {hasReviewWords && (
           <button
-            onClick={() => navigate("/review")}
+            onClick={() => {
+              sound.click();
+              navigate("/review");
+            }}
             className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide"
           >
             🔁 Review words you've missed

@@ -55,6 +55,37 @@ export function splitIntroWords(lesson, wordStats) {
   return newWords;
 }
 
+function chunk(arr, size) {
+  const out = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+}
+
+const TEACH_GROUP_SIZE = 2;
+
+// Builds an interleaved "teach a couple, quiz on them" sequence instead of
+// front-loading every flashcard before any exercise: teach word 1+2, quiz
+// on them, teach word 3+4, quiz, and so on. Distractors for the mini-quiz
+// can be sampled from the whole lesson (not just taught-so-far words)
+// since they only ever appear as wrong answers, never the tested word.
+export function buildTeachingSequence(lesson, introWords) {
+  const groups = chunk(introWords, TEACH_GROUP_SIZE);
+  const sequence = [];
+  for (const group of groups) {
+    for (const word of group) {
+      sequence.push({ kind: "teach", word });
+    }
+    for (const word of group) {
+      const exercise =
+        Math.random() < 0.5
+          ? makeMultipleChoice(lesson.id, word, lesson.words)
+          : makeReverseChoice(lesson.id, word, lesson.words);
+      sequence.push({ kind: "quiz", exercise });
+    }
+  }
+  return sequence;
+}
+
 function makeMultipleChoice(lessonId, word, pool) {
   const distractorPool = pool.filter((w) => w.tigrinya !== word.tigrinya);
   const distractors = sample(distractorPool, Math.min(3, distractorPool.length));

@@ -20,10 +20,12 @@ npm run preview
 
 ## How a lesson works
 
-1. **Intro** — every word in the lesson you haven't been taught yet (tracked per-word in localStorage) shows as a flashcard: Tigrinya, English, picture, audio, and an optional usage note. Tap "Got it" to move on. Already-known words skip straight to practice.
-2. **Practice** — a mix of 9 exercise types (below), auto-generated from the lesson's words/sentences.
+1. **Teach, interleaved** — new words are taught two at a time (flashcard: Tigrinya, English, picture, audio, optional note), then immediately quizzed on those same two before the next pair is taught. These mini-quizzes are low-stakes: wrong answers show the right one but never cost a heart. Already-known words (tracked per-word in localStorage) skip straight to full practice.
+2. **Practice** — once every new word has been taught+quizzed, a full mixed round of all 9 exercise types (below) kicks in, using the complete word set — this is where hearts are on the line.
 3. **Review** — anything you got wrong in practice comes back at the end and repeats until you get it right.
 4. **Celebration** — XP earned, accuracy %, crown, and any newly unlocked badge.
+
+Every button press, correct answer, and wrong answer has its own short synthesized sound (Web Audio API tones — no audio files needed), toggleable in Settings.
 
 A **"?" hint button** is available on most exercises — it reveals the taught word's meaning and audio without ending the question, but that question earns no XP if used.
 

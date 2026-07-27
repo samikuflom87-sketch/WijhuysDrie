@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BADGES } from "../data/badges";
+import { useSound } from "../hooks/useSound";
 
 export default function Achievements({ progress }) {
   const navigate = useNavigate();
+  const sound = useSound();
   const unlockedCount = progress.unlockedBadges.length;
 
   return (
@@ -14,7 +16,10 @@ export default function Achievements({ progress }) {
       >
         <div className="max-w-md mx-auto flex items-center gap-4 px-4 py-3">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => {
+              sound.click();
+              navigate("/");
+            }}
             aria-label="Back"
             className="text-2xl font-bold text-white"
           >

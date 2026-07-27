@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSound } from "../../hooks/useSound";
 
 export default function BuildSentenceExercise({ exercise, checked, onChange, shake }) {
+  const sound = useSound();
   const [selected, setSelected] = useState([]); // array of tile objects in chosen order
 
   useEffect(() => {
@@ -18,11 +20,13 @@ export default function BuildSentenceExercise({ exercise, checked, onChange, sha
 
   function addTile(tile) {
     if (checked) return;
+    sound.click();
     setSelected((prev) => [...prev, tile]);
   }
 
   function removeTile(tile) {
     if (checked) return;
+    sound.click();
     setSelected((prev) => prev.filter((t) => t.id !== tile.id));
   }
 

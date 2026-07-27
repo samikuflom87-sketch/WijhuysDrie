@@ -2,7 +2,12 @@ import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import lessonsData from "../data/lessons.json";
-import { generateLessonExercises, splitIntroWords, normalizeAnswer } from "../lib/exercises";
+import {
+  generateLessonExercises,
+  splitIntroWords,
+  buildTeachingSequence,
+  normalizeAnswer,
+} from "../lib/exercises";
 import { randomMascot, randomLine } from "../data/mascots";
 import { applyLessonComplete } from "../lib/storage";
 import { checkBadges } from "../data/badges";
@@ -19,9 +24,11 @@ import BuildSentenceExercise from "../components/exercises/BuildSentenceExercise
 import TapPairsExercise from "../components/exercises/TapPairsExercise";
 import TypeAnswerExercise from "../components/exercises/TypeAnswerExercise";
 import XPCounter from "../components/XPCounter";
+import { useSound } from "../hooks/useSound";
 
 const XP_PER_CORRECT = 10;
 const XP_PER_REVIEW_CORRECT = 5;
+const XP_PER_TEACH_QUIZ = 5;
 const MAX_HEARTS = 5;
 const REVIEW_SESSION_SIZE = 8;
 
@@ -44,6 +51,7 @@ export default function LessonScreen({
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
+  const sound = useSound();
   const lessonId = isReview ? "review" : Number(id);
   const allLessons = lessonsData.lessons;
 
@@ -63,18 +71,25 @@ export default function LessonScreen({
     if (isReview) return [];
     return splitIntroWords(lesson, wordStats);
     // Intentionally excludes wordStats: this list must stay frozen while
-    // the intro phase walks through it one "Got it" at a time, or marking a
-    // word introduced mid-phase would shrink the list under introIndex.
+    // the teaching phase walks through it, or marking a word introduced
+    // mid-phase would shrink the list under the sequence pointer.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson, isReview]);
+
+  // Interleaved "teach a couple, quiz on them" sequence instead of front-
+  // loading every flashcard before any exercise.
+  const teachingSequence = useMemo(
+    () => (lesson ? buildTeachingSequence(lesson, introWords) : []),
+    [lesson, introWords],
+  );
 
   const exercises = useMemo(
     () => (lesson ? generateLessonExercises(lesson, allLessons) : []),
     [lesson, allLessons],
   );
 
-  const [phase, setPhase] = useState(introWords.length > 0 ? "intro" : "practice");
-  const [introIndex, setIntroIndex] = useState(0);
+  const [phase, setPhase] = useState(teachingSequence.length > 0 ? "teaching" : "practice");
+  const [teachIndex, setTeachIndex] = useState(0);
   const [mainQueue, setMainQueue] = useState(exercises);
   const [reviewQueue, setReviewQueue] = useState([]);
   const [resolvedCount, setResolvedCount] = useState(0);
@@ -96,7 +111,15 @@ export default function LessonScreen({
   const [newBadges, setNewBadges] = useState([]);
 
   const totalToResolve = exercises.length;
-  const current = phase === "review" ? reviewQueue[0] : mainQueue[0];
+  const teachStep = phase === "teaching" ? teachingSequence[teachIndex] : null;
+  const current =
+    phase === "review"
+      ? reviewQueue[0]
+      : phase === "teaching"
+      ? teachStep?.kind === "quiz"
+        ? teachStep.exercise
+        : null
+      : mainQueue[0];
 
   if (!lesson) {
     return (
@@ -162,6 +185,15 @@ export default function LessonScreen({
     setXp((x) => x + xpDelta);
     resetPerExerciseState();
 
+    if (phase === "teaching") {
+      if (teachIndex + 1 >= teachingSequence.length) {
+        setPhase("practice");
+      } else {
+        setTeachIndex((i) => i + 1);
+      }
+      return;
+    }
+
     if (phase === "practice") {
       setPracticeStats((s) => ({ attempts: s.attempts + 1, correct: s.correct + (isCorrect ? 1 : 0) }));
       if (isCorrect) {
@@ -199,10 +231,15 @@ export default function LessonScreen({
     setBannerMessage(line);
     setBannerStatus(isCorrect ? "correct" : "wrong");
     setLastCorrect(isCorrect);
-    if (!isCorrect) {
+    if (isCorrect) {
+      sound.correct();
+    } else {
+      sound.wrong();
       setShake(true);
       setTimeout(() => setShake(false), 400);
-      loseHeart();
+      // Teaching-phase mini quizzes are low-stakes: no heart lost for a
+      // word you were just taught seconds ago.
+      if (phase !== "teaching") loseHeart();
     }
   }
 
@@ -223,7 +260,14 @@ export default function LessonScreen({
   }
 
   function handleBannerContinue() {
-    const baseXp = bannerStatus === "correct" ? (phase === "review" ? XP_PER_REVIEW_CORRECT : XP_PER_CORRECT) : 0;
+    const baseXp =
+      bannerStatus !== "correct"
+        ? 0
+        : phase === "teaching"
+        ? XP_PER_TEACH_QUIZ
+        : phase === "review"
+        ? XP_PER_REVIEW_CORRECT
+        : XP_PER_CORRECT;
     const xpDelta = hintUsed ? 0 : baseXp;
     advance(xpDelta, bannerStatus === "correct");
   }
@@ -245,26 +289,32 @@ export default function LessonScreen({
     ? typedAnswer.trim().length > 0
     : Boolean(selectedId);
 
-  // --- Intro (teach-before-test) ---
-  if (phase === "intro") {
-    const word = introWords[introIndex];
+  const progressPct =
+    phase === "teaching"
+      ? (teachIndex / teachingSequence.length) * 100
+      : totalToResolve > 0
+      ? (resolvedCount / totalToResolve) * 100
+      : 100;
+
+  // --- Teaching: flashcard step ---
+  if (phase === "teaching" && teachStep?.kind === "teach") {
+    const word = teachStep.word;
+    const teachStepsSoFar = teachingSequence
+      .slice(0, teachIndex)
+      .filter((s) => s.kind === "teach").length;
     return (
       <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
-        <TopBar progressPct={(introIndex / introWords.length) * 100} hearts={MAX_HEARTS} onExit={() => navigate("/")} />
+        <TopBar progressPct={progressPct} hearts={MAX_HEARTS} onExit={() => navigate("/")} />
         <div className="flex-1 max-w-md w-full mx-auto px-4 py-8 flex items-center justify-center">
           <AnimatePresence mode="wait">
             <Flashcard
               key={word.tigrinya}
               word={word}
-              index={introIndex}
+              index={teachStepsSoFar}
               total={introWords.length}
               onGotIt={() => {
                 onIntroduceWord(wordId(lesson.id, word.tigrinya));
-                if (introIndex + 1 >= introWords.length) {
-                  setPhase("practice");
-                } else {
-                  setIntroIndex((i) => i + 1);
-                }
+                advance(0, true);
               }}
             />
           </AnimatePresence>
@@ -272,8 +322,6 @@ export default function LessonScreen({
       </div>
     );
   }
-
-  const progressPct = totalToResolve > 0 ? (resolvedCount / totalToResolve) * 100 : 100;
 
   if (phase === "failed") {
     return (
@@ -369,6 +417,14 @@ export default function LessonScreen({
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
       <TopBar progressPct={progressPct} hearts={hearts} />
+
+      {phase === "teaching" && (
+        <div className="max-w-md w-full mx-auto px-4 pt-3">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-center" style={{ color: "var(--color-brand-teal-dark)" }}>
+            📝 Quick check — no hearts at risk
+          </p>
+        </div>
+      )}
 
       {phase === "review" && (
         <div className="max-w-md w-full mx-auto px-4 pt-3">

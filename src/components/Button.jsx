@@ -1,3 +1,5 @@
+import { useSound } from "../hooks/useSound";
+
 const VARIANT_CLASS = {
   coral: "btn-coral",
   teal: "btn-teal",
@@ -12,12 +14,18 @@ export default function Button({
   variant = "coral",
   className = "",
   state, // "selected" | "correct" | "wrong"
+  onClick,
   ...props
 }) {
+  const sound = useSound();
   const stateClass = state ? state : "";
   return (
     <button
       className={`btn-3d ${VARIANT_CLASS[variant]} ${stateClass} rounded-2xl font-extrabold py-3.5 px-6 text-sm sm:text-base ${className}`}
+      onClick={(e) => {
+        sound.click();
+        onClick?.(e);
+      }}
       {...props}
     >
       {children}
