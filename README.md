@@ -73,7 +73,7 @@ All lesson content lives in `src/data/lessons.json`. Each lesson has a title, a 
 
 Field notes:
 
-- `audio` — path to an `.mp3` under `public/audio/`. Every speaker button plays it; missing files fail silently (no crash) until you record and drop in the real files.
+- `audio` — path to an `.mp3` under `public/audio/`. Every speaker button plays it if the file exists; if it's missing (the default, until you record real ones), the button instead reads the word aloud using the browser's built-in text-to-speech, so sound always works. There's no Tigrinya voice in any browser, so this is a best-effort reading of the Latin spelling, not authentic pronunciation — dropping in a real recording with the matching filename automatically takes over from the synthesized voice.
 - `image` — an illustration key (e.g. `"father"`, `"water"`, `"num3"`, `"wave"`). Words with a non-null image can appear in picture-choice exercises. See `src/components/Illustration.jsx` for the full list — add a new `case` there for a new key.
 - `note` — optional short usage tip shown on the word's intro flashcard. Omit it if you don't need one.
 - `verify` — marks a translation not yet confirmed by a native speaker. The app never edits, removes, or "corrects" this flag or the surrounding text — it's purely for your own tracking.
@@ -91,6 +91,7 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/data/mascots.js` — the five mascots' personalities and message banks
 - `src/data/badges.js` — achievement definitions and unlock conditions
 - `src/lib/exercises.js` — generates all 9 exercise types + intro-word splitting from lesson content
+- `src/lib/tts.js` — browser text-to-speech fallback used by every speaker button when no real recording exists yet
 - `src/lib/wordStats.js` / `src/hooks/useWordStats.js` — per-word spaced-repetition tracking
 - `src/lib/storage.js` / `src/hooks/useProgress.js` — XP/levels/streak/freeze/badges/daily-goal progress
 - `src/lib/settings.js` / `src/context/SettingsContext.jsx` — sound/reduced-motion preferences, available app-wide

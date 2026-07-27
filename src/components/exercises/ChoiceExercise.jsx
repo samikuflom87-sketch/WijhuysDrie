@@ -34,6 +34,7 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
           <div className="flex justify-center py-2">
             <SpeakerButton
               src={exercise.promptAudio}
+              text={exercise.correctText}
               size={48}
               className="bg-brand-coral-light text-brand-coral"
               label="Play the word"
@@ -44,8 +45,8 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
             <h2 className="text-2xl sm:text-3xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
               {isReverse ? `"${exercise.promptText}"` : `'${exercise.promptText}'`}
             </h2>
-            {isReverse && exercise.promptAudio && (
-              <SpeakerButton src={exercise.promptAudio} className="text-brand-coral" />
+            {isReverse && (
+              <SpeakerButton src={exercise.promptAudio} text={exercise.promptText} className="text-brand-coral" />
             )}
           </div>
         ) : null}
@@ -74,6 +75,7 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
               {opt.audio && (
                 <SpeakerButton
                   src={opt.audio}
+                  text={opt.text}
                   size={16}
                   className="text-brand-coral absolute right-2 top-1/2 -translate-y-1/2"
                 />

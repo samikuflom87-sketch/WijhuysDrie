@@ -31,6 +31,7 @@ export default function TypeAnswerExercise({ exercise, checked, isCorrect, onCha
           <div className="flex justify-center py-2">
             <SpeakerButton
               src={exercise.promptAudio}
+              text={exercise.correctAnswer}
               size={48}
               className="bg-brand-coral-light text-brand-coral"
               label="Play the word"

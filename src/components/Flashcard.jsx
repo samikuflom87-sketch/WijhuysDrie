@@ -30,7 +30,7 @@ export default function Flashcard({ word, index, total, onGotIt }) {
         <h1 className="text-3xl sm:text-4xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
           {word.tigrinya}
         </h1>
-        {word.audio && <SpeakerButton src={word.audio} size={26} className="text-brand-coral" />}
+        <SpeakerButton src={word.audio} text={word.tigrinya} size={26} className="text-brand-coral" />
       </div>
 
       <p className="text-lg font-bold" style={{ color: "var(--color-brand-teal-dark)" }}>

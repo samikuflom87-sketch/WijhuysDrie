@@ -43,7 +43,7 @@ export default function HintReveal({ word, open, onToggle }) {
                 {word.english}
               </p>
             </div>
-            {word.audio && <SpeakerButton src={word.audio} size={18} className="text-brand-coral" />}
+            <SpeakerButton src={word.audio} text={word.tigrinya} size={18} className="text-brand-coral" />
           </motion.div>
         )}
       </AnimatePresence>

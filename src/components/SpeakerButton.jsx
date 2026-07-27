@@ -1,16 +1,30 @@
 import { useSettingsContext } from "../context/SettingsContext";
+import { speakText } from "../lib/tts";
 
-function playAudio(path) {
-  if (!path) return;
+// Plays a real recording if one exists at `src`; otherwise (or if it fails
+// to load, e.g. the file hasn't been recorded yet) reads `text` aloud with
+// the browser's built-in text-to-speech so the button always makes sound.
+function playAudio(src, text) {
+  if (!src) {
+    speakText(text);
+    return;
+  }
   try {
-    const audio = new Audio(path);
-    audio.play().catch(() => {});
+    const audio = new Audio(src);
+    let fellBack = false;
+    const fallback = () => {
+      if (fellBack) return;
+      fellBack = true;
+      speakText(text);
+    };
+    audio.addEventListener("error", fallback);
+    audio.play().catch(fallback);
   } catch {
-    // Missing or unplayable audio fails silently — recordings are added later.
+    speakText(text);
   }
 }
 
-export default function SpeakerButton({ src, size = 20, className = "", label = "Play audio" }) {
+export default function SpeakerButton({ src, text, size = 20, className = "", label = "Play audio" }) {
   const { settings } = useSettingsContext();
 
   return (
@@ -19,7 +33,7 @@ export default function SpeakerButton({ src, size = 20, className = "", label = 
       aria-label={label}
       onClick={(e) => {
         e.stopPropagation();
-        if (settings.soundOn) playAudio(src);
+        if (settings.soundOn) playAudio(src, text);
       }}
       className={`inline-flex items-center justify-center rounded-full shrink-0 hover:opacity-75 active:scale-90 transition ${className}`}
       style={{ width: size + 12, height: size + 12 }}
