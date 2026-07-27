@@ -1,26 +1,24 @@
 import { useSettingsContext } from "../context/SettingsContext";
-import { speakText } from "../lib/tts";
+import { speakText, cancelSpeech } from "../lib/tts";
 
-// Plays a real recording if one exists at `src`; otherwise (or if it fails
-// to load, e.g. the file hasn't been recorded yet) reads `text` aloud with
-// the browser's built-in text-to-speech so the button always makes sound.
+// Speaks `text` immediately and synchronously — phones (Safari especially)
+// only allow speech synthesis to start when it's called directly inside a
+// tap handler, not from an 'error' event or a rejected promise that fires
+// later. If a real recording exists at `src` and loads in time, we cancel
+// the synthesized speech and play that instead; otherwise the spoken word
+// is what the learner hears.
 function playAudio(src, text) {
-  if (!src) {
-    speakText(text);
-    return;
-  }
+  speakText(text);
+  if (!src) return;
   try {
     const audio = new Audio(src);
-    let fellBack = false;
-    const fallback = () => {
-      if (fellBack) return;
-      fellBack = true;
-      speakText(text);
-    };
-    audio.addEventListener("error", fallback);
-    audio.play().catch(fallback);
+    audio.addEventListener("canplaythrough", () => {
+      cancelSpeech();
+      audio.play().catch(() => {});
+    });
+    audio.load();
   } catch {
-    speakText(text);
+    // Synthesized speech already covers this click.
   }
 }
 

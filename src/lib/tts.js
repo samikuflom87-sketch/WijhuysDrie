@@ -37,3 +37,7 @@ export function speakText(text) {
   if (voice) utterance.voice = voice;
   window.speechSynthesis.speak(utterance);
 }
+
+export function cancelSpeech() {
+  if (ttsSupported()) window.speechSynthesis.cancel();
+}
