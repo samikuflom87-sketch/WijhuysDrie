@@ -3,7 +3,7 @@ import Button from "./Button";
 import Mascot from "./Mascot";
 import Confetti from "./Confetti";
 
-export default function AnswerBanner({ status, correctText, mascotId, message, onContinue }) {
+export default function AnswerBanner({ status, correctText, mascotId, message, compliment, onContinue }) {
   const isCorrect = status === "correct";
 
   return (
@@ -16,8 +16,11 @@ export default function AnswerBanner({ status, correctText, mascotId, message, o
           transition={{ type: "spring", stiffness: 260, damping: 28 }}
           className="fixed bottom-0 left-0 right-0 z-30 px-4 pt-4 pb-6 sm:pb-8"
           style={{
-            background: isCorrect ? "var(--color-brand-teal-light)" : "var(--color-brand-red-light)",
+            background: isCorrect
+              ? "linear-gradient(180deg, var(--color-brand-teal-light), #c9efec)"
+              : "linear-gradient(180deg, var(--color-brand-red-light), #ffd4d5)",
             borderTop: `3px solid ${isCorrect ? "var(--color-brand-teal)" : "var(--color-brand-red)"}`,
+            boxShadow: "0 -8px 24px rgba(20, 48, 43, 0.12)",
           }}
         >
           <div className="max-w-md mx-auto flex flex-col gap-3">
@@ -25,8 +28,20 @@ export default function AnswerBanner({ status, correctText, mascotId, message, o
               {isCorrect && <Confetti />}
               <Mascot mascotId={mascotId} mood={isCorrect ? "happy" : "sad"} size={56} />
               <div>
+                {isCorrect && compliment && (
+                  <motion.p
+                    key={compliment}
+                    initial={{ scale: 0.7, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 14 }}
+                    className="font-extrabold text-2xl leading-none mb-0.5"
+                    style={{ color: "var(--color-brand-teal-dark)", fontFamily: "var(--font-display)" }}
+                  >
+                    {compliment}
+                  </motion.p>
+                )}
                 <p
-                  className="font-extrabold text-lg"
+                  className="font-bold text-base"
                   style={{ color: isCorrect ? "var(--color-brand-teal-dark)" : "var(--color-brand-red-dark)" }}
                 >
                   {message}

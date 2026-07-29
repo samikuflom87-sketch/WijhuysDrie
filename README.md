@@ -76,7 +76,7 @@ All lesson content lives in `src/data/lessons.json`. Each lesson has a title, a 
 Field notes:
 
 - `audio` — path to an `.mp3` under `public/audio/`. Every speaker button plays it if the file exists; if it's missing (the default, until you record real ones), the button instead reads the word aloud using the browser's built-in text-to-speech, so sound always works. There's no Tigrinya voice in any browser, so this is a best-effort reading of the Latin spelling, not authentic pronunciation — dropping in a real recording with the matching filename automatically takes over from the synthesized voice.
-- `image` — an illustration key (e.g. `"father"`, `"water"`, `"num3"`, `"wave"`). Words with a non-null image can appear in picture-choice exercises. See `src/components/Illustration.jsx` for the full list — add a new `case` there for a new key.
+- `image` — an illustration key (e.g. `"father"`, `"water"`, `"num3"`, `"wave"`). Words with a non-null image can appear in picture-choice exercises. See `src/components/Illustration.jsx` for the full list — most concrete concepts render a Twemoji icon from `public/icons/`, while family members and numbers use the custom illustrations further down in that file. Add a new key to whichever system fits.
 - `note` — optional short usage tip shown on the word's intro flashcard. Omit it if you don't need one.
 - `verify` — marks a translation not yet confirmed by a native speaker. The app never edits, removes, or "corrects" this flag or the surrounding text — it's purely for your own tracking.
 - `sentences` — used to auto-generate build-the-sentence exercises. Leave the array empty (`[]`) to skip that exercise type for a lesson.
@@ -99,7 +99,8 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/lib/storage.js` / `src/hooks/useProgress.js` — XP/levels/streak/freeze/badges/daily-goal progress
 - `src/lib/settings.js` / `src/context/SettingsContext.jsx` — sound/reduced-motion preferences, available app-wide
 - `src/components/Mascot.jsx` — the five original SVG mascots
-- `src/components/Illustration.jsx` — original SVG pictograms for picture-choice exercises
+- `src/components/Illustration.jsx` — picture-choice illustrations: Twemoji icons for concrete concepts, custom SVGs for family members and numbers
+- `public/icons/` — the Twemoji SVG icon files referenced above
 - `src/components/Flashcard.jsx` — the intro "teach before test" card
 - `src/components/HintReveal.jsx` — the in-exercise "?" hint
 - `src/components/ProgressRing.jsx` — per-lesson accuracy ring on Home
@@ -108,3 +109,7 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/screens/Home.jsx` — learning path, streak/XP/level, daily goal, Review button
 - `src/screens/LessonScreen.jsx` — intro → practice → review → celebration flow
 - `src/screens/Settings.jsx` / `src/screens/Achievements.jsx`
+
+## Attribution
+
+Picture-choice icons in `public/icons/` are from [Twemoji](https://twemoji.twitter.com/), licensed [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).

@@ -9,6 +9,7 @@ import {
   normalizeAnswer,
 } from "../lib/exercises";
 import { randomMascot, randomLine } from "../data/mascots";
+import { randomCompliment } from "../data/compliments";
 import { applyLessonComplete } from "../lib/storage";
 import { checkBadges } from "../data/badges";
 import { pickReviewWords, wordId } from "../lib/wordStats";
@@ -119,6 +120,7 @@ export default function LessonScreen({
   const [hintUsed, setHintUsed] = useState(false);
   const [bannerStatus, setBannerStatus] = useState(null); // null | 'correct' | 'wrong'
   const [bannerMessage, setBannerMessage] = useState("");
+  const [bannerCompliment, setBannerCompliment] = useState(null);
   const [shake, setShake] = useState(false);
   const [companion] = useState(() => randomMascot());
   const [newBadges, setNewBadges] = useState([]);
@@ -146,7 +148,7 @@ export default function LessonScreen({
 
   if (isReview && lesson.words.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center app-bg">
         <Mascot mascotId="nardos" mood="neutral" size={130} />
         <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
           Nothing to review yet
@@ -171,6 +173,7 @@ export default function LessonScreen({
     setHintOpen(false);
     setHintUsed(false);
     setBannerStatus(null);
+    setBannerCompliment(null);
     setComboBonus(0);
   }
 
@@ -263,6 +266,7 @@ export default function LessonScreen({
       setComboStreak(0);
     }
     setBannerMessage(line);
+    setBannerCompliment(isCorrect && current.type !== "speak-answer" ? randomCompliment() : null);
     setBannerStatus(isCorrect ? "correct" : "wrong");
     setLastCorrect(isCorrect);
     if (isCorrect) {
@@ -358,7 +362,7 @@ export default function LessonScreen({
       .slice(0, teachIndex)
       .filter((s) => s.kind === "teach").length;
     return (
-      <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
+      <div className="min-h-screen flex flex-col app-bg">
         <TopBar progressPct={progressPct} hearts={MAX_HEARTS} combo={comboStreak} onExit={() => navigate("/")} />
         <div className="flex-1 max-w-md w-full mx-auto px-4 py-8 flex items-center justify-center">
           <AnimatePresence mode="wait">
@@ -380,7 +384,7 @@ export default function LessonScreen({
 
   if (phase === "failed") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center app-bg">
         <Mascot mascotId={companion.id} mood="neutral" size={140} />
         <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
           Let's try that again
@@ -405,7 +409,7 @@ export default function LessonScreen({
     const accuracyPct =
       practiceStats.attempts > 0 ? Math.round((practiceStats.correct / practiceStats.attempts) * 100) : 100;
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-6 text-center" style={{ background: "var(--color-brand-cream)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-6 text-center app-bg">
         <div className="relative">
           <Confetti count={30} />
           <motion.div
@@ -470,7 +474,7 @@ export default function LessonScreen({
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
+    <div className="min-h-screen flex flex-col app-bg">
       <TopBar progressPct={progressPct} hearts={hearts} combo={comboStreak} />
 
       {phase === "teaching" && (
@@ -584,6 +588,7 @@ export default function LessonScreen({
         correctText={current.correctText}
         mascotId={companion.id}
         message={hintUsed && bannerStatus === "correct" ? `${bannerMessage} (no XP — hint used)` : bannerMessage}
+        compliment={bannerCompliment}
         onContinue={handleBannerContinue}
       />
     </div>

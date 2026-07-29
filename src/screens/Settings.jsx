@@ -66,7 +66,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-brand-cream)" }}>
+    <div className="min-h-screen flex flex-col app-bg">
       <header
         className="sticky top-0 z-10"
         style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
