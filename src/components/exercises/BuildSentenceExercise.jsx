@@ -69,7 +69,7 @@ export default function BuildSentenceExercise({ exercise, checked, onChange, sha
                   ? isCorrect
                     ? "var(--color-brand-teal-light)"
                     : "var(--color-brand-red-light)"
-                  : "white",
+                  : "var(--color-brand-surface)",
                 border: `2px solid ${
                   checked
                     ? isCorrect

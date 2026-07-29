@@ -21,6 +21,79 @@
   --color-brand-line-dark: #d8c4ac;
   --color-brand-ink: #4a3527;
   --color-brand-ink-light: #8a7461;
+  --color-brand-surface: #ffffff;
+  --color-brand-shadow: rgba(74, 53, 39, 0.12);
+}
+
+/* Dark palette: tokens re-derived for contrast/elevation on a dark ground,
+   not a naive invert — "-dark" text tokens go lighter (they're used as
+   high-contrast text on a surface), "-light" tint tokens go to deep muted
+   fills (they're used as background washes), and the card surface sits one
+   step lighter than the page background for a sense of elevation. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-brand-coral: #ff7c5c;
+    --color-brand-coral-dark: #ffab8f;
+    --color-brand-coral-light: #402620;
+    --color-brand-yellow: #ffd766;
+    --color-brand-yellow-dark: #ffe9a8;
+    --color-brand-yellow-light: #3d331a;
+    --color-brand-teal: #2dd4c5;
+    --color-brand-teal-dark: #7ee8db;
+    --color-brand-teal-light: #163330;
+    --color-brand-red: #ff6b6f;
+    --color-brand-red-dark: #ffabad;
+    --color-brand-red-light: #3d2224;
+    --color-brand-cream: #1c1410;
+    --color-brand-line: #43362b;
+    --color-brand-line-dark: #0a0705;
+    --color-brand-ink: #f5e9dd;
+    --color-brand-ink-light: #c7ab94;
+    --color-brand-surface: #251c15;
+    --color-brand-shadow: rgba(0, 0, 0, 0.4);
+  }
+}
+:root[data-theme="dark"] {
+  --color-brand-coral: #ff7c5c;
+  --color-brand-coral-dark: #ffab8f;
+  --color-brand-coral-light: #402620;
+  --color-brand-yellow: #ffd766;
+  --color-brand-yellow-dark: #ffe9a8;
+  --color-brand-yellow-light: #3d331a;
+  --color-brand-teal: #2dd4c5;
+  --color-brand-teal-dark: #7ee8db;
+  --color-brand-teal-light: #163330;
+  --color-brand-red: #ff6b6f;
+  --color-brand-red-dark: #ffabad;
+  --color-brand-red-light: #3d2224;
+  --color-brand-cream: #1c1410;
+  --color-brand-line: #43362b;
+  --color-brand-line-dark: #0a0705;
+  --color-brand-ink: #f5e9dd;
+  --color-brand-ink-light: #c7ab94;
+  --color-brand-surface: #251c15;
+  --color-brand-shadow: rgba(0, 0, 0, 0.4);
+}
+:root[data-theme="light"] {
+  --color-brand-coral: #ff6b4a;
+  --color-brand-coral-dark: #e04f2f;
+  --color-brand-coral-light: #ffe4da;
+  --color-brand-yellow: #ffc93c;
+  --color-brand-yellow-dark: #e0a800;
+  --color-brand-yellow-light: #fff1c9;
+  --color-brand-teal: #00a19d;
+  --color-brand-teal-dark: #007b78;
+  --color-brand-teal-light: #d3f3f1;
+  --color-brand-red: #e5484d;
+  --color-brand-red-dark: #c53338;
+  --color-brand-red-light: #ffe1e2;
+  --color-brand-cream: #fff6ec;
+  --color-brand-line: #f0e2d3;
+  --color-brand-line-dark: #d8c4ac;
+  --color-brand-ink: #4a3527;
+  --color-brand-ink-light: #8a7461;
+  --color-brand-surface: #ffffff;
+  --color-brand-shadow: rgba(74, 53, 39, 0.12);
 }
 
 * {
@@ -39,8 +112,11 @@ body {
   color: var(--color-brand-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overscroll-behavior-y: none;
+  /* Left at the browser default (rather than "none") so iOS Safari's
+     native elastic bounce at scroll edges still happens — that little
+     rubber-band give is a native-app feel a website usually lacks. */
   background-color: var(--color-brand-cream);
+  transition: background-color 0.25s ease, color 0.25s ease;
   /* A faint diamond lattice (a nod to habesha textile borders) so the
      background reads as designed, not a flat AI-default cream fill. */
   background-image:
@@ -48,6 +124,21 @@ body {
     linear-gradient(45deg, rgba(0, 161, 157, 0.045) 25%, transparent 25%, transparent 75%, rgba(0, 161, 157, 0.045) 75%);
   background-size: 26px 26px;
   background-position: 0 0, 13px 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
+/* Branded keyboard-focus ring instead of the default browser blue —
+   :focus-visible so mouse/touch clicks never show it, only real keyboard
+   navigation does. */
+:focus-visible {
+  outline: 3px solid var(--color-brand-teal);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 h1,
@@ -77,6 +168,20 @@ button {
 .btn-3d:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+/* Hover only on devices that actually have a pointer that can hover
+   (real mice/trackpads) — guarded so touchscreens never get a "sticky"
+   hover state left over after a tap. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-3d:not(:disabled):hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+  }
+  .btn-3d:not(:disabled):active:hover {
+    transform: translateY(4px);
+    filter: brightness(1);
+  }
 }
 
 .btn-coral {
@@ -116,7 +221,7 @@ button {
 }
 
 .btn-white {
-  background: white;
+  background: var(--color-brand-surface);
   color: var(--color-brand-coral-dark);
   box-shadow: 0 4px 0 var(--color-brand-line-dark);
   border: 2px solid var(--color-brand-line);
@@ -126,7 +231,7 @@ button {
 }
 
 .btn-outline {
-  background: white;
+  background: var(--color-brand-surface);
   box-shadow: 0 4px 0 var(--color-brand-line);
   border: 2px solid var(--color-brand-line);
   color: var(--color-brand-ink);
@@ -159,11 +264,20 @@ button {
   box-shadow: 0 4px 0 var(--color-brand-red);
 }
 
+.btn-outline.golden {
+  background: var(--color-brand-yellow-light);
+  border-color: var(--color-brand-yellow-dark);
+  color: var(--color-brand-yellow-dark);
+  box-shadow: 0 4px 0 var(--color-brand-yellow-dark);
+}
+
 /* Soft-elevated card: subtle shadow + hairline border instead of a flat
    border-only outline, so surfaces read as lifted rather than flat. */
 .card-soft {
+  background: var(--color-brand-surface);
   border: 2px solid var(--color-brand-line);
-  box-shadow: 0 2px 10px rgba(74, 53, 39, 0.06);
+  box-shadow: 0 2px 10px var(--color-brand-shadow);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 /* Shared screen background: cream fill + faint diamond-lattice texture,
@@ -176,6 +290,7 @@ button {
     linear-gradient(45deg, rgba(0, 161, 157, 0.045) 25%, transparent 25%, transparent 75%, rgba(0, 161, 157, 0.045) 75%);
   background-size: 26px 26px;
   background-position: 0 0, 13px 13px;
+  transition: background-color 0.25s ease;
 }
 
 /* Glossy top highlight on chunky 3D buttons for a more tactile, premium

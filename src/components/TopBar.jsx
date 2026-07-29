@@ -4,12 +4,15 @@ import ProgressBar from "./ProgressBar";
 import Hearts from "./Hearts";
 import { useSound } from "../hooks/useSound";
 
-export default function TopBar({ progressPct, hearts, combo = 0, onExit }) {
+export default function TopBar({ progressPct, hearts, combo = 0, onExit, accentColor }) {
   const navigate = useNavigate();
   const sound = useSound();
 
   return (
-    <div className="sticky top-0 z-20 bg-white px-4 py-3">
+    <div
+      className="sticky top-0 z-20 bg-brand-surface px-4 py-3"
+      style={accentColor ? { borderBottom: `3px solid ${accentColor}` } : undefined}
+    >
       <div className="max-w-md mx-auto flex items-center gap-4">
         <button
           onClick={() => {

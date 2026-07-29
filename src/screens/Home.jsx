@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import lessonsData from "../data/lessons.json";
 import { isLessonCompleted, isLessonUnlocked, getLevelInfo } from "../lib/storage";
 import { lessonAccuracy, pickReviewWords } from "../lib/wordStats";
@@ -13,10 +13,14 @@ import Mascot from "../components/Mascot";
 import ProgressBar from "../components/ProgressBar";
 import XPCounter from "../components/XPCounter";
 import { useSound } from "../hooks/useSound";
+import { useSettingsContext } from "../context/SettingsContext";
 
 export default function Home({ progress, wordStats }) {
   const navigate = useNavigate();
   const sound = useSound();
+  const { settings } = useSettingsContext();
+  const { scrollY } = useScroll();
+  const mascotParallaxY = useTransform(scrollY, [0, 260], [0, -22]);
   const lessons = lessonsData.lessons;
   const greeter = useMemo(() => randomMascot(), []);
   const greeting = useMemo(() => randomLine(greeter, "greetings"), [greeter]);
@@ -78,9 +82,16 @@ export default function Home({ progress, wordStats }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
           className="rounded-2xl p-4 flex items-center gap-3 card-soft"
-          style={{ background: "white" }}
+          style={{ background: "var(--color-brand-surface)" }}
         >
-          <Mascot mascotId={greeter.id} mood="happy" size={56} />
+          <motion.div style={{ y: settings.reducedMotion ? 0 : mascotParallaxY }}>
+            <Mascot
+              mascotId={greeter.id}
+              mood="happy"
+              size={56}
+              accessories={progress.unlockedAccessories || []}
+            />
+          </motion.div>
           <div>
             <p className="font-extrabold text-sm" style={{ color: "var(--color-brand-coral-dark)" }}>
               {greeter.name}
@@ -91,7 +102,7 @@ export default function Home({ progress, wordStats }) {
           </div>
         </motion.div>
 
-        <div className="bg-white rounded-2xl p-4 flex items-center justify-between card-soft">
+        <div className="rounded-2xl p-4 flex items-center justify-between card-soft">
           <div>
             <p className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
               Level {levelInfo.level}
@@ -107,7 +118,7 @@ export default function Home({ progress, wordStats }) {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-4 card-soft">
+        <div className="rounded-2xl p-4 card-soft">
           <div className="flex justify-between items-center mb-2">
             <span className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
               Daily Goal
@@ -130,6 +141,16 @@ export default function Home({ progress, wordStats }) {
             🔁 Review words you've missed
           </button>
         )}
+
+        <button
+          onClick={() => {
+            sound.click();
+            navigate("/words");
+          }}
+          className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide"
+        >
+          📖 My Words
+        </button>
       </div>
 
       <motion.div

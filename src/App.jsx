@@ -1,9 +1,13 @@
+import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { EASE_OUT_FAST } from "./lib/motion";
+import { setAppBadge } from "./lib/appBadge";
 import Home from "./screens/Home";
 import LessonScreen from "./screens/LessonScreen";
 import Settings from "./screens/Settings";
 import Achievements from "./screens/Achievements";
+import WordCollection from "./screens/WordCollection";
 import { useProgress } from "./hooks/useProgress";
 import { useWordStats } from "./hooks/useWordStats";
 import { SettingsProvider } from "./context/SettingsContext";
@@ -17,14 +21,14 @@ function PageTransition({ children }) {
       initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -16 }}
-      transition={{ duration: 0.16, ease: "easeOut" }}
+      transition={EASE_OUT_FAST}
     >
       {children}
     </motion.div>
   );
 }
 
-function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, updateSetting, resetProgress, introduce, record }) {
+function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, unlockAccessories, addXp, updateSetting, resetProgress, introduce, record }) {
   const location = useLocation();
   return (
     <AnimatePresence mode="wait" initial={false}>
@@ -48,6 +52,8 @@ function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, updateS
                 onIntroduceWord={introduce}
                 onRecordAttempt={record}
                 onUnlockBadges={unlockBadges}
+                onUnlockAccessories={unlockAccessories}
+                onAddXp={addXp}
               />
             </PageTransition>
           }
@@ -63,6 +69,8 @@ function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, updateS
                 onIntroduceWord={introduce}
                 onRecordAttempt={record}
                 onUnlockBadges={unlockBadges}
+                onUnlockAccessories={unlockAccessories}
+                onAddXp={addXp}
                 isReview
               />
             </PageTransition>
@@ -88,14 +96,26 @@ function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, updateS
             </PageTransition>
           }
         />
+        <Route
+          path="/words"
+          element={
+            <PageTransition>
+              <WordCollection wordStats={stats} />
+            </PageTransition>
+          }
+        />
       </Routes>
     </AnimatePresence>
   );
 }
 
 function App() {
-  const { progress, completeLesson, unlockBadges, updateSetting, resetProgress } = useProgress();
+  const { progress, completeLesson, unlockBadges, unlockAccessories, addXp, updateSetting, resetProgress } = useProgress();
   const { stats, introduce, record } = useWordStats();
+
+  useEffect(() => {
+    setAppBadge(progress.streak);
+  }, [progress.streak]);
 
   return (
     <SettingsProvider>
@@ -104,6 +124,8 @@ function App() {
         stats={stats}
         completeLesson={completeLesson}
         unlockBadges={unlockBadges}
+        unlockAccessories={unlockAccessories}
+        addXp={addXp}
         updateSetting={updateSetting}
         resetProgress={resetProgress}
         introduce={introduce}

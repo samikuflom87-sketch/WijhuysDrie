@@ -10,6 +10,17 @@ export function SettingsProvider({ children }) {
     saveSettings(settings);
   }, [settings]);
 
+  useEffect(() => {
+    // "system" removes the attribute entirely so the prefers-color-scheme
+    // media query governs; "light"/"dark" pin it explicitly, overriding
+    // the OS preference either direction.
+    if (settings.theme === "system") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.setAttribute("data-theme", settings.theme);
+    }
+  }, [settings.theme]);
+
   function updateSetting(key, value) {
     setSettings((prev) => ({ ...prev, [key]: value }));
   }

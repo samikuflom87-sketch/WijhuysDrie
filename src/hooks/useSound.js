@@ -1,5 +1,5 @@
 import { useSettingsContext } from "../context/SettingsContext";
-import { playClick, playCorrect, playWrong, playPop } from "../lib/soundEffects";
+import { playClick, playCorrect, playWrong, playPop, playFanfare } from "../lib/soundEffects";
 import { hapticTap, hapticCorrect, hapticWrong } from "../lib/haptics";
 
 export function useSound() {
@@ -21,6 +21,10 @@ export function useSound() {
     pop: () => {
       if (on) playPop();
       hapticTap();
+    },
+    fanfare: () => {
+      if (on) playFanfare();
+      hapticCorrect();
     },
   };
 }

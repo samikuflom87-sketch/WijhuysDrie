@@ -18,8 +18,50 @@
       rel="stylesheet"
     />
     <title>Habesha Steps</title>
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        background: linear-gradient(160deg, #ff8163, #ff6b4a);
+        transition: opacity 0.4s ease;
+      }
+      #splash img {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        animation: splash-pulse 1.1s ease-in-out infinite;
+      }
+      #splash span {
+        font-family: "Baloo 2", "Quicksand", system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 20px;
+        color: #fff6ec;
+        letter-spacing: 0.01em;
+      }
+      #splash.splash-hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      @keyframes splash-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash img { animation: none; }
+      }
+    </style>
   </head>
   <body>
+    <div id="splash">
+      <img src="/favicon.svg" alt="" />
+      <span>Habesha Steps</span>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

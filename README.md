@@ -28,13 +28,17 @@ npm run preview
 ## How a lesson works
 
 1. **Teach, interleaved** — new words are taught two at a time (flashcard: Tigrinya, English, picture, audio, optional note), then immediately quizzed on those same two before the next pair is taught. These mini-quizzes are low-stakes: wrong answers show the right one but never cost a heart. Already-known words (tracked per-word in localStorage) skip straight to full practice.
-2. **Practice** — once every new word has been taught+quizzed, a full mixed round of all 9 exercise types (below) kicks in, using the complete word set — this is where hearts are on the line.
+2. **Practice** — once every new word has been taught+quizzed, a full mixed round of all 10 exercise types (below) kicks in, using the complete word set — this is where hearts are on the line.
 3. **Review** — anything you got wrong in practice comes back at the end and repeats until you get it right.
 4. **Celebration** — XP earned, accuracy %, crown, and any newly unlocked badge.
 
 Every button press, correct answer, and wrong answer has its own short synthesized sound (Web Audio API tones — no audio files needed), toggleable in Settings.
 
 A **"?" hint button** is available on most exercises — it reveals the taught word's meaning and audio without ending the question, but that question earns no XP if used.
+
+Exactly one exercise per practice round is randomly marked a **✨ golden question** — get it right and it pays extra bonus XP on top of the normal reward. It's never revealed in advance, only once you've answered it.
+
+After a lesson's celebration screen, an optional **🎁 bonus round** offers a few extra no-hearts-at-risk questions for more XP — a low-stakes way to keep going for players who want more without any risk of losing progress.
 
 ## Exercise types
 
@@ -51,12 +55,20 @@ Every word tracks times-seen/times-correct/last-practiced in localStorage. The H
 - XP levels with rank names (Curious Beginner → Habesha Master), shown on Home.
 - Daily goal measured in **lessons/day** (Casual 1 / Regular 3 / Serious 5), set in Settings.
 - Streak with an earnable streak-freeze (awarded every 7-day streak, caps at 3) that auto-covers exactly one missed day.
-- A badges/achievements screen (`/achievements`) — first lesson, all lessons, streak milestones, words-taught milestones, XP milestones, earning a freeze.
+- A badges/achievements screen (`/achievements`) — first lesson, all lessons, streak milestones, words-taught milestones, XP milestones, earning a freeze. It also shows a GitHub-style **streak calendar** (a 70-day grid of which days you practiced).
 - Each lesson node on Home shows an accuracy ring (green/yellow/coral by how well you know it), separate from its locked/unlocked/crowned state.
+- Cosmetic **mascot accessories** (a party hat, glasses) unlock from milestones like streaks or words-taught, and once unlocked they render on your mascot everywhere it appears.
+- A **"📖 My Words" screen** (`/words`) lists every word you've been taught across all lessons, each with a 1–3 star mastery rating based on your accuracy on it, plus its picture and a speaker button.
+- Each lesson's top bar carries a subtle accent color tied to its theme (greetings, family, food, numbers, everyday), so lessons feel visually distinct from one another instead of interchangeable.
+- If your browser supports the Badging API (`navigator.setAppBadge`), the installed home-screen icon shows your current streak as a small badge number — it's a no-op, invisible enhancement everywhere else.
 
 ## Settings
 
-`/settings` — sound on/off, reduced-motion toggle (turns off mascot idle loops and confetti), daily goal picker, and a two-step "reset all progress" (clears XP, word stats, and preferences).
+`/settings` — sound on/off, an optional soft ambient music bed during lessons, reduced-motion toggle (turns off mascot idle loops and confetti), a light/dark/system appearance picker, daily goal picker, and a two-step "reset all progress" (clears XP, word stats, and preferences).
+
+## Appearance / dark mode
+
+Theming follows the system's light/dark preference by default (`prefers-color-scheme`), or can be pinned to light or dark from Settings regardless of the OS setting. Every color in the app is a CSS custom property (`--color-brand-*`, defined in `src/index.css`), redefined per theme, so components never hardcode a light- or dark-specific color directly.
 
 ## Adding content
 
@@ -99,25 +111,33 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/data/lessons.json` — lesson/word/sentence content (edit this to add vocabulary)
 - `src/data/mascots.js` — the five mascots' personalities and message banks
 - `src/data/badges.js` — achievement definitions and unlock conditions
-- `src/lib/exercises.js` — generates all 9 exercise types + intro-word splitting from lesson content
+- `src/data/accessories.js` — cosmetic mascot-accessory definitions and unlock conditions
+- `src/lib/exercises.js` — generates all 10 exercise types + intro-word splitting from lesson content, plus the golden-question marker and bonus-round generator
 - `src/lib/tts.js` — browser text-to-speech fallback used by every speaker button when no real recording exists yet
 - `src/lib/speech.js` — browser speech recognition + rough similarity match used by the speaking-practice exercise
-- `src/lib/wordStats.js` / `src/hooks/useWordStats.js` — per-word spaced-repetition tracking
-- `src/lib/storage.js` / `src/hooks/useProgress.js` — XP/levels/streak/freeze/badges/daily-goal progress
-- `src/lib/settings.js` / `src/context/SettingsContext.jsx` — sound/reduced-motion preferences, available app-wide
-- `src/components/Mascot.jsx` — the five original SVG mascots
+- `src/lib/wordStats.js` / `src/hooks/useWordStats.js` — per-word spaced-repetition tracking + mastery-star rating
+- `src/lib/storage.js` / `src/hooks/useProgress.js` — XP/levels/streak/freeze/badges/accessories/daily-goal progress, active-days history
+- `src/lib/settings.js` / `src/context/SettingsContext.jsx` — sound/music/theme/reduced-motion preferences, available app-wide
+- `src/lib/motion.js` — shared Framer Motion spring/easing presets used across components for a consistent feel
+- `src/lib/lessonTheme.js` — maps each lesson theme to an accent color for its top bar
+- `src/lib/appBadge.js` — sets/clears the installed app's home-screen icon badge (Badging API) to the current streak
+- `src/lib/ambientMusic.js` — optional soft generative ambient pad (Web Audio API) played during lessons
+- `src/components/Mascot.jsx` — the five original SVG mascots, with support for cosmetic accessories (hat, glasses)
 - `src/components/Illustration.jsx` — picture-choice illustrations: Twemoji icons for concrete concepts, custom SVGs for family members and numbers
 - `public/icons/` — the Twemoji SVG icon files referenced above
 - `src/components/Flashcard.jsx` — the intro "teach before test" card
 - `src/components/HintReveal.jsx` — the in-exercise "?" hint
 - `src/components/ProgressRing.jsx` — per-lesson accuracy ring on Home
 - `src/components/SpeakerButton.jsx` — plays a word's audio file, fails silently if missing
-- `src/components/Confetti.jsx` — correct-answer particle burst
-- `src/screens/Home.jsx` — learning path, streak/XP/level, daily goal, Review button
-- `src/screens/LessonScreen.jsx` — intro → practice → review → celebration flow
+- `src/components/Confetti.jsx` — correct-answer particle burst (burst/rain/fountain variants)
+- `src/components/StreakCalendar.jsx` — GitHub-style grid of recently active practice days
+- `src/screens/Home.jsx` — learning path, streak/XP/level, daily goal, Review button, link to My Words
+- `src/screens/LessonScreen.jsx` — intro → practice → review → celebration → optional bonus round flow
+- `src/screens/WordCollection.jsx` — every taught word across all lessons, with mastery stars
 - `src/screens/Settings.jsx` / `src/screens/Achievements.jsx`
 - `src/components/ErrorBoundary.jsx` — catches a crash anywhere in the app and shows a friendly "back to home" screen instead of a blank white page
 - `public/manifest.json`, `public/icons/app-*.png`, `public/apple-touch-icon.png` — installable-app assets
+- `index.html` / `src/main.jsx` — animated splash screen shown while the app's first paint loads
 
 ## Attribution
 

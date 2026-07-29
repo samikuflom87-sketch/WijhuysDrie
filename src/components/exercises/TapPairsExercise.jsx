@@ -47,7 +47,7 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
   function tileClass(tile, isSelected) {
     if (wrongIds.has(tile.id)) return "bg-brand-red-light border-brand-red text-brand-red-dark";
     if (isSelected) return "bg-brand-coral-light border-brand-coral text-brand-coral-dark";
-    return "bg-white border-brand-line text-brand-ink";
+    return "bg-brand-surface border-brand-line text-brand-ink";
   }
 
   return (

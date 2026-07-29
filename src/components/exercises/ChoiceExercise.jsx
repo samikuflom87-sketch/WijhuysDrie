@@ -52,11 +52,20 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
         ) : null}
       </div>
 
+      {checked && exercise.isGoldenQuestion && (
+        <p
+          className="text-sm font-extrabold text-center -mt-2"
+          style={{ color: "var(--color-brand-yellow-dark)" }}
+        >
+          ✨ Golden question — bonus XP!
+        </p>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {exercise.options.map((opt) => {
           let state;
           if (checked) {
-            if (opt.isCorrect) state = "correct";
+            if (opt.isCorrect) state = exercise.isGoldenQuestion ? "golden" : "correct";
             else if (opt.id === selectedId) state = "wrong";
           } else if (opt.id === selectedId) {
             state = "selected";

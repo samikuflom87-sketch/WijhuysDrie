@@ -56,3 +56,17 @@ export function playWrong() {
   tone(audioCtx, 246, t, 0.16, { type: "sine", peak: 0.12 });
   tone(audioCtx, 196, t + 0.1, 0.24, { type: "sine", peak: 0.12 });
 }
+
+// A bigger, longer fanfare reserved for real milestones (a 7/30/100-day
+// streak) — distinct from the everyday correct-answer chime so a milestone
+// actually sounds like one.
+export function playFanfare() {
+  const audioCtx = getCtx();
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+  notes.forEach((freq, i) => {
+    tone(audioCtx, freq, t + i * 0.11, 0.3, { type: "triangle", peak: 0.18 });
+  });
+  tone(audioCtx, 1318.5, t + 0.44, 0.5, { type: "sine", peak: 0.14 }); // E6 shimmer
+}

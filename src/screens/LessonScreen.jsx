@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import lessonsData from "../data/lessons.json";
@@ -7,17 +7,21 @@ import {
   splitIntroWords,
   buildTeachingSequence,
   normalizeAnswer,
+  makeBonusRound,
 } from "../lib/exercises";
 import { randomMascot, randomLine } from "../data/mascots";
+import { lessonAccentColor } from "../lib/lessonTheme";
 import { randomCompliment } from "../data/compliments";
+import { SPRING_BOUNCY } from "../lib/motion";
 import { applyLessonComplete } from "../lib/storage";
 import { checkBadges } from "../data/badges";
+import { checkAccessories } from "../data/accessories";
 import { pickReviewWords, wordId } from "../lib/wordStats";
 import TopBar from "../components/TopBar";
 import AnswerBanner from "../components/AnswerBanner";
 import Button from "../components/Button";
 import Mascot from "../components/Mascot";
-import Confetti from "../components/Confetti";
+import Confetti, { randomConfettiVariant } from "../components/Confetti";
 import Flashcard from "../components/Flashcard";
 import HintReveal from "../components/HintReveal";
 import ChoiceExercise from "../components/exercises/ChoiceExercise";
@@ -27,13 +31,18 @@ import TypeAnswerExercise from "../components/exercises/TypeAnswerExercise";
 import SpeakAnswerExercise from "../components/exercises/SpeakAnswerExercise";
 import XPCounter from "../components/XPCounter";
 import { useSound } from "../hooks/useSound";
+import { useSettingsContext } from "../context/SettingsContext";
+import { startAmbient, stopAmbient } from "../lib/ambientMusic";
 
 const XP_PER_CORRECT = 10;
 const XP_PER_REVIEW_CORRECT = 5;
 const XP_PER_TEACH_QUIZ = 5;
+const XP_PER_BONUS_CORRECT = 8;
+const GOLDEN_BONUS_XP = 15;
 const MAX_HEARTS = 5;
 const REVIEW_SESSION_SIZE = 8;
 const COMBO_BONUS_XP = 5;
+const STREAK_MILESTONES = [7, 14, 30, 60, 100, 365];
 
 function comboMessageFor(streak) {
   if (streak === 3) return "🔥 3 in a row! You're on fire!";
@@ -59,11 +68,19 @@ export default function LessonScreen({
   onIntroduceWord,
   onRecordAttempt,
   onUnlockBadges,
+  onUnlockAccessories,
+  onAddXp,
   isReview = false,
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const sound = useSound();
+  const { settings } = useSettingsContext();
+
+  useEffect(() => {
+    if (settings.musicOn) startAmbient();
+    return () => stopAmbient();
+  }, [settings.musicOn]);
   const lessonId = isReview ? "review" : Number(id);
   const allLessons = lessonsData.lessons;
 
@@ -126,12 +143,22 @@ export default function LessonScreen({
   const [newBadges, setNewBadges] = useState([]);
   const [comboStreak, setComboStreak] = useState(0);
   const [comboBonus, setComboBonus] = useState(0);
+  const [celebrationVariant] = useState(() => randomConfettiVariant());
+  const [anyHintUsedInLesson, setAnyHintUsedInLesson] = useState(false);
+  const [newAccessories, setNewAccessories] = useState([]);
+  const [beatBestScore, setBeatBestScore] = useState(false);
+  const [isPerfectLesson, setIsPerfectLesson] = useState(false);
+  const [goldenHit, setGoldenHit] = useState(false);
+  const [bonusQueue, setBonusQueue] = useState([]);
+  const [bonusOffered, setBonusOffered] = useState(false);
 
   const totalToResolve = exercises.length;
   const teachStep = phase === "teaching" ? teachingSequence[teachIndex] : null;
   const current =
     phase === "review"
       ? reviewQueue[0]
+      : phase === "bonus"
+      ? bonusQueue[0]
       : phase === "teaching"
       ? teachStep?.kind === "quiz"
         ? teachStep.exercise
@@ -175,6 +202,7 @@ export default function LessonScreen({
     setBannerStatus(null);
     setBannerCompliment(null);
     setComboBonus(0);
+    setGoldenHit(false);
   }
 
   function loseHeart() {
@@ -194,11 +222,24 @@ export default function LessonScreen({
   }
 
   function finishLesson(finalXp) {
-    const predicted = applyLessonComplete(progress, lessonId, finalXp);
+    const accuracyPct = practiceStats.attempts > 0 ? practiceStats.correct / practiceStats.attempts : 1;
+    const prevBest = progress.bestAccuracyByLesson[lessonId] ?? 0;
+    const predicted = applyLessonComplete(progress, lessonId, finalXp, accuracyPct);
     const { newlyUnlocked } = checkBadges(predicted, wordStats, allLessons);
-    onCompleteLesson(lessonId, finalXp);
+    const { newlyUnlocked: newlyUnlockedAccessories } = checkAccessories(predicted, wordStats);
+    onCompleteLesson(lessonId, finalXp, accuracyPct);
     if (newlyUnlocked.length > 0) onUnlockBadges(newlyUnlocked.map((b) => b.id));
+    if (newlyUnlockedAccessories.length > 0) {
+      onUnlockAccessories(newlyUnlockedAccessories.map((a) => a.id));
+    }
     setNewBadges(newlyUnlocked);
+    setNewAccessories(newlyUnlockedAccessories);
+    setBeatBestScore(prevBest > 0 && accuracyPct > prevBest);
+    setIsPerfectLesson(accuracyPct === 1 && !anyHintUsedInLesson && practiceStats.attempts > 0);
+    const crossedMilestone = STREAK_MILESTONES.some(
+      (m) => progress.streak < m && predicted.streak >= m,
+    );
+    if (crossedMilestone) sound.fanfare();
     setPhase("complete");
   }
 
@@ -244,6 +285,14 @@ export default function LessonScreen({
         const retry = { ...current, id: `${current.id}-retry-${Date.now()}` };
         setReviewQueue([...nextReview, retry]);
       }
+    } else if (phase === "bonus") {
+      // Bonus-round XP was already banked at lesson completion, so it's
+      // credited directly to progress here rather than folded into
+      // finishLesson (which would otherwise re-run streak/badge logic).
+      onAddXp(xpDelta);
+      const nextBonus = bonusQueue.slice(1);
+      setBonusQueue(nextBonus);
+      if (nextBonus.length === 0) setPhase("complete");
     }
   }
 
@@ -275,9 +324,10 @@ export default function LessonScreen({
       sound.wrong();
       setShake(true);
       setTimeout(() => setShake(false), 400);
-      // Teaching-phase mini quizzes are low-stakes: no heart lost for a
-      // word you were just taught seconds ago.
-      if (phase !== "teaching") loseHeart();
+      // Teaching-phase mini quizzes and the optional bonus round are both
+      // low-stakes: no heart lost for a word you were just taught, or for
+      // an extra-credit question nobody was required to attempt.
+      if (phase !== "teaching" && phase !== "bonus") loseHeart();
     }
   }
 
@@ -287,6 +337,7 @@ export default function LessonScreen({
     if (CHOICE_TYPES.has(current.type)) {
       const opt = current.options.find((o) => o.id === selectedId);
       isCorrect = Boolean(opt?.isCorrect);
+      if (isCorrect && current.isGoldenQuestion) setGoldenHit(true);
     } else if (current.type === "build-sentence") {
       isCorrect = JSON.stringify(buildAnswer) === JSON.stringify(current.correctTokens);
     } else if (current.type === "type-answer") {
@@ -319,8 +370,11 @@ export default function LessonScreen({
         ? XP_PER_TEACH_QUIZ
         : phase === "review"
         ? XP_PER_REVIEW_CORRECT
+        : phase === "bonus"
+        ? XP_PER_BONUS_CORRECT
         : XP_PER_CORRECT;
-    const xpDelta = hintUsed ? 0 : baseXp + comboBonus;
+    const goldenBonus = goldenHit ? GOLDEN_BONUS_XP : 0;
+    const xpDelta = hintUsed ? 0 : baseXp + comboBonus + goldenBonus;
     advance(xpDelta, bannerStatus === "correct");
   }
 
@@ -363,7 +417,7 @@ export default function LessonScreen({
       .filter((s) => s.kind === "teach").length;
     return (
       <div className="min-h-screen flex flex-col app-bg">
-        <TopBar progressPct={progressPct} hearts={MAX_HEARTS} combo={comboStreak} onExit={() => navigate("/")} />
+        <TopBar progressPct={progressPct} hearts={MAX_HEARTS} combo={comboStreak} onExit={() => navigate("/")} accentColor={lessonAccentColor(lesson.theme)} />
         <div className="flex-1 max-w-md w-full mx-auto px-4 py-8 flex items-center justify-center">
           <AnimatePresence mode="wait">
             <Flashcard
@@ -411,7 +465,7 @@ export default function LessonScreen({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-6 text-center app-bg">
         <div className="relative">
-          <Confetti count={30} />
+          <Confetti count={30} variant={celebrationVariant} />
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -439,12 +493,35 @@ export default function LessonScreen({
           {message}
         </motion.p>
 
+        {isPerfectLesson && (
+          <motion.p
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ ...SPRING_BOUNCY, delay: 0.3 }}
+            className="text-sm font-extrabold uppercase tracking-wide px-3 py-1.5 rounded-full"
+            style={{ background: "var(--color-brand-yellow-light)", color: "var(--color-brand-yellow-dark)" }}
+          >
+            💯 Perfect! No hints, no mistakes.
+          </motion.p>
+        )}
+        {beatBestScore && !isPerfectLesson && (
+          <motion.p
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ ...SPRING_BOUNCY, delay: 0.3 }}
+            className="text-sm font-extrabold uppercase tracking-wide px-3 py-1.5 rounded-full"
+            style={{ background: "var(--color-brand-teal-light)", color: "var(--color-brand-teal-dark)" }}
+          >
+            🏅 New personal best for this lesson!
+          </motion.p>
+        )}
+
         <div className="flex gap-3">
           <motion.div
             initial={{ opacity: 0, scale: 0.7, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 0.4, type: "spring", stiffness: 260, damping: 16 }}
-            className="bg-white rounded-2xl px-5 py-4 flex flex-col items-center card-soft"
+            transition={{ ...SPRING_BOUNCY, delay: 0.4 }}
+            className="rounded-2xl px-5 py-4 flex flex-col items-center card-soft"
           >
             <span className="text-2xl font-extrabold" style={{ color: "var(--color-brand-yellow-dark)" }}>
               +<XPCounter value={xp} />
@@ -456,8 +533,8 @@ export default function LessonScreen({
           <motion.div
             initial={{ opacity: 0, scale: 0.7, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 0.52, type: "spring", stiffness: 260, damping: 16 }}
-            className="bg-white rounded-2xl px-5 py-4 flex flex-col items-center card-soft"
+            transition={{ ...SPRING_BOUNCY, delay: 0.52 }}
+            className="rounded-2xl px-5 py-4 flex flex-col items-center card-soft"
           >
             <span className="text-2xl font-extrabold" style={{ color: "var(--color-brand-teal-dark)" }}>
               {accuracyPct}%
@@ -472,7 +549,7 @@ export default function LessonScreen({
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.66, type: "spring", stiffness: 300, damping: 14 }}
+            transition={{ ...SPRING_BOUNCY, delay: 0.66 }}
             className="flex items-center gap-2 font-bold"
             style={{ color: "var(--color-brand-yellow-dark)" }}
           >
@@ -481,7 +558,7 @@ export default function LessonScreen({
           </motion.div>
         )}
 
-        {newBadges.length > 0 && (
+        {(newBadges.length > 0 || newAccessories.length > 0) && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -490,26 +567,46 @@ export default function LessonScreen({
             style={{ background: "var(--color-brand-yellow-light)" }}
           >
             <p className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
-              New badge unlocked
+              {newBadges.length > 0 ? "New badge unlocked" : "New mascot accessory unlocked"}
             </p>
             {newBadges.map((b) => (
               <p key={b.id} className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
                 {b.icon} {b.name}
               </p>
             ))}
+            {newAccessories.map((a) => (
+              <p key={a.id} className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
+                {a.icon} {a.name}
+              </p>
+            ))}
           </motion.div>
         )}
 
-        <Button variant="coral" className="w-full max-w-xs uppercase tracking-wide" onClick={() => navigate("/")}>
-          Continue
-        </Button>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          {!bonusOffered && (
+            <Button
+              variant="yellow"
+              className="w-full uppercase tracking-wide"
+              onClick={() => {
+                setBonusOffered(true);
+                setBonusQueue(makeBonusRound(lesson));
+                setPhase("bonus");
+              }}
+            >
+              🎁 Bonus round (+XP)
+            </Button>
+          )}
+          <Button variant="coral" className="w-full uppercase tracking-wide" onClick={() => navigate("/")}>
+            Continue
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col app-bg">
-      <TopBar progressPct={progressPct} hearts={hearts} combo={comboStreak} />
+      <TopBar progressPct={progressPct} hearts={hearts} combo={comboStreak} accentColor={lessonAccentColor(lesson.theme)} />
 
       {phase === "teaching" && (
         <div className="max-w-md w-full mx-auto px-4 pt-3">
@@ -527,6 +624,14 @@ export default function LessonScreen({
         </div>
       )}
 
+      {phase === "bonus" && (
+        <div className="max-w-md w-full mx-auto px-4 pt-3">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-center" style={{ color: "var(--color-brand-yellow-dark)" }}>
+            🎁 Bonus round — no hearts at risk
+          </p>
+        </div>
+      )}
+
       <div className="flex-1 max-w-md w-full mx-auto px-4 py-6 pb-40">
         <div className="flex justify-end mb-2">
           <HintReveal
@@ -536,6 +641,7 @@ export default function LessonScreen({
               if (checked) return;
               setHintOpen((o) => !o);
               setHintUsed(true);
+              setAnyHintUsedInLesson(true);
             }}
           />
         </div>
@@ -603,7 +709,7 @@ export default function LessonScreen({
       )}
 
       {current.type !== "tap-pairs" && !bannerStatus && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white px-4 py-4 border-t-2" style={{ borderColor: "var(--color-brand-line)" }}>
+        <div className="fixed bottom-0 left-0 right-0 bg-brand-surface px-4 py-4 border-t-2" style={{ borderColor: "var(--color-brand-line)" }}>
           <div className="max-w-md mx-auto">
             <Button
               variant="coral"
@@ -621,7 +727,13 @@ export default function LessonScreen({
         status={bannerStatus}
         correctText={current.correctText}
         mascotId={companion.id}
-        message={hintUsed && bannerStatus === "correct" ? `${bannerMessage} (no XP — hint used)` : bannerMessage}
+        message={
+          hintUsed && bannerStatus === "correct"
+            ? `${bannerMessage} (no XP — hint used)`
+            : goldenHit && bannerStatus === "correct"
+            ? `${bannerMessage} ✨ +${GOLDEN_BONUS_XP} bonus XP!`
+            : bannerMessage
+        }
         compliment={bannerCompliment}
         onContinue={handleBannerContinue}
       />

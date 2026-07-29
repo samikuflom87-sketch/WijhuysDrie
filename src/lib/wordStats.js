@@ -68,6 +68,19 @@ export function totalWordsIntroduced(stats) {
   return Object.values(stats).filter((e) => e.introduced).length;
 }
 
+// 1-3 star mastery rating for the word collection screen: 0 if not yet
+// introduced, 1 for a freshly-taught or still-shaky word, up to 3 once
+// accuracy and repetition both show it's stuck.
+export function masteryStars(stats, id) {
+  const entry = stats[id];
+  if (!entry || !entry.introduced) return 0;
+  if (entry.seen === 0) return 1;
+  const acc = entry.correct / entry.seen;
+  if (acc >= 0.85 && entry.seen >= 3) return 3;
+  if (acc >= 0.6) return 2;
+  return 1;
+}
+
 // Builds a review session's word list across all lessons, prioritizing
 // words with the lowest accuracy and the longest time since last practiced.
 export function pickReviewWords(stats, lessons, limit = 8) {

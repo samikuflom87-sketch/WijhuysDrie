@@ -14,3 +14,12 @@ createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </StrictMode>,
 )
+
+// Fade out the static splash (index.html) now that React has painted its
+// first frame, instead of a blank white gap while the bundle parses.
+requestAnimationFrame(() => {
+  const splash = document.getElementById('splash')
+  if (!splash) return
+  splash.classList.add('splash-hide')
+  setTimeout(() => splash.remove(), 450)
+})

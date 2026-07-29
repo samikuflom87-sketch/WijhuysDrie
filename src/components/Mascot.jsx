@@ -9,7 +9,35 @@ const BODY_ANIMATIONS = {
   neutral: { y: [0, -4, 0] },
 };
 
-function Face({ mood, cx, cy, eyeGap = 13, eyeY = 0 }) {
+function Accessory({ type, cx, cy, eyeGap }) {
+  if (type === "hat") {
+    return (
+      <g>
+        <path
+          d={`M${cx - 15} ${cy - 28} L${cx} ${cy - 52} L${cx + 15} ${cy - 28} Z`}
+          fill="#FF6B4A"
+          stroke="#4A3527"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <circle cx={cx} cy={cy - 52} r="4.5" fill="#FFC93C" />
+        <rect x={cx - 17} y={cy - 30} width="34" height="6" rx="3" fill="#FFC93C" stroke="#4A3527" strokeWidth="1" />
+      </g>
+    );
+  }
+  if (type === "glasses") {
+    return (
+      <g>
+        <circle cx={cx - eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
+        <circle cx={cx + eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
+        <path d={`M${cx - eyeGap + 11} ${cy} L${cx + eyeGap - 11} ${cy}`} stroke="#4A3527" strokeWidth="2.5" />
+      </g>
+    );
+  }
+  return null;
+}
+
+function Face({ mood, cx, cy, eyeGap = 13, eyeY = 0, accessories = [] }) {
   const isSad = mood === "sad";
   const isHappy = mood === "happy" || mood === "excited";
   const eyeR = isSad ? 5 : 6;
@@ -62,11 +90,14 @@ function Face({ mood, cx, cy, eyeGap = 13, eyeY = 0 }) {
           strokeLinecap="round"
         />
       )}
+      {accessories.map((type) => (
+        <Accessory key={type} type={type} cx={cx} cy={cy + eyeY} eyeGap={eyeGap} />
+      ))}
     </g>
   );
 }
 
-function ZakiShape({ mood, uid, reducedMotion }) {
+function ZakiShape({ mood, uid, reducedMotion, accessories }) {
   const isHappy = (mood === "happy" || mood === "excited") && !reducedMotion;
   const petals = [0, 60, 120, 180, 240, 300];
   const gradId = `zakiGrad-${uid}`;
@@ -93,12 +124,12 @@ function ZakiShape({ mood, uid, reducedMotion }) {
         />
       ))}
       <circle cx="60" cy="60" r="27" fill="#FFF6EC" />
-      <Face mood={mood} cx={60} cy={60} />
+      <Face mood={mood} cx={60} cy={60} accessories={accessories} />
     </>
   );
 }
 
-function NardosShape({ mood, uid }) {
+function NardosShape({ mood, uid, accessories }) {
   const gradId = `nardosGrad-${uid}`;
   return (
     <>
@@ -120,12 +151,12 @@ function NardosShape({ mood, uid }) {
         fill="none"
       />
       <ellipse cx="60" cy="78" rx="30" ry="26" fill="#FFF6EC" opacity="0.94" />
-      <Face mood={mood} cx={60} cy={80} eyeGap={12} />
+      <Face mood={mood} cx={60} cy={80} eyeGap={12} accessories={accessories} />
     </>
   );
 }
 
-function BemnetShape({ mood, uid, reducedMotion }) {
+function BemnetShape({ mood, uid, reducedMotion, accessories }) {
   const isHappy = mood === "happy" || mood === "excited";
   const animateLoop = isHappy && !reducedMotion;
   const gradId = `bemnetGrad-${uid}`;
@@ -171,7 +202,7 @@ function BemnetShape({ mood, uid, reducedMotion }) {
       <circle cx="78" cy="42" r="14" fill={`url(#${gradId})`} />
 
       <ellipse cx="60" cy="70" rx="32" ry="28" fill="#FFF6EC" opacity="0.92" />
-      <Face mood={mood} cx={60} cy={68} eyeGap={14} />
+      <Face mood={mood} cx={60} cy={68} eyeGap={14} accessories={accessories} />
       {isHappy && (
         <ellipse cx="60" cy="94" rx="7" ry="5" fill="#FF6B4A" opacity="0.85" />
       )}
@@ -179,7 +210,7 @@ function BemnetShape({ mood, uid, reducedMotion }) {
   );
 }
 
-function SabaShape({ mood, uid }) {
+function SabaShape({ mood, uid, accessories }) {
   const gradId = `sabaGrad-${uid}`;
   const eyeGap = 13;
   const cy = 64;
@@ -204,7 +235,7 @@ function SabaShape({ mood, uid }) {
       <circle cx="60" cy={cy} r="34" fill={`url(#${gradId})`} />
       <circle cx="60" cy={cy - 26} r="8" fill={`url(#${gradId})`} />
 
-      <Face mood={mood} cx={60} cy={cy} eyeGap={eyeGap} />
+      <Face mood={mood} cx={60} cy={cy} eyeGap={eyeGap} accessories={accessories} />
 
       {/* glasses */}
       <circle cx={60 - eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
@@ -216,7 +247,7 @@ function SabaShape({ mood, uid }) {
   );
 }
 
-function TesfaShape({ mood, uid, reducedMotion }) {
+function TesfaShape({ mood, uid, reducedMotion, accessories }) {
   const isHappy = (mood === "happy" || mood === "excited") && !reducedMotion;
   const gradId = `tesfaGrad-${uid}`;
   return (
@@ -252,7 +283,7 @@ function TesfaShape({ mood, uid, reducedMotion }) {
         fill={`url(#${gradId})`}
       />
       <ellipse cx="60" cy="56" rx="28" ry="24" fill="#FFF6EC" opacity="0.92" />
-      <Face mood={mood} cx={60} cy={54} eyeGap={12} />
+      <Face mood={mood} cx={60} cy={54} eyeGap={12} accessories={accessories} />
     </>
   );
 }
@@ -265,11 +296,14 @@ const SHAPES = {
   tesfa: TesfaShape,
 };
 
-export default function Mascot({ mascotId = "zaki", mood = "neutral", size = 120, className = "" }) {
+export default function Mascot({ mascotId = "zaki", mood = "neutral", size = 120, className = "", accessories = [] }) {
   const Shape = SHAPES[mascotId] || ZakiShape;
   const uid = useId();
   const { settings } = useSettingsContext();
   const reducedMotion = settings.reducedMotion;
+  // Saba's design already includes glasses as part of her character —
+  // stacking a second pair would just look like a rendering bug.
+  const effectiveAccessories = mascotId === "saba" ? accessories.filter((a) => a !== "glasses") : accessories;
 
   return (
     <motion.div
@@ -279,7 +313,7 @@ export default function Mascot({ mascotId = "zaki", mood = "neutral", size = 120
       transition={{ duration: 0.6, ease: "easeInOut" }}
     >
       <svg viewBox="0 0 120 120" width={size} height={size}>
-        <Shape mood={mood} uid={uid} reducedMotion={reducedMotion} />
+        <Shape mood={mood} uid={uid} reducedMotion={reducedMotion} accessories={effectiveAccessories} />
       </svg>
     </motion.div>
   );

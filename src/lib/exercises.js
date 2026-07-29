@@ -381,5 +381,24 @@ export function generateLessonExercises(lesson, allLessons = [lesson]) {
     })
     .filter(Boolean);
 
+  markOneGoldenQuestion(exercises);
+
   return exercises;
+}
+
+// Marks exactly one choice-type exercise per practice round as a "golden"
+// question — its correct option pays out bonus XP, a small unpredictable
+// reward baked into a normal round rather than a separate mini-game.
+function markOneGoldenQuestion(exercises) {
+  const eligible = exercises.filter((ex) => Array.isArray(ex.options));
+  if (eligible.length === 0) return;
+  const chosen = eligible[Math.floor(Math.random() * eligible.length)];
+  chosen.isGoldenQuestion = true;
+}
+
+// A short, low-stakes set of extra multiple-choice questions offered after
+// a lesson finishes — a "want to keep going?" bonus, never required.
+export function makeBonusRound(lesson, count = 3) {
+  const words = sample(lesson.words, Math.min(count, lesson.words.length));
+  return words.map((w) => makeMultipleChoice(lesson.id, w, lesson.words));
 }

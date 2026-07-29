@@ -14,7 +14,7 @@ function ToggleSwitch({ on, onToggle, label }) {
         sound.click();
         onToggle();
       }}
-      className="flex items-center justify-between w-full rounded-2xl bg-white px-4 py-3.5 card-soft"
+      className="flex items-center justify-between w-full rounded-2xl px-4 py-3.5 card-soft"
     >
       <span className="font-extrabold text-left" style={{ color: "var(--color-brand-ink)" }}>
         {label}
@@ -40,6 +40,12 @@ const GOAL_LABELS = [
   { key: "casual", label: "Casual", sub: "1 lesson / day" },
   { key: "regular", label: "Regular", sub: "3 lessons / day" },
   { key: "serious", label: "Serious", sub: "5 lessons / day" },
+];
+
+const THEME_OPTIONS = [
+  { key: "system", label: "System", icon: "🌗" },
+  { key: "light", label: "Light", icon: "☀️" },
+  { key: "dark", label: "Dark", icon: "🌙" },
 ];
 
 export default function Settings({ progress, onUpdateProgressField, onResetProgress }) {
@@ -88,12 +94,47 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
       <div className="max-w-md w-full mx-auto px-4 py-6 flex flex-col gap-6">
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+            Appearance
+          </h2>
+          <div className="grid grid-cols-3 gap-2">
+            {THEME_OPTIONS.map((opt) => {
+              const active = settings.theme === opt.key;
+              return (
+                <button
+                  key={opt.key}
+                  onClick={() => {
+                    sound.click();
+                    updateSetting("theme", opt.key);
+                  }}
+                  className="rounded-2xl px-2 py-3 flex flex-col items-center gap-0.5"
+                  style={{
+                    background: active ? "var(--color-brand-coral-light)" : "var(--color-brand-surface)",
+                    border: `2px solid ${active ? "var(--color-brand-coral)" : "var(--color-brand-line)"}`,
+                  }}
+                >
+                  <span className="text-lg leading-none">{opt.icon}</span>
+                  <span className="font-extrabold text-sm" style={{ color: "var(--color-brand-ink)" }}>
+                    {opt.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
             Sound &amp; Motion
           </h2>
           <ToggleSwitch
             label="Sound"
             on={settings.soundOn}
             onToggle={() => updateSetting("soundOn", !settings.soundOn)}
+          />
+          <ToggleSwitch
+            label="Soft lesson music"
+            on={settings.musicOn}
+            onToggle={() => updateSetting("musicOn", !settings.musicOn)}
           />
           <ToggleSwitch
             label="Reduce animations"
@@ -146,7 +187,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
                   }}
                   className="rounded-2xl px-2 py-3 flex flex-col items-center gap-0.5"
                   style={{
-                    background: active ? "var(--color-brand-coral-light)" : "white",
+                    background: active ? "var(--color-brand-coral-light)" : "var(--color-brand-surface)",
                     border: `2px solid ${active ? "var(--color-brand-coral)" : "var(--color-brand-line)"}`,
                   }}
                 >

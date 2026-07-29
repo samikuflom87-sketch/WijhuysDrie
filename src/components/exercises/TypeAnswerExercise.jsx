@@ -69,7 +69,7 @@ export default function TypeAnswerExercise({ exercise, checked, isCorrect, onCha
                 : "var(--color-brand-red-light)"
               : showRetryHint
               ? "var(--color-brand-yellow-light)"
-              : "white",
+              : "var(--color-brand-surface)",
             color: "var(--color-brand-ink)",
           }}
         />

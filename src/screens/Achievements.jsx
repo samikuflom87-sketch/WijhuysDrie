@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BADGES } from "../data/badges";
 import { useSound } from "../hooks/useSound";
+import StreakCalendar from "../components/StreakCalendar";
 
 export default function Achievements({ progress }) {
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ export default function Achievements({ progress }) {
       </header>
 
       <div className="max-w-md w-full mx-auto px-4 py-6 flex flex-col gap-3">
+        <StreakCalendar activeDates={progress.activeDates} />
+
         <p className="text-sm font-bold text-center" style={{ color: "var(--color-brand-ink-light)" }}>
           {unlockedCount} of {BADGES.length} unlocked
         </p>
@@ -44,7 +47,7 @@ export default function Achievements({ progress }) {
               transition={{ duration: 0.25, delay: i * 0.03 }}
               className="rounded-2xl p-4 flex items-center gap-4"
               style={{
-                background: unlocked ? "white" : "#F3E9DA",
+                background: "var(--color-brand-surface)",
                 border: `2px solid ${unlocked ? "var(--color-brand-yellow)" : "var(--color-brand-line)"}`,
                 boxShadow: unlocked ? "0 2px 10px rgba(224, 168, 0, 0.16)" : "none",
                 opacity: unlocked ? 1 : 0.65,

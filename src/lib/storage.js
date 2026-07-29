@@ -43,6 +43,9 @@ function daysBetween(a, b) {
   return Math.round((db - da) / msPerDay);
 }
 
+// How many days of history the streak calendar keeps around.
+const ACTIVE_DATES_HISTORY_DAYS = 180;
+
 export function defaultProgress() {
   return {
     xp: 0,
@@ -54,7 +57,10 @@ export function defaultProgress() {
     dailyGoalLessons: DEFAULT_DAILY_GOAL_LESSONS,
     streakFreezes: 0,
     unlockedBadges: [],
+    unlockedAccessories: [],
     completedLessons: {}, // { [lessonId]: { crown: true } }
+    bestAccuracyByLesson: {}, // { [lessonId]: 0..1 }
+    activeDates: [], // ["2026-07-29", ...] — for the streak calendar
   };
 }
 
@@ -102,7 +108,7 @@ export function isLessonCompleted(progress, lessonId) {
   return Boolean(progress.completedLessons[lessonId]);
 }
 
-export function applyLessonComplete(progress, lessonId, xpEarned) {
+export function applyLessonComplete(progress, lessonId, xpEarned, accuracyPct = 1) {
   const today = todayStr();
   let streak = progress.streak;
   let streakFreezes = progress.streakFreezes;
@@ -130,6 +136,16 @@ export function applyLessonComplete(progress, lessonId, xpEarned) {
   const todayXp = isNewDay ? xpEarned : progress.todayXp + xpEarned;
   const todayLessons = isNewDay ? 1 : progress.todayLessons + 1;
 
+  const activeDates = progress.activeDates.includes(today)
+    ? progress.activeDates
+    : [...progress.activeDates, today].slice(-ACTIVE_DATES_HISTORY_DAYS);
+
+  const prevBest = progress.bestAccuracyByLesson[lessonId] ?? 0;
+  const bestAccuracyByLesson = {
+    ...progress.bestAccuracyByLesson,
+    [lessonId]: Math.max(prevBest, accuracyPct),
+  };
+
   return {
     ...progress,
     xp: progress.xp + xpEarned,
@@ -139,6 +155,8 @@ export function applyLessonComplete(progress, lessonId, xpEarned) {
     todayDate: today,
     todayXp,
     todayLessons,
+    activeDates,
+    bestAccuracyByLesson,
     completedLessons: {
       ...progress.completedLessons,
       [lessonId]: { crown: true },

@@ -4,6 +4,8 @@ export function defaultSettings() {
   return {
     soundOn: true,
     reducedMotion: false,
+    theme: "system", // "system" | "light" | "dark"
+    musicOn: false,
   };
 }
 
