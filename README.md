@@ -2,6 +2,13 @@
 
 A gamified web app for learning Tigrinya (Latin transliteration — no Ge'ez script). Original visual identity: warm coral, sunny yellow, and deep teal, with five original mascots (Zaki, Nardos, Bemnet, Saba, and Tesfa). One of them accompanies you through each lesson — visible during exercises, not just after you answer — and reacts to correct/wrong answers in its own voice. Built with React, Vite, Tailwind CSS, and Framer Motion. All progress is stored in `localStorage` — there is no backend.
 
+## Installing it as an app
+
+There's a `manifest.json` and app icons, so on a phone you can add it to the
+home screen (Chrome/Safari: share/menu → "Add to Home Screen") and it opens
+full-screen with its own icon, like an installed app — no offline support
+yet, just the installable shell.
+
 ## Running it
 
 ```bash
@@ -109,6 +116,8 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/screens/Home.jsx` — learning path, streak/XP/level, daily goal, Review button
 - `src/screens/LessonScreen.jsx` — intro → practice → review → celebration flow
 - `src/screens/Settings.jsx` / `src/screens/Achievements.jsx`
+- `src/components/ErrorBoundary.jsx` — catches a crash anywhere in the app and shows a friendly "back to home" screen instead of a blank white page
+- `public/manifest.json`, `public/icons/app-*.png`, `public/apple-touch-icon.png` — installable-app assets
 
 ## Attribution
 
