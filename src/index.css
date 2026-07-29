@@ -159,6 +159,13 @@ button {
   box-shadow: 0 4px 0 var(--color-brand-red);
 }
 
+/* Soft-elevated card: subtle shadow + hairline border instead of a flat
+   border-only outline, so surfaces read as lifted rather than flat. */
+.card-soft {
+  border: 2px solid var(--color-brand-line);
+  box-shadow: 0 2px 10px rgba(74, 53, 39, 0.06);
+}
+
 /* Shared screen background: cream fill + faint diamond-lattice texture,
    used instead of a flat inline background color so every full-screen
    view reads as designed rather than a flat AI-default fill. */

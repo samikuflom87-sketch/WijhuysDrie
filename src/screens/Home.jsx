@@ -6,7 +6,9 @@ import { isLessonCompleted, isLessonUnlocked, getLevelInfo } from "../lib/storag
 import { lessonAccuracy, pickReviewWords } from "../lib/wordStats";
 import { randomMascot, randomLine } from "../data/mascots";
 import LessonBubble from "../components/LessonBubble";
+import LessonPath from "../components/LessonPath";
 import StatPill from "../components/StatPill";
+import StreakFlame from "../components/StreakFlame";
 import Mascot from "../components/Mascot";
 import ProgressBar from "../components/ProgressBar";
 import XPCounter from "../components/XPCounter";
@@ -43,7 +45,7 @@ export default function Home({ progress, wordStats }) {
             Habesha Steps
           </h1>
           <div className="flex items-center gap-3">
-            <StatPill icon="🔥" value={progress.streak} color="white" />
+            <StreakFlame streak={progress.streak} color="white" />
             {progress.streakFreezes > 0 && <StatPill icon="🧊" value={progress.streakFreezes} color="white" />}
             <StatPill icon="⭐" value={<XPCounter value={progress.xp} />} color="white" />
             <button
@@ -75,8 +77,8 @@ export default function Home({ progress, wordStats }) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="rounded-2xl p-4 flex items-center gap-3"
-          style={{ background: "white", border: "2px solid var(--color-brand-line)" }}
+          className="rounded-2xl p-4 flex items-center gap-3 card-soft"
+          style={{ background: "white" }}
         >
           <Mascot mascotId={greeter.id} mood="happy" size={56} />
           <div>
@@ -89,7 +91,7 @@ export default function Home({ progress, wordStats }) {
           </div>
         </motion.div>
 
-        <div className="bg-white rounded-2xl p-4 flex items-center justify-between" style={{ border: "2px solid var(--color-brand-line)" }}>
+        <div className="bg-white rounded-2xl p-4 flex items-center justify-between card-soft">
           <div>
             <p className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
               Level {levelInfo.level}
@@ -105,7 +107,7 @@ export default function Home({ progress, wordStats }) {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-4" style={{ border: "2px solid var(--color-brand-line)" }}>
+        <div className="bg-white rounded-2xl p-4 card-soft">
           <div className="flex justify-between items-center mb-2">
             <span className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
               Daily Goal
@@ -131,11 +133,12 @@ export default function Home({ progress, wordStats }) {
       </div>
 
       <motion.div
-        className="max-w-md w-full mx-auto flex flex-col items-center gap-10 px-4 py-12"
+        className="relative max-w-md w-full mx-auto flex flex-col items-center gap-10 px-4 py-12"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
+        <LessonPath count={lessons.length} />
         {lessons.map((lesson, i) => (
           <LessonBubble
             key={lesson.id}

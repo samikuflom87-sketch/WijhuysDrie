@@ -420,41 +420,75 @@ export default function LessonScreen({
             <Mascot mascotId={companion.id} mood="excited" size={140} />
           </motion.div>
         </div>
-        <h1 className="text-3xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
+        <motion.h1
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.3 }}
+          className="text-3xl font-extrabold"
+          style={{ color: "var(--color-brand-ink)" }}
+        >
           {isReview ? "Review Complete!" : "Lesson Complete!"}
-        </h1>
-        <p className="font-bold text-lg" style={{ color: "var(--color-brand-ink-light)" }}>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.3 }}
+          className="font-bold text-lg"
+          style={{ color: "var(--color-brand-ink-light)" }}
+        >
           {message}
-        </p>
+        </motion.p>
 
         <div className="flex gap-3">
-          <div className="bg-white rounded-2xl border-2 px-5 py-4 flex flex-col items-center" style={{ borderColor: "var(--color-brand-line)" }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.7, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: 0.4, type: "spring", stiffness: 260, damping: 16 }}
+            className="bg-white rounded-2xl px-5 py-4 flex flex-col items-center card-soft"
+          >
             <span className="text-2xl font-extrabold" style={{ color: "var(--color-brand-yellow-dark)" }}>
               +<XPCounter value={xp} />
             </span>
             <span className="text-xs font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
               XP
             </span>
-          </div>
-          <div className="bg-white rounded-2xl border-2 px-5 py-4 flex flex-col items-center" style={{ borderColor: "var(--color-brand-line)" }}>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.7, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: 0.52, type: "spring", stiffness: 260, damping: 16 }}
+            className="bg-white rounded-2xl px-5 py-4 flex flex-col items-center card-soft"
+          >
             <span className="text-2xl font-extrabold" style={{ color: "var(--color-brand-teal-dark)" }}>
               {accuracyPct}%
             </span>
             <span className="text-xs font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
               Accuracy
             </span>
-          </div>
+          </motion.div>
         </div>
 
         {!isReview && (
-          <div className="flex items-center gap-2 font-bold" style={{ color: "var(--color-brand-yellow-dark)" }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.66, type: "spring", stiffness: 300, damping: 14 }}
+            className="flex items-center gap-2 font-bold"
+            style={{ color: "var(--color-brand-yellow-dark)" }}
+          >
             <span>👑</span>
             <span>Crown earned!</span>
-          </div>
+          </motion.div>
         )}
 
         {newBadges.length > 0 && (
-          <div className="flex flex-col items-center gap-1 rounded-2xl px-5 py-3" style={{ background: "var(--color-brand-yellow-light)" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.78, duration: 0.3 }}
+            className="flex flex-col items-center gap-1 rounded-2xl px-5 py-3 card-soft"
+            style={{ background: "var(--color-brand-yellow-light)" }}
+          >
             <p className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
               New badge unlocked
             </p>
@@ -463,7 +497,7 @@ export default function LessonScreen({
                 {b.icon} {b.name}
               </p>
             ))}
-          </div>
+          </motion.div>
         )}
 
         <Button variant="coral" className="w-full max-w-xs uppercase tracking-wide" onClick={() => navigate("/")}>

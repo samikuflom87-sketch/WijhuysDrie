@@ -52,7 +52,7 @@ export default function LessonBubble({ lesson, status, index, accuracy, onClick 
   const ringColor = accuracy >= 0.8 ? "var(--color-brand-teal)" : accuracy >= 0.5 ? "var(--color-brand-yellow-dark)" : "var(--color-brand-coral)";
 
   return (
-    <div className="flex flex-col items-center" style={{ transform: `translateX(${offset}px)` }}>
+    <div className="relative z-10 flex flex-col items-center" style={{ transform: `translateX(${offset}px)` }}>
       <div className="relative" style={{ width: 96, height: 96 }}>
         {showRing && <ProgressRing pct={accuracy} size={96} color={ringColor} />}
         <motion.button

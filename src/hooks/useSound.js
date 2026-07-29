@@ -1,13 +1,26 @@
 import { useSettingsContext } from "../context/SettingsContext";
 import { playClick, playCorrect, playWrong, playPop } from "../lib/soundEffects";
+import { hapticTap, hapticCorrect, hapticWrong } from "../lib/haptics";
 
 export function useSound() {
   const { settings } = useSettingsContext();
   const on = settings.soundOn;
   return {
-    click: () => on && playClick(),
-    correct: () => on && playCorrect(),
-    wrong: () => on && playWrong(),
-    pop: () => on && playPop(),
+    click: () => {
+      if (on) playClick();
+      hapticTap();
+    },
+    correct: () => {
+      if (on) playCorrect();
+      hapticCorrect();
+    },
+    wrong: () => {
+      if (on) playWrong();
+      hapticWrong();
+    },
+    pop: () => {
+      if (on) playPop();
+      hapticTap();
+    },
   };
 }

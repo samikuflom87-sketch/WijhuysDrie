@@ -46,6 +46,7 @@ export default function Achievements({ progress }) {
               style={{
                 background: unlocked ? "white" : "#F3E9DA",
                 border: `2px solid ${unlocked ? "var(--color-brand-yellow)" : "var(--color-brand-line)"}`,
+                boxShadow: unlocked ? "0 2px 10px rgba(224, 168, 0, 0.16)" : "none",
                 opacity: unlocked ? 1 : 0.65,
               }}
             >

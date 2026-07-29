@@ -14,8 +14,7 @@ function ToggleSwitch({ on, onToggle, label }) {
         sound.click();
         onToggle();
       }}
-      className="flex items-center justify-between w-full rounded-2xl bg-white px-4 py-3.5"
-      style={{ border: "2px solid var(--color-brand-line)" }}
+      className="flex items-center justify-between w-full rounded-2xl bg-white px-4 py-3.5 card-soft"
     >
       <span className="font-extrabold text-left" style={{ color: "var(--color-brand-ink)" }}>
         {label}
