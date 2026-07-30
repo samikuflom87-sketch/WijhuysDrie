@@ -19,10 +19,7 @@ export default function Flashcard({ word, index, total, onGotIt }) {
       </p>
 
       {word.image && (
-        <div
-          className="rounded-3xl p-5 flex items-center justify-center"
-          style={{ background: "var(--color-brand-teal-light)" }}
-        >
+        <div className="icon-badge rounded-3xl p-5 flex items-center justify-center">
           <Illustration name={word.image} size={110} />
         </div>
       )}

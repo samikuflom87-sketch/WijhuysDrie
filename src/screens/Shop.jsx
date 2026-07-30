@@ -59,8 +59,8 @@ export default function Shop({ progress, onPurchase }) {
               className="rounded-2xl p-4 flex items-center gap-4 card-soft"
             >
               <span
-                className="flex items-center justify-center rounded-full shrink-0"
-                style={{ width: 44, height: 44, background: "var(--color-brand-teal-light)", color: "var(--color-brand-teal-dark)" }}
+                className="icon-badge flex items-center justify-center rounded-full shrink-0"
+                style={{ width: 44, height: 44, color: "var(--color-brand-teal-dark)" }}
               >
                 <Icon name={item.icon} size={22} />
               </span>

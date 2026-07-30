@@ -50,8 +50,8 @@ export default function OnboardingGoal({ onChoose }) {
               style={{ color: "var(--color-brand-ink)" }}
             >
               <span
-                className="flex items-center justify-center rounded-full shrink-0"
-                style={{ width: 36, height: 36, background: "var(--color-brand-coral-light)", color: "var(--color-brand-coral-dark)" }}
+                className="icon-badge flex items-center justify-center rounded-full shrink-0"
+                style={{ width: 36, height: 36, "--badge-tint": "var(--color-brand-coral-light)", color: "var(--color-brand-coral-dark)" }}
               >
                 <Icon name={g.icon} size={18} />
               </span>

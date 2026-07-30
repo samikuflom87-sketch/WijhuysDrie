@@ -24,8 +24,8 @@ function QuestRow({ quest, progress, onClaim, i }) {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <span
-            className="flex items-center justify-center rounded-full shrink-0"
-            style={{ width: 32, height: 32, background: "var(--color-brand-teal-light)", color: "var(--color-brand-teal-dark)" }}
+            className="icon-badge flex items-center justify-center rounded-full shrink-0"
+            style={{ width: 32, height: 32, color: "var(--color-brand-teal-dark)" }}
           >
             <Icon name={quest.icon} size={16} />
           </span>
@@ -95,7 +95,7 @@ export default function Quests({ progress, onClaimQuest }) {
 
       <div className="max-w-md md:max-w-xl w-full mx-auto px-4 py-6 flex flex-col gap-6">
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+          <h2 className="text-sm font-extrabold uppercase tracking-wider" style={{ color: "var(--color-brand-ink-light)" }}>
             Daily
           </h2>
           {DAILY_QUESTS.map((quest, i) => (
@@ -104,7 +104,7 @@ export default function Quests({ progress, onClaimQuest }) {
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+          <h2 className="text-sm font-extrabold uppercase tracking-wider" style={{ color: "var(--color-brand-ink-light)" }}>
             Weekly
           </h2>
           {WEEKLY_QUESTS.map((quest, i) => (

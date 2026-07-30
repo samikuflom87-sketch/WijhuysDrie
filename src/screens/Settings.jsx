@@ -94,7 +94,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
 
       <div className="max-w-md md:max-w-xl w-full mx-auto px-4 py-6 flex flex-col gap-6">
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+          <h2 className="text-sm font-extrabold uppercase tracking-wider" style={{ color: "var(--color-brand-ink-light)" }}>
             Appearance
           </h2>
           <div className="grid grid-cols-3 gap-2">
@@ -124,7 +124,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+          <h2 className="text-sm font-extrabold uppercase tracking-wider" style={{ color: "var(--color-brand-ink-light)" }}>
             Sound &amp; Motion
           </h2>
           <ToggleSwitch
@@ -173,7 +173,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+          <h2 className="text-sm font-extrabold uppercase tracking-wider" style={{ color: "var(--color-brand-ink-light)" }}>
             Daily Goal
           </h2>
           <div className="grid grid-cols-3 gap-2">
@@ -206,7 +206,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-red-dark)" }}>
+          <h2 className="text-sm font-extrabold uppercase tracking-wider" style={{ color: "var(--color-brand-red-dark)" }}>
             Danger Zone
           </h2>
           {!confirmingReset ? (

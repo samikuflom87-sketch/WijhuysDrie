@@ -24,10 +24,7 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
         </p>
         {isPicture ? (
           <div className="flex justify-center py-2">
-            <div
-              className="rounded-3xl p-4 flex items-center justify-center"
-              style={{ background: "var(--color-brand-teal-light)" }}
-            >
+            <div className="icon-badge rounded-3xl p-4 flex items-center justify-center">
               <Illustration name={exercise.promptImage} size={120} />
             </div>
           </div>

@@ -75,10 +75,7 @@ export default function Mistakes({ wordStats }) {
                 className="rounded-2xl p-3 flex items-center gap-3 card-soft"
               >
                 {word.image && (
-                  <div
-                    className="rounded-xl p-2 flex items-center justify-center shrink-0"
-                    style={{ background: "var(--color-brand-teal-light)" }}
-                  >
+                  <div className="icon-badge rounded-xl p-2 flex items-center justify-center shrink-0">
                     <Illustration name={word.image} size={36} />
                   </div>
                 )}

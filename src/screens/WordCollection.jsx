@@ -74,10 +74,7 @@ export default function WordCollection({ wordStats }) {
                 className="rounded-2xl p-3 flex flex-col items-center gap-1.5 card-soft"
               >
                 {word.image && (
-                  <div
-                    className="rounded-xl p-2 flex items-center justify-center"
-                    style={{ background: "var(--color-brand-teal-light)" }}
-                  >
+                  <div className="icon-badge rounded-xl p-2 flex items-center justify-center">
                     <Illustration name={word.image} size={44} />
                   </div>
                 )}

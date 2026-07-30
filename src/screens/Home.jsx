@@ -166,7 +166,7 @@ export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, o
 
         <div className="rounded-2xl p-4 flex items-center justify-between card-soft">
           <div>
-            <p className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
+            <p className="text-xs font-extrabold uppercase tracking-wider" style={{ color: "var(--color-brand-ink-light)" }}>
               Level {levelInfo.level} · Est. {cefrLevel}
             </p>
             <p className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
