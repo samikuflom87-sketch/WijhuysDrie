@@ -33,6 +33,8 @@ export const MASCOTS = [
       "Okay, quick regroup! Let's hit this one again — you've got more in you.",
       "Pit stop! Reload and let's go again, even faster this time.",
     ],
+    questsTip: "Let's smash these quests and grab that XP!",
+    practiceTip: "Extra reps, zero risk — let's go!",
   },
   {
     id: "nardos",
@@ -64,6 +66,8 @@ export const MASCOTS = [
       "Let's pause here. A short break, then we go again — no rush at all.",
       "This is just a natural stopping point. Come back whenever you're ready.",
     ],
+    questsTip: "A few small goals each day add up to real progress.",
+    practiceTip: "A little practice here keeps everything sharp.",
   },
   {
     id: "bemnet",
@@ -95,6 +99,8 @@ export const MASCOTS = [
       "Plot twist: this is just round two waiting to happen. Let's go again!",
       "Even my snacks needed a intermission. Let's jump back in!",
     ],
+    questsTip: "Quests? More like snack breaks that pay you in gems.",
+    practiceTip: "Practice mode: where mistakes cost nothing but my dignity.",
   },
   {
     id: "saba",
@@ -126,6 +132,8 @@ export const MASCOTS = [
       "Interesting — that tells us exactly which words need another look. Let's dig back in.",
       "A good researcher just gathers more data and tries again. Ready when you are.",
     ],
+    questsTip: "I like collecting these — it's oddly satisfying.",
+    practiceTip: "Great place to double-check what's really stuck.",
   },
   {
     id: "tesfa",
@@ -157,6 +165,8 @@ export const MASCOTS = [
       "Hey, no rush — let's just breathe and try this lesson again together.",
       "You showed up and tried, and that's what counts. Let's go once more, at your pace.",
     ],
+    questsTip: "No pressure — just nice little goals to enjoy.",
+    practiceTip: "Take your time here — nothing to lose, only to gain.",
   },
 ];
 

@@ -4,6 +4,7 @@ import { DAILY_QUESTS, WEEKLY_QUESTS } from "../data/quests";
 import ProgressBar from "../components/ProgressBar";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
+import MascotTip from "../components/MascotTip";
 import { useSound } from "../hooks/useSound";
 
 function QuestRow({ quest, progress, onClaim, i }) {
@@ -94,6 +95,8 @@ export default function Quests({ progress, onClaimQuest }) {
       </header>
 
       <div className="max-w-md md:max-w-xl w-full mx-auto px-4 py-6 flex flex-col gap-6">
+        <MascotTip tipKey="questsTip" />
+
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-extrabold uppercase tracking-wider" style={{ color: "var(--color-brand-ink-light)" }}>
             Daily

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Icon from "../components/Icon";
+import MascotTip from "../components/MascotTip";
 import { useSound } from "../hooks/useSound";
 import { popIn } from "../lib/motion";
 
@@ -36,6 +37,8 @@ export default function PracticeHub({ hasReviewWords }) {
       </header>
 
       <div className="max-w-md md:max-w-xl w-full mx-auto px-4 py-6 flex flex-col gap-3">
+        <MascotTip tipKey="practiceTip" />
+
         <p className="text-sm font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
           Targeted practice on words you've already been taught — no hearts at risk.
         </p>

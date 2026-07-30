@@ -14,7 +14,7 @@ import { randomMascot, randomLine } from "../data/mascots";
 import { lessonAccentColor } from "../lib/lessonTheme";
 import { randomCompliment } from "../data/compliments";
 import { SPRING_BOUNCY } from "../lib/motion";
-import { applyLessonComplete, HEART_REFILL_COST } from "../lib/storage";
+import { applyLessonComplete, getLevelInfo, HEART_REFILL_COST } from "../lib/storage";
 import { checkBadges } from "../data/badges";
 import { checkAccessories } from "../data/accessories";
 import { pickReviewWords, allIntroducedWords, wordId } from "../lib/wordStats";
@@ -24,6 +24,7 @@ import Button from "../components/Button";
 import Icon from "../components/Icon";
 import Mascot from "../components/Mascot";
 import Confetti, { randomConfettiVariant } from "../components/Confetti";
+import CelebrationMoment from "../components/CelebrationMoment";
 import Flashcard from "../components/Flashcard";
 import HintReveal from "../components/HintReveal";
 import ChoiceExercise from "../components/exercises/ChoiceExercise";
@@ -169,6 +170,7 @@ export default function LessonScreen({
   const [bonusQueue, setBonusQueue] = useState([]);
   const [bonusOffered, setBonusOffered] = useState(false);
   const [preFailPhase, setPreFailPhase] = useState("practice");
+  const [celebrationQueue, setCelebrationQueue] = useState([]);
 
   const totalToResolve = exercises.length;
   const teachStep = phase === "teaching" ? teachingSequence[teachIndex] : null;
@@ -281,11 +283,30 @@ export default function LessonScreen({
     setNewAccessories(newlyUnlockedAccessories);
     setBeatBestScore(prevBest > 0 && accuracyPct > prevBest);
     setIsPerfectLesson(wasPerfect);
-    const crossedMilestone = STREAK_MILESTONES.some(
+
+    // Streak milestones and level-ups get their own full-screen "directed
+    // moment" instead of being folded quietly into the summary — queued so
+    // both can play in sequence on the rare visit that earns both at once.
+    const crossedMilestoneValue = STREAK_MILESTONES.find(
       (m) => progress.streak < m && predicted.streak >= m,
     );
-    if (crossedMilestone) sound.fanfare();
-    setPhase("complete");
+    const prevLevel = getLevelInfo(progress.xp).level;
+    const newLevelInfo = getLevelInfo(predicted.xp);
+    const leveledUp = newLevelInfo.level > prevLevel;
+
+    const celebrations = [];
+    if (crossedMilestoneValue) celebrations.push({ type: "streak", value: crossedMilestoneValue });
+    if (leveledUp) celebrations.push({ type: "level", value: newLevelInfo.level, rank: newLevelInfo.rank });
+    if (celebrations.length > 0) sound.fanfare();
+    setCelebrationQueue(celebrations);
+    setPhase(celebrations.length > 0 ? "celebrate" : "complete");
+  }
+
+  function advanceCelebration() {
+    sound.click();
+    const next = celebrationQueue.slice(1);
+    setCelebrationQueue(next);
+    if (next.length === 0) setPhase("complete");
   }
 
   function advance(xpDelta, isCorrect) {
@@ -515,6 +536,19 @@ export default function LessonScreen({
           </Button>
         </div>
       </div>
+    );
+  }
+
+  if (phase === "celebrate" && celebrationQueue.length > 0) {
+    const current = celebrationQueue[0];
+    return (
+      <CelebrationMoment
+        type={current.type}
+        value={current.value}
+        rank={current.rank}
+        companion={companion}
+        onContinue={advanceCelebration}
+      />
     );
   }
 
