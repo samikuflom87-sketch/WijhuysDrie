@@ -69,10 +69,7 @@ export default function Quests({ progress, onClaimQuest }) {
 
   return (
     <div className="min-h-screen flex flex-col app-bg">
-      <header
-        className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(135deg, #C25A3D, var(--color-brand-coral))" }}
-      >
+      <header className="header-premium sticky top-0 z-10">
         <div className="max-w-md md:max-w-xl mx-auto flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-4">
             <button

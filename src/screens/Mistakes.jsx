@@ -33,10 +33,7 @@ export default function Mistakes({ wordStats }) {
 
   return (
     <div className="min-h-screen flex flex-col app-bg">
-      <header
-        className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(135deg, #C25A3D, var(--color-brand-coral))" }}
-      >
+      <header className="header-premium sticky top-0 z-10">
         <div className="max-w-md md:max-w-xl mx-auto flex items-center gap-4 px-4 py-3">
           <button
             onClick={() => {

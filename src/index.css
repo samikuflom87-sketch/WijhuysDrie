@@ -26,6 +26,13 @@
   --color-brand-ink-light: #6b5c4e;
   --color-brand-surface: #fffcf7;
   --color-brand-shadow: rgba(42, 32, 25, 0.14);
+
+  /* Dedicated header-bar tones, independent of --color-brand-coral: that
+     token is reused as a light readable-text tint in dark mode, so deriving
+     the header background from it there would wash the bar out to a pale
+     peach. These stay deep and rich in both themes. */
+  --color-brand-header-from: #8a371f;
+  --color-brand-header-to: #b8492f;
 }
 
 /* A soft ambient gradient-mesh backdrop — three large, barely-there color
@@ -66,6 +73,8 @@
     --color-brand-ink-light: #c2b0a0;
     --color-brand-surface: #251c16;
     --color-brand-shadow: rgba(0, 0, 0, 0.4);
+    --color-brand-header-from: #48200f;
+    --color-brand-header-to: #6b2f19;
   }
 }
 :root[data-theme="dark"] {
@@ -88,6 +97,8 @@
   --color-brand-ink-light: #c2b0a0;
   --color-brand-surface: #251c16;
   --color-brand-shadow: rgba(0, 0, 0, 0.4);
+  --color-brand-header-from: #48200f;
+  --color-brand-header-to: #6b2f19;
 }
 :root[data-theme="light"] {
   --color-brand-coral: #b8492f;
@@ -109,6 +120,8 @@
   --color-brand-ink-light: #6b5c4e;
   --color-brand-surface: #fffcf7;
   --color-brand-shadow: rgba(42, 32, 25, 0.14);
+  --color-brand-header-from: #8a371f;
+  --color-brand-header-to: #b8492f;
 }
 
 * {
@@ -316,6 +329,30 @@ button {
   background-image: var(--app-ambient-glow);
   background-repeat: no-repeat;
   transition: background-color 0.25s ease;
+}
+
+/* Premium app-bar header: a richer three-stop diagonal gradient derived
+   entirely from the live coral token via color-mix(), plus a soft top-left
+   gloss highlight — replaces a flat two-stop gradient that was anchored to
+   a hardcoded hex, which meant it went pale/washed-out instead of deeper in
+   dark mode (dark mode's coral token is a lighter tint, used for text). */
+.header-premium {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-header-from),
+    var(--color-brand-header-to) 60%,
+    color-mix(in srgb, var(--color-brand-header-to) 100%, white 14%)
+  );
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 4px 14px var(--color-brand-shadow);
+}
+
+.header-premium::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 220px 70px at 12% -40%, rgba(255, 255, 255, 0.18), transparent 70%);
+  pointer-events: none;
 }
 
 /* scrollbar tidy */
