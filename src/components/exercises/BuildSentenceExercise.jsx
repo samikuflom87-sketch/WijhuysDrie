@@ -79,13 +79,7 @@ export default function BuildSentenceExercise({ exercise, checked, onChange, sha
                     : "var(--color-brand-coral)"
                 }`,
                 color: "var(--color-brand-ink)",
-                boxShadow: `0 3px 0 ${
-                  checked
-                    ? isCorrect
-                      ? "var(--color-brand-teal)"
-                      : "var(--color-brand-red)"
-                    : "var(--color-brand-coral)"
-                }`,
+                boxShadow: "0 1px 3px var(--color-brand-shadow)",
               }}
             >
               {tile.text}

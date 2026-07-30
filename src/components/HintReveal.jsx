@@ -20,8 +20,8 @@ export default function HintReveal({ word, open, onToggle }) {
           width: 36,
           height: 36,
           background: "var(--color-brand-yellow)",
-          boxShadow: "0 3px 0 var(--color-brand-yellow-dark)",
-          color: "var(--color-brand-ink)",
+          boxShadow: "0 2px 6px var(--color-brand-shadow)",
+          color: "#2A2019",
         }}
       >
         ?

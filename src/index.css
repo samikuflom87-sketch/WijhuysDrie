@@ -28,6 +28,18 @@
   --color-brand-shadow: rgba(42, 32, 25, 0.14);
 }
 
+/* A soft ambient gradient-mesh backdrop — three large, barely-there color
+   washes instead of a small tiled pattern (which reads as visual noise at
+   normal viewing distance). Built from color-mix() against the live brand
+   tokens, so it re-tints itself automatically for dark mode with no
+   separate per-theme block needed. */
+:root {
+  --app-ambient-glow:
+    radial-gradient(ellipse 640px 420px at 8% -8%, color-mix(in srgb, var(--color-brand-coral) 14%, transparent), transparent 68%),
+    radial-gradient(ellipse 760px 560px at 108% 6%, color-mix(in srgb, var(--color-brand-teal) 12%, transparent), transparent 68%),
+    radial-gradient(ellipse 680px 520px at -8% 104%, color-mix(in srgb, var(--color-brand-yellow) 10%, transparent), transparent 68%);
+}
+
 /* Dark palette: tokens re-derived for contrast/elevation on a dark ground,
    not a naive invert — "-dark" text tokens go lighter (they're used as
    high-contrast text on a surface), "-light" tint tokens go to deep muted
@@ -120,13 +132,7 @@ body {
      rubber-band give is a native-app feel a website usually lacks. */
   background-color: var(--color-brand-cream);
   transition: background-color 0.25s ease, color 0.25s ease;
-  /* A faint diamond lattice (a nod to habesha textile borders) so the
-     background reads as designed, not a flat AI-default cream fill. */
-  background-image:
-    linear-gradient(45deg, rgba(184, 73, 47, 0.05) 25%, transparent 25%, transparent 75%, rgba(184, 73, 47, 0.05) 75%),
-    linear-gradient(45deg, rgba(30, 107, 96, 0.045) 25%, transparent 25%, transparent 75%, rgba(30, 107, 96, 0.045) 75%);
-  background-size: 26px 26px;
-  background-position: 0 0, 13px 13px;
+  background-image: var(--app-ambient-glow);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -255,16 +261,13 @@ button {
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
-/* Shared screen background: cream fill + faint diamond-lattice texture,
-   used instead of a flat inline background color so every full-screen
-   view reads as designed rather than a flat AI-default fill. */
+/* Shared screen background: cream fill + the same soft ambient glow as
+   <body>, used instead of a flat inline background color so every
+   full-screen view reads as designed rather than a flat fill. */
 .app-bg {
   background-color: var(--color-brand-cream);
-  background-image:
-    linear-gradient(45deg, rgba(184, 73, 47, 0.05) 25%, transparent 25%, transparent 75%, rgba(184, 73, 47, 0.05) 75%),
-    linear-gradient(45deg, rgba(30, 107, 96, 0.045) 25%, transparent 25%, transparent 75%, rgba(30, 107, 96, 0.045) 75%);
-  background-size: 26px 26px;
-  background-position: 0 0, 13px 13px;
+  background-image: var(--app-ambient-glow);
+  background-repeat: no-repeat;
   transition: background-color 0.25s ease;
 }
 

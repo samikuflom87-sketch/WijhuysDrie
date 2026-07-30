@@ -101,6 +101,14 @@ function Face({ mood, cx, cy, eyeGap = 13, eyeY = 0, accessories = [] }) {
       )}
       <circle cx={cx - eyeGap} cy={cy + eyeY} r={eyeR} fill="#2A2019" />
       <circle cx={cx + eyeGap} cy={cy + eyeY} r={eyeR} fill="#2A2019" />
+      {/* A small offset glint in each eye reads as life/light, so the face
+          doesn't feel like two flat dots at a glance. */}
+      <circle cx={cx - eyeGap + eyeR * 0.35} cy={cy + eyeY - eyeR * 0.35} r={eyeR * 0.3} fill="#FFFCF7" />
+      <circle cx={cx + eyeGap + eyeR * 0.35} cy={cy + eyeY - eyeR * 0.35} r={eyeR * 0.3} fill="#FFFCF7" />
+      {/* Soft blush for warmth — a subtle, deliberately-drawn detail rather
+          than a flat, expressionless face. */}
+      <ellipse cx={cx - eyeGap - 4} cy={cy + eyeY + 9} rx="6" ry="3.5" fill="#B8492F" opacity="0.18" />
+      <ellipse cx={cx + eyeGap + 4} cy={cy + eyeY + 9} rx="6" ry="3.5" fill="#B8492F" opacity="0.18" />
 
       {isHappy ? (
         <path

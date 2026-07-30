@@ -86,7 +86,7 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
                       tile,
                       isSelected,
                     )}`}
-                    style={{ boxShadow: "0 3px 0 var(--color-brand-line)" }}
+                    style={{ boxShadow: "0 1px 3px var(--color-brand-shadow)" }}
                   >
                     {tile.text}
                   </motion.button>
@@ -117,7 +117,7 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
                       tile,
                       isSelected,
                     )}`}
-                    style={{ boxShadow: "0 3px 0 var(--color-brand-line)" }}
+                    style={{ boxShadow: "0 1px 3px var(--color-brand-shadow)" }}
                   >
                     {tile.text}
                   </motion.button>

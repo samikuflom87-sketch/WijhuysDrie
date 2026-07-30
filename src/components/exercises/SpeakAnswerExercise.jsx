@@ -76,7 +76,7 @@ export default function SpeakAnswerExercise({ exercise, checked, onResult, shake
             width: 84,
             height: 84,
             background: status === "recording" ? "var(--color-brand-red-light)" : "var(--color-brand-coral-light)",
-            boxShadow: `0 4px 0 ${status === "recording" ? "var(--color-brand-red)" : "var(--color-brand-coral)"}`,
+            boxShadow: "0 2px 8px var(--color-brand-shadow)",
             color: status === "recording" ? "var(--color-brand-red-dark)" : "var(--color-brand-coral-dark)",
           }}
         >
