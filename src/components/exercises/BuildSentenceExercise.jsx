@@ -63,6 +63,7 @@ export default function BuildSentenceExercise({ exercise, checked, onChange, sha
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.6, opacity: 0 }}
               onClick={() => removeTile(tile)}
+              aria-label={`Remove "${tile.text}" from your sentence`}
               className="btn-3d rounded-xl px-4 py-2 font-bold"
               style={{
                 background: checked
@@ -104,6 +105,7 @@ export default function BuildSentenceExercise({ exercise, checked, onChange, sha
               exit={{ scale: 0.6, opacity: 0 }}
               onClick={() => addTile(tile)}
               disabled={checked}
+              aria-label={`Add "${tile.text}" to your sentence`}
               className="btn-outline btn-3d rounded-xl px-4 py-2 font-bold"
             >
               {tile.text}

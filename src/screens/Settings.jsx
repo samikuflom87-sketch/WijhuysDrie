@@ -76,7 +76,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
         className="sticky top-0 z-10"
         style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
       >
-        <div className="max-w-md mx-auto flex items-center gap-4 px-4 py-3">
+        <div className="max-w-md md:max-w-xl mx-auto flex items-center gap-4 px-4 py-3">
           <button
             onClick={() => {
               sound.click();
@@ -91,7 +91,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
         </div>
       </header>
 
-      <div className="max-w-md w-full mx-auto px-4 py-6 flex flex-col gap-6">
+      <div className="max-w-md md:max-w-xl w-full mx-auto px-4 py-6 flex flex-col gap-6">
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
             Appearance

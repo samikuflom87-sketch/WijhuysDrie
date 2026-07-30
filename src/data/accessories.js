@@ -19,6 +19,15 @@ export const ACCESSORIES = [
   },
 ];
 
+// Cosmetic accessories bought with gems in the Shop, instead of earned from
+// a milestone. Same visual system (Mascot.jsx renders them), different
+// unlock path.
+export const SHOP_ACCESSORIES = [
+  { id: "bandana", name: "Bandana", icon: "🧣", cost: 40 },
+  { id: "medal", name: "Champion Medal", icon: "🥇", cost: 60 },
+  { id: "crown", name: "Golden Crown", icon: "👑", cost: 100 },
+];
+
 // Returns { progress: updated-if-needed, newlyUnlocked: [accessory, ...] }
 export function checkAccessories(progress, wordStats) {
   const unlocked = progress.unlockedAccessories || [];

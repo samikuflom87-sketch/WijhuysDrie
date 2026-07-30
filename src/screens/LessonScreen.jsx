@@ -8,15 +8,16 @@ import {
   buildTeachingSequence,
   normalizeAnswer,
   makeBonusRound,
+  makeFocusedSession,
 } from "../lib/exercises";
 import { randomMascot, randomLine } from "../data/mascots";
 import { lessonAccentColor } from "../lib/lessonTheme";
 import { randomCompliment } from "../data/compliments";
 import { SPRING_BOUNCY } from "../lib/motion";
-import { applyLessonComplete } from "../lib/storage";
+import { applyLessonComplete, HEART_REFILL_COST } from "../lib/storage";
 import { checkBadges } from "../data/badges";
 import { checkAccessories } from "../data/accessories";
-import { pickReviewWords, wordId } from "../lib/wordStats";
+import { pickReviewWords, allIntroducedWords, wordId } from "../lib/wordStats";
 import TopBar from "../components/TopBar";
 import AnswerBanner from "../components/AnswerBanner";
 import Button from "../components/Button";
@@ -61,6 +62,13 @@ const CHOICE_TYPES = new Set([
   "odd-one-out",
 ]);
 
+const PRACTICE_TITLES = {
+  listening: "Listening Practice",
+  speaking: "Speaking Practice",
+  vocabulary: "Vocabulary Practice",
+};
+const PRACTICE_SESSION_SIZE = 10;
+
 export default function LessonScreen({
   progress,
   wordStats,
@@ -70,7 +78,9 @@ export default function LessonScreen({
   onUnlockBadges,
   onUnlockAccessories,
   onAddXp,
+  onSpendGems,
   isReview = false,
+  practiceMode = null,
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -89,21 +99,26 @@ export default function LessonScreen({
       const words = pickReviewWords(wordStats, allLessons, REVIEW_SESSION_SIZE);
       return { id: "review", title: "Review Session", theme: null, words, sentences: [] };
     }
+    if (practiceMode) {
+      const words = allIntroducedWords(wordStats, allLessons);
+      return { id: `practice-${practiceMode}`, title: PRACTICE_TITLES[practiceMode] || "Practice", theme: null, words, sentences: [] };
+    }
     return allLessons.find((l) => l.id === lessonId) || null;
-    // Intentionally excludes wordStats: the review word list is frozen for
-    // the whole session so mid-session stat updates don't reshuffle it.
+    // Intentionally excludes wordStats: the review/practice word list is
+    // frozen for the whole session so mid-session stat updates don't
+    // reshuffle it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonId, isReview]);
+  }, [lessonId, isReview, practiceMode]);
 
   const introWords = useMemo(() => {
     if (!lesson) return [];
-    if (isReview) return [];
+    if (isReview || practiceMode) return [];
     return splitIntroWords(lesson, wordStats);
     // Intentionally excludes wordStats: this list must stay frozen while
     // the teaching phase walks through it, or marking a word introduced
     // mid-phase would shrink the list under the sequence pointer.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lesson, isReview]);
+  }, [lesson, isReview, practiceMode]);
 
   // Interleaved "teach a couple, quiz on them" sequence instead of front-
   // loading every flashcard before any exercise.
@@ -112,10 +127,11 @@ export default function LessonScreen({
     [lesson, introWords],
   );
 
-  const exercises = useMemo(
-    () => (lesson ? generateLessonExercises(lesson, allLessons) : []),
-    [lesson, allLessons],
-  );
+  const exercises = useMemo(() => {
+    if (!lesson) return [];
+    if (practiceMode) return makeFocusedSession(lesson.words, practiceMode, PRACTICE_SESSION_SIZE);
+    return generateLessonExercises(lesson, allLessons);
+  }, [lesson, allLessons, practiceMode]);
 
   const [phase, setPhase] = useState(teachingSequence.length > 0 ? "teaching" : "practice");
   const [teachIndex, setTeachIndex] = useState(0);
@@ -151,6 +167,7 @@ export default function LessonScreen({
   const [goldenHit, setGoldenHit] = useState(false);
   const [bonusQueue, setBonusQueue] = useState([]);
   const [bonusOffered, setBonusOffered] = useState(false);
+  const [preFailPhase, setPreFailPhase] = useState("practice");
 
   const totalToResolve = exercises.length;
   const teachStep = phase === "teaching" ? teachingSequence[teachIndex] : null;
@@ -190,6 +207,23 @@ export default function LessonScreen({
     );
   }
 
+  if (practiceMode && exercises.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center app-bg">
+        <Mascot mascotId="tesfa" mood="neutral" size={130} />
+        <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
+          Not enough words yet
+        </h1>
+        <p className="font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
+          Learn a few words in a lesson first, and this practice mode will have something to work with.
+        </p>
+        <Button variant="coral" className="w-full max-w-xs uppercase tracking-wide" onClick={() => navigate("/practice")}>
+          Back to Practice Hub
+        </Button>
+      </div>
+    );
+  }
+
   function resetPerExerciseState() {
     setSelectedId(null);
     setBuildAnswer([]);
@@ -209,6 +243,7 @@ export default function LessonScreen({
     setHearts((h) => {
       const next = Math.max(0, h - 1);
       if (next === 0) {
+        setPreFailPhase(phase);
         setTimeout(() => setPhase("failed"), 900);
       }
       return next;
@@ -222,12 +257,21 @@ export default function LessonScreen({
   }
 
   function finishLesson(finalXp) {
+    // Practice Hub sessions are supplementary, heart-free practice — bank
+    // the XP directly and skip streak/badge/accuracy bookkeeping, the same
+    // lightweight path the bonus round already uses.
+    if (practiceMode) {
+      onAddXp(finalXp);
+      setPhase("complete");
+      return;
+    }
     const accuracyPct = practiceStats.attempts > 0 ? practiceStats.correct / practiceStats.attempts : 1;
+    const wasPerfect = accuracyPct === 1 && !anyHintUsedInLesson && practiceStats.attempts > 0;
     const prevBest = progress.bestAccuracyByLesson[lessonId] ?? 0;
-    const predicted = applyLessonComplete(progress, lessonId, finalXp, accuracyPct);
+    const predicted = applyLessonComplete(progress, lessonId, finalXp, accuracyPct, wasPerfect);
     const { newlyUnlocked } = checkBadges(predicted, wordStats, allLessons);
     const { newlyUnlocked: newlyUnlockedAccessories } = checkAccessories(predicted, wordStats);
-    onCompleteLesson(lessonId, finalXp, accuracyPct);
+    onCompleteLesson(lessonId, finalXp, accuracyPct, wasPerfect);
     if (newlyUnlocked.length > 0) onUnlockBadges(newlyUnlocked.map((b) => b.id));
     if (newlyUnlockedAccessories.length > 0) {
       onUnlockAccessories(newlyUnlockedAccessories.map((a) => a.id));
@@ -235,7 +279,7 @@ export default function LessonScreen({
     setNewBadges(newlyUnlocked);
     setNewAccessories(newlyUnlockedAccessories);
     setBeatBestScore(prevBest > 0 && accuracyPct > prevBest);
-    setIsPerfectLesson(accuracyPct === 1 && !anyHintUsedInLesson && practiceStats.attempts > 0);
+    setIsPerfectLesson(wasPerfect);
     const crossedMilestone = STREAK_MILESTONES.some(
       (m) => progress.streak < m && predicted.streak >= m,
     );
@@ -324,10 +368,10 @@ export default function LessonScreen({
       sound.wrong();
       setShake(true);
       setTimeout(() => setShake(false), 400);
-      // Teaching-phase mini quizzes and the optional bonus round are both
-      // low-stakes: no heart lost for a word you were just taught, or for
-      // an extra-credit question nobody was required to attempt.
-      if (phase !== "teaching" && phase !== "bonus") loseHeart();
+      // Teaching-phase mini quizzes, the optional bonus round, and Practice
+      // Hub sessions are all low-stakes: no heart lost for a word you were
+      // just taught, an extra-credit question, or supplementary practice.
+      if (phase !== "teaching" && phase !== "bonus" && !practiceMode) loseHeart();
     }
   }
 
@@ -418,7 +462,7 @@ export default function LessonScreen({
     return (
       <div className="min-h-screen flex flex-col app-bg">
         <TopBar progressPct={progressPct} hearts={MAX_HEARTS} combo={comboStreak} onExit={() => navigate("/")} accentColor={lessonAccentColor(lesson.theme)} />
-        <div className="flex-1 max-w-md w-full mx-auto px-4 py-8 flex items-center justify-center">
+        <div className="flex-1 max-w-md md:max-w-xl w-full mx-auto px-4 py-8 flex items-center justify-center">
           <AnimatePresence mode="wait">
             <Flashcard
               key={word.tigrinya}
@@ -437,6 +481,7 @@ export default function LessonScreen({
   }
 
   if (phase === "failed") {
+    const canRefill = onSpendGems && progress.gems >= HEART_REFILL_COST;
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center app-bg">
         <Mascot mascotId={companion.id} mood="neutral" size={140} />
@@ -447,6 +492,19 @@ export default function LessonScreen({
           {randomLine(companion, "outOfHearts")}
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
+          {canRefill && (
+            <Button
+              variant="yellow"
+              className="w-full uppercase tracking-wide"
+              onClick={() => {
+                onSpendGems(HEART_REFILL_COST);
+                setHearts(MAX_HEARTS);
+                setPhase(preFailPhase);
+              }}
+            >
+              💎 Refill hearts ({HEART_REFILL_COST} gems)
+            </Button>
+          )}
           <Button variant="coral" className="w-full uppercase tracking-wide" onClick={() => navigate(0)}>
             Try Again
           </Button>
@@ -481,7 +539,7 @@ export default function LessonScreen({
           className="text-3xl font-extrabold"
           style={{ color: "var(--color-brand-ink)" }}
         >
-          {isReview ? "Review Complete!" : "Lesson Complete!"}
+          {isReview ? "Review Complete!" : practiceMode ? "Practice Complete!" : "Lesson Complete!"}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 8 }}
@@ -545,7 +603,7 @@ export default function LessonScreen({
           </motion.div>
         </div>
 
-        {!isReview && (
+        {!isReview && !practiceMode && (
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -583,7 +641,7 @@ export default function LessonScreen({
         )}
 
         <div className="flex flex-col gap-3 w-full max-w-xs">
-          {!bonusOffered && (
+          {!bonusOffered && !practiceMode && (
             <Button
               variant="yellow"
               className="w-full uppercase tracking-wide"
@@ -596,7 +654,11 @@ export default function LessonScreen({
               🎁 Bonus round (+XP)
             </Button>
           )}
-          <Button variant="coral" className="w-full uppercase tracking-wide" onClick={() => navigate("/")}>
+          <Button
+            variant="coral"
+            className="w-full uppercase tracking-wide"
+            onClick={() => navigate(practiceMode ? "/practice" : "/")}
+          >
             Continue
           </Button>
         </div>
@@ -609,7 +671,7 @@ export default function LessonScreen({
       <TopBar progressPct={progressPct} hearts={hearts} combo={comboStreak} accentColor={lessonAccentColor(lesson.theme)} />
 
       {phase === "teaching" && (
-        <div className="max-w-md w-full mx-auto px-4 pt-3">
+        <div className="max-w-md md:max-w-xl w-full mx-auto px-4 pt-3">
           <p className="text-xs font-extrabold uppercase tracking-wide text-center" style={{ color: "var(--color-brand-teal-dark)" }}>
             📝 Quick check — no hearts at risk
           </p>
@@ -617,7 +679,7 @@ export default function LessonScreen({
       )}
 
       {phase === "review" && (
-        <div className="max-w-md w-full mx-auto px-4 pt-3">
+        <div className="max-w-md md:max-w-xl w-full mx-auto px-4 pt-3">
           <p className="text-xs font-extrabold uppercase tracking-wide text-center" style={{ color: "var(--color-brand-coral-dark)" }}>
             Review — let's lock these in
           </p>
@@ -625,14 +687,14 @@ export default function LessonScreen({
       )}
 
       {phase === "bonus" && (
-        <div className="max-w-md w-full mx-auto px-4 pt-3">
+        <div className="max-w-md md:max-w-xl w-full mx-auto px-4 pt-3">
           <p className="text-xs font-extrabold uppercase tracking-wide text-center" style={{ color: "var(--color-brand-yellow-dark)" }}>
             🎁 Bonus round — no hearts at risk
           </p>
         </div>
       )}
 
-      <div className="flex-1 max-w-md w-full mx-auto px-4 py-6 pb-40">
+      <div className="flex-1 max-w-md md:max-w-xl w-full mx-auto px-4 py-6 pb-40">
         <div className="flex justify-end mb-2">
           <HintReveal
             word={current.hintWord}
@@ -695,7 +757,7 @@ export default function LessonScreen({
 
       {!bannerStatus && (
         <div className="fixed inset-x-0 z-20 pointer-events-none" style={{ bottom: current.type === "tap-pairs" ? 16 : 96 }}>
-          <div className="max-w-md mx-auto relative h-0">
+          <div className="max-w-md md:max-w-xl mx-auto relative h-0">
             <motion.div
               className="absolute right-4 bottom-0"
               initial={{ opacity: 0, scale: 0.6 }}
@@ -710,7 +772,7 @@ export default function LessonScreen({
 
       {current.type !== "tap-pairs" && !bannerStatus && (
         <div className="fixed bottom-0 left-0 right-0 bg-brand-surface px-4 py-4 border-t-2" style={{ borderColor: "var(--color-brand-line)" }}>
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md md:max-w-xl mx-auto">
             <Button
               variant="coral"
               className="w-full uppercase tracking-wide"

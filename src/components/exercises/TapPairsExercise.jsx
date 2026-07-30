@@ -81,6 +81,7 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
                       sound.click();
                       setSelectedLeft(tile);
                     }}
+                    aria-pressed={isSelected}
                     className={`btn-3d rounded-xl border-2 py-3 px-3 font-bold text-sm sm:text-base transition-colors ${tileClass(
                       tile,
                       isSelected,
@@ -111,6 +112,7 @@ export default function TapPairsExercise({ exercise, onWrong, onDone }) {
                       sound.click();
                       setSelectedRight(tile);
                     }}
+                    aria-pressed={isSelected}
                     className={`btn-3d rounded-xl border-2 py-3 px-3 font-bold text-sm sm:text-base transition-colors ${tileClass(
                       tile,
                       isSelected,

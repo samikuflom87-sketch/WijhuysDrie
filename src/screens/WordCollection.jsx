@@ -43,7 +43,7 @@ export default function WordCollection({ wordStats }) {
         className="sticky top-0 z-10"
         style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
       >
-        <div className="max-w-md mx-auto flex items-center gap-4 px-4 py-3">
+        <div className="max-w-md md:max-w-xl mx-auto flex items-center gap-4 px-4 py-3">
           <button
             onClick={() => {
               sound.click();
@@ -58,7 +58,7 @@ export default function WordCollection({ wordStats }) {
         </div>
       </header>
 
-      <div className="max-w-md w-full mx-auto px-4 py-6">
+      <div className="max-w-md md:max-w-xl w-full mx-auto px-4 py-6">
         {collected.length === 0 ? (
           <p className="font-bold text-center mt-12" style={{ color: "var(--color-brand-ink-light)" }}>
             Learn your first words in a lesson and they'll show up here.

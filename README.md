@@ -50,6 +50,30 @@ Multiple choice, reverse (Tigrinya → English), picture choice, listening (audi
 
 Every word tracks times-seen/times-correct/last-practiced in localStorage. The Home screen's **"Review words you've missed"** button (appears once you've practiced at least one word) builds a session from your lowest-accuracy, longest-untouched words across *all* lessons — skips the intro phase since you've already been taught them.
 
+The **"📓 Mistakes"** screen (`/mistakes`) is a persistent, browsable version of that same data — every word you've ever been quizzed on, worst accuracy first, without starting a session.
+
+## Practice Hub
+
+`/practice` offers targeted, heart-free practice on words you've already been taught: **Listening** (audio → meaning), **Speaking** (say the word, beta), and **Vocabulary** (quick-fire multiple choice), plus a shortcut into the existing Review session. XP earns normally, but no heart is ever lost and nothing here affects streaks, badges, or lesson completion — it's purely supplementary.
+
+## Placement test
+
+Brand-new learners (no lesson completed yet) see a **"Take a placement test"** button on Home. It's a short multiple-choice quiz sampled across the whole course — score well and the first few lessons are marked complete for you (with a small starter-XP bonus), so you can skip straight to your actual level instead of repeating what you already know. Skipped lessons stay fully revisitable.
+
+## Gems, Quests & Shop
+
+- **Gems** are a lightweight currency earned from finishing lessons (with a bonus for a perfect one) and from quests — shown with a 💎 icon next to your XP.
+- **Quests** (`/quests`) are simple daily and weekly goals (finish a lesson, hit an XP target, keep a streak) that pay out gems once claimed.
+- The **Shop** (`/shop`) sells a few extra cosmetic mascot accessories for gems, on top of the ones that unlock from streak/vocabulary milestones.
+- If your hearts run out mid-lesson, a **"Refill hearts"** option appears (gems permitting) so you can keep going instead of restarting.
+- If a streak breaks, Home shows a **"Restore it for gems"** banner for as long as it stays unclaimed — dismiss it any time to make it go away for good.
+
+None of this touches real money — it's a self-contained progress-and-reward loop, not a store.
+
+## CEFR-style level estimate
+
+Home and Achievements show a rough **A1–C2** label next to your level, estimated from how many words you've learned so far. It's a fun approximation for motivation, not an official proficiency certificate.
+
 ## Gamification
 
 - XP levels with rank names (Curious Beginner → Habesha Master), shown on Home.
@@ -61,6 +85,8 @@ Every word tracks times-seen/times-correct/last-practiced in localStorage. The H
 - A **"📖 My Words" screen** (`/words`) lists every word you've been taught across all lessons, each with a 1–3 star mastery rating based on your accuracy on it, plus its picture and a speaker button.
 - Each lesson's top bar carries a subtle accent color tied to its theme (greetings, family, food, numbers, everyday), so lessons feel visually distinct from one another instead of interchangeable.
 - If your browser supports the Badging API (`navigator.setAppBadge`), the installed home-screen icon shows your current streak as a small badge number — it's a no-op, invisible enhancement everywhere else.
+- A **"📤 Share your progress"** button on Achievements renders your streak/level onto a shareable image (via the Web Share API where supported, otherwise a plain download) — no server round-trip.
+- A first-run **"why are you learning?"** picker personalizes the Home greeting with a short blurb matching your answer.
 
 ## Settings
 
@@ -111,12 +137,13 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/data/lessons.json` — lesson/word/sentence content (edit this to add vocabulary)
 - `src/data/mascots.js` — the five mascots' personalities and message banks
 - `src/data/badges.js` — achievement definitions and unlock conditions
-- `src/data/accessories.js` — cosmetic mascot-accessory definitions and unlock conditions
-- `src/lib/exercises.js` — generates all 10 exercise types + intro-word splitting from lesson content, plus the golden-question marker and bonus-round generator
+- `src/data/accessories.js` — cosmetic mascot-accessory definitions (milestone-unlocked and gem-purchasable) and unlock conditions
+- `src/data/quests.js` — daily and weekly quest definitions and their gems rewards
+- `src/lib/exercises.js` — generates all 10 exercise types + intro-word splitting from lesson content, plus the golden-question marker, bonus-round, placement-test, and Practice Hub focused-session generators
 - `src/lib/tts.js` — browser text-to-speech fallback used by every speaker button when no real recording exists yet
 - `src/lib/speech.js` — browser speech recognition + rough similarity match used by the speaking-practice exercise
 - `src/lib/wordStats.js` / `src/hooks/useWordStats.js` — per-word spaced-repetition tracking + mastery-star rating
-- `src/lib/storage.js` / `src/hooks/useProgress.js` — XP/levels/streak/freeze/badges/accessories/daily-goal progress, active-days history
+- `src/lib/storage.js` / `src/hooks/useProgress.js` — XP/gems/levels/streak/freeze/badges/accessories/daily-goal progress, active-days history, streak repair, placement results
 - `src/lib/settings.js` / `src/context/SettingsContext.jsx` — sound/music/theme/reduced-motion preferences, available app-wide
 - `src/lib/motion.js` — shared Framer Motion spring/easing presets used across components for a consistent feel
 - `src/lib/lessonTheme.js` — maps each lesson theme to an accent color for its top bar
@@ -131,9 +158,16 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/components/SpeakerButton.jsx` — plays a word's audio file, fails silently if missing
 - `src/components/Confetti.jsx` — correct-answer particle burst (burst/rain/fountain variants)
 - `src/components/StreakCalendar.jsx` — GitHub-style grid of recently active practice days
-- `src/screens/Home.jsx` — learning path, streak/XP/level, daily goal, Review button, link to My Words
-- `src/screens/LessonScreen.jsx` — intro → practice → review → celebration → optional bonus round flow
+- `src/components/OnboardingGoal.jsx` — first-run "why are you learning" picker
+- `src/components/ShareCard.jsx` — canvas-rendered shareable progress image + Web Share/download button
+- `src/screens/Home.jsx` — learning path, streak/XP/gems/level, daily goal, Review button, links to My Words/Mistakes/Practice Hub/Shop, streak-repair banner
+- `src/screens/LessonScreen.jsx` — intro → practice → review → celebration → optional bonus round flow; also drives Review and Practice Hub sessions via `isReview`/`practiceMode` props
 - `src/screens/WordCollection.jsx` — every taught word across all lessons, with mastery stars
+- `src/screens/Mistakes.jsx` — every practiced word, worst accuracy first
+- `src/screens/PracticeHub.jsx` — Listening/Speaking/Vocabulary mode picker
+- `src/screens/PlacementTest.jsx` — quick quiz that can skip a new learner ahead
+- `src/screens/Quests.jsx` — daily/weekly quest progress and gems claiming
+- `src/screens/Shop.jsx` — spend gems on extra mascot accessories
 - `src/screens/Settings.jsx` / `src/screens/Achievements.jsx`
 - `src/components/ErrorBoundary.jsx` — catches a crash anywhere in the app and shows a friendly "back to home" screen instead of a blank white page
 - `public/manifest.json`, `public/icons/app-*.png`, `public/apple-touch-icon.png` — installable-app assets

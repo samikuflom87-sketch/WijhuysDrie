@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import lessonsData from "../data/lessons.json";
-import { isLessonCompleted, isLessonUnlocked, getLevelInfo } from "../lib/storage";
-import { lessonAccuracy, pickReviewWords } from "../lib/wordStats";
+import { isLessonCompleted, isLessonUnlocked, getLevelInfo, STREAK_REPAIR_COST } from "../lib/storage";
+import { lessonAccuracy, pickReviewWords, totalWordsIntroduced, estimatedCefrLevel } from "../lib/wordStats";
 import { randomMascot, randomLine } from "../data/mascots";
 import LessonBubble from "../components/LessonBubble";
 import LessonPath from "../components/LessonPath";
@@ -12,10 +12,12 @@ import StreakFlame from "../components/StreakFlame";
 import Mascot from "../components/Mascot";
 import ProgressBar from "../components/ProgressBar";
 import XPCounter from "../components/XPCounter";
+import Button from "../components/Button";
+import OnboardingGoal, { goalBlurb } from "../components/OnboardingGoal";
 import { useSound } from "../hooks/useSound";
 import { useSettingsContext } from "../context/SettingsContext";
 
-export default function Home({ progress, wordStats }) {
+export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, onDismissStreakRepair }) {
   const navigate = useNavigate();
   const sound = useSound();
   const { settings } = useSettingsContext();
@@ -25,10 +27,13 @@ export default function Home({ progress, wordStats }) {
   const greeter = useMemo(() => randomMascot(), []);
   const greeting = useMemo(() => randomLine(greeter, "greetings"), [greeter]);
   const levelInfo = getLevelInfo(progress.xp);
+  const cefrLevel = estimatedCefrLevel(totalWordsIntroduced(wordStats));
   const hasReviewWords = useMemo(
     () => pickReviewWords(wordStats, lessons, 1).length > 0,
     [wordStats, lessons],
   );
+  const isBrandNew = Object.keys(progress.completedLessons).length === 0;
+  const canRepairStreak = progress.previousStreak > 0;
 
   function statusFor(lesson) {
     if (isLessonCompleted(progress, lesson.id)) return "completed";
@@ -44,7 +49,7 @@ export default function Home({ progress, wordStats }) {
         className="sticky top-0 z-10"
         style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
       >
-        <div className="max-w-md mx-auto flex items-center justify-between px-4 py-3">
+        <div className="max-w-md md:max-w-xl mx-auto flex items-center justify-between px-4 py-3">
           <h1 className="font-display font-extrabold text-lg text-white tracking-tight">
             Habesha Steps
           </h1>
@@ -52,6 +57,17 @@ export default function Home({ progress, wordStats }) {
             <StreakFlame streak={progress.streak} color="white" />
             {progress.streakFreezes > 0 && <StatPill icon="🧊" value={progress.streakFreezes} color="white" />}
             <StatPill icon="⭐" value={<XPCounter value={progress.xp} />} color="white" />
+            <StatPill icon="💎" value={progress.gems} color="white" />
+            <button
+              onClick={() => {
+                sound.click();
+                navigate("/quests");
+              }}
+              aria-label="Quests"
+              className="text-xl"
+            >
+              🎯
+            </button>
             <button
               onClick={() => {
                 sound.click();
@@ -76,7 +92,7 @@ export default function Home({ progress, wordStats }) {
         </div>
       </header>
 
-      <div className="max-w-md w-full mx-auto px-4 pt-4 flex flex-col gap-4">
+      <div className="max-w-md md:max-w-xl w-full mx-auto px-4 pt-4 flex flex-col gap-4">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -99,13 +115,56 @@ export default function Home({ progress, wordStats }) {
             <p className="text-sm font-bold" style={{ color: "var(--color-brand-ink)" }}>
               {greeting}
             </p>
+            {progress.goal && (
+              <p className="text-xs font-bold mt-0.5" style={{ color: "var(--color-brand-ink-light)" }}>
+                {goalBlurb(progress.goal)}
+              </p>
+            )}
           </div>
         </motion.div>
+
+        {canRepairStreak && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl p-4 flex items-center gap-3 card-soft"
+            style={{ border: "2px solid var(--color-brand-coral)" }}
+          >
+            <span className="text-2xl" aria-hidden="true">
+              💔
+            </span>
+            <div className="flex-1">
+              <p className="font-extrabold text-sm" style={{ color: "var(--color-brand-ink)" }}>
+                Your {progress.previousStreak}-day streak broke
+              </p>
+              <p className="text-xs font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
+                Restore it for {STREAK_REPAIR_COST} gems
+              </p>
+            </div>
+            <div className="flex flex-col gap-1 shrink-0">
+              <Button
+                variant="yellow"
+                className="!py-1.5 !px-3 text-xs uppercase tracking-wide"
+                disabled={progress.gems < STREAK_REPAIR_COST}
+                onClick={onRepairStreak}
+              >
+                Restore
+              </Button>
+              <button
+                onClick={onDismissStreakRepair}
+                className="text-xs font-bold underline"
+                style={{ color: "var(--color-brand-ink-light)" }}
+              >
+                Dismiss
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         <div className="rounded-2xl p-4 flex items-center justify-between card-soft">
           <div>
             <p className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-ink-light)" }}>
-              Level {levelInfo.level}
+              Level {levelInfo.level} · Est. {cefrLevel}
             </p>
             <p className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
               {levelInfo.rank}
@@ -117,6 +176,18 @@ export default function Home({ progress, wordStats }) {
             </p>
           )}
         </div>
+
+        {isBrandNew && (
+          <button
+            onClick={() => {
+              sound.click();
+              navigate("/placement");
+            }}
+            className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide"
+          >
+            🎯 Already know some Tigrinya? Take a placement test
+          </button>
+        )}
 
         <div className="rounded-2xl p-4 card-soft">
           <div className="flex justify-between items-center mb-2">
@@ -142,19 +213,48 @@ export default function Home({ progress, wordStats }) {
           </button>
         )}
 
-        <button
-          onClick={() => {
-            sound.click();
-            navigate("/words");
-          }}
-          className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide"
-        >
-          📖 My Words
-        </button>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => {
+              sound.click();
+              navigate("/words");
+            }}
+            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm"
+          >
+            📖 My Words
+          </button>
+          <button
+            onClick={() => {
+              sound.click();
+              navigate("/mistakes");
+            }}
+            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm"
+          >
+            📓 Mistakes
+          </button>
+          <button
+            onClick={() => {
+              sound.click();
+              navigate("/practice");
+            }}
+            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm"
+          >
+            🧠 Practice Hub
+          </button>
+          <button
+            onClick={() => {
+              sound.click();
+              navigate("/shop");
+            }}
+            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm"
+          >
+            🛍️ Shop
+          </button>
+        </div>
       </div>
 
       <motion.div
-        className="relative max-w-md w-full mx-auto flex flex-col items-center gap-10 px-4 py-12"
+        className="relative max-w-md md:max-w-xl w-full mx-auto flex flex-col items-center gap-10 px-4 py-12"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -178,6 +278,8 @@ export default function Home({ progress, wordStats }) {
           </p>
         </div>
       </motion.div>
+
+      {!progress.goal && <OnboardingGoal onChoose={onSetGoal} />}
     </div>
   );
 }

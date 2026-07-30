@@ -76,6 +76,7 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
                 variant="outline"
                 state={state}
                 disabled={checked}
+                aria-pressed={opt.id === selectedId}
                 onClick={() => onSelect(opt.id)}
                 className="w-full text-left font-bold text-base"
               >

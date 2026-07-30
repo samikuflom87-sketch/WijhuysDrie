@@ -10,7 +10,7 @@ function HeartIcon({ filled }) {
 
 export default function Hearts({ count, max = 5 }) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1" role="status" aria-label={`${count} of ${max} hearts remaining`}>
       <AnimatePresence initial={false}>
         {Array.from({ length: max }).map((_, i) => (
           <motion.div

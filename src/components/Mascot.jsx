@@ -34,6 +34,43 @@ function Accessory({ type, cx, cy, eyeGap }) {
       </g>
     );
   }
+  if (type === "bandana") {
+    return (
+      <g>
+        <path
+          d={`M${cx - 24} ${cy - 26} Q${cx} ${cy - 40} ${cx + 24} ${cy - 26} L${cx + 22} ${cy - 16} Q${cx} ${cy - 28} ${cx - 22} ${cy - 16} Z`}
+          fill="#00A19D"
+          stroke="#4A3527"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <circle cx={cx + 26} cy={cy - 20} r="4" fill="#FFC93C" />
+      </g>
+    );
+  }
+  if (type === "medal") {
+    return (
+      <g>
+        <path d={`M${cx - 6} ${cy + 32} L${cx - 2} ${cy + 20} L${cx + 2} ${cy + 20} L${cx + 6} ${cy + 32} Z`} fill="#E5484D" />
+        <circle cx={cx} cy={cy + 38} r="9" fill="#FFC93C" stroke="#B8860B" strokeWidth="1.5" />
+        <path d={`M${cx - 4} ${cy + 38} L${cx + 4} ${cy + 38} M${cx} ${cy + 34} L${cx} ${cy + 42}`} stroke="#B8860B" strokeWidth="1.5" />
+      </g>
+    );
+  }
+  if (type === "crown") {
+    return (
+      <g>
+        <path
+          d={`M${cx - 18} ${cy - 24} L${cx - 18} ${cy - 40} L${cx - 9} ${cy - 30} L${cx} ${cy - 44} L${cx + 9} ${cy - 30} L${cx + 18} ${cy - 40} L${cx + 18} ${cy - 24} Z`}
+          fill="#FFC93C"
+          stroke="#B8860B"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <circle cx={cx} cy={cy - 44} r="3" fill="#E5484D" />
+      </g>
+    );
+  }
   return null;
 }
 

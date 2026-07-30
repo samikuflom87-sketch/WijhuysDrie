@@ -29,7 +29,7 @@ export default function AnswerBanner({ status, correctText, mascotId, message, c
             boxShadow: "0 -8px 24px rgba(20, 48, 43, 0.12)",
           }}
         >
-          <div className="max-w-md mx-auto flex flex-col gap-3">
+          <div className="max-w-md md:max-w-xl mx-auto flex flex-col gap-3">
             <div className="relative flex items-center gap-3">
               {isCorrect && <Confetti variant={confettiVariant} />}
               <Mascot mascotId={mascotId} mood={isCorrect ? "happy" : "sad"} size={56} />

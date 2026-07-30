@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { EASE_OUT_FAST } from "./lib/motion";
 import { setAppBadge } from "./lib/appBadge";
@@ -8,8 +8,15 @@ import LessonScreen from "./screens/LessonScreen";
 import Settings from "./screens/Settings";
 import Achievements from "./screens/Achievements";
 import WordCollection from "./screens/WordCollection";
+import Mistakes from "./screens/Mistakes";
+import Quests from "./screens/Quests";
+import PlacementTest from "./screens/PlacementTest";
+import PracticeHub from "./screens/PracticeHub";
+import Shop from "./screens/Shop";
 import { useProgress } from "./hooks/useProgress";
 import { useWordStats } from "./hooks/useWordStats";
+import { pickReviewWords } from "./lib/wordStats";
+import lessonsData from "./data/lessons.json";
 import { SettingsProvider } from "./context/SettingsContext";
 import { useSettingsContext } from "./context/SettingsContext";
 
@@ -28,8 +35,32 @@ function PageTransition({ children }) {
   );
 }
 
-function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, unlockAccessories, addXp, updateSetting, resetProgress, introduce, record }) {
+function PracticeModeLesson(props) {
+  const { mode } = useParams();
+  return <LessonScreen {...props} practiceMode={mode} />;
+}
+
+function AnimatedRoutes({
+  progress,
+  stats,
+  completeLesson,
+  unlockBadges,
+  unlockAccessories,
+  addXp,
+  spendGems,
+  repairStreak,
+  dismissStreakRepairBanner,
+  claimQuest,
+  purchaseAccessory,
+  applyPlacement,
+  updateSetting,
+  resetProgress,
+  introduce,
+  record,
+}) {
   const location = useLocation();
+  const hasReviewWords = pickReviewWords(stats, lessonsData.lessons, 1).length > 0;
+
   return (
     <AnimatePresence mode="wait" initial={false}>
       <Routes location={location} key={location.pathname}>
@@ -37,7 +68,13 @@ function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, unlockA
           path="/"
           element={
             <PageTransition>
-              <Home progress={progress} wordStats={stats} />
+              <Home
+                progress={progress}
+                wordStats={stats}
+                onSetGoal={(goal) => updateSetting("goal", goal)}
+                onRepairStreak={repairStreak}
+                onDismissStreakRepair={dismissStreakRepairBanner}
+              />
             </PageTransition>
           }
         />
@@ -54,6 +91,7 @@ function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, unlockA
                 onUnlockBadges={unlockBadges}
                 onUnlockAccessories={unlockAccessories}
                 onAddXp={addXp}
+                onSpendGems={spendGems}
               />
             </PageTransition>
           }
@@ -71,8 +109,67 @@ function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, unlockA
                 onUnlockBadges={unlockBadges}
                 onUnlockAccessories={unlockAccessories}
                 onAddXp={addXp}
+                onSpendGems={spendGems}
                 isReview
               />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/practice"
+          element={
+            <PageTransition>
+              <PracticeHub hasReviewWords={hasReviewWords} />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/practice/:mode"
+          element={
+            <PageTransition>
+              <PracticeModeLesson
+                progress={progress}
+                wordStats={stats}
+                onCompleteLesson={completeLesson}
+                onIntroduceWord={introduce}
+                onRecordAttempt={record}
+                onUnlockBadges={unlockBadges}
+                onUnlockAccessories={unlockAccessories}
+                onAddXp={addXp}
+                onSpendGems={spendGems}
+              />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/placement"
+          element={
+            <PageTransition>
+              <PlacementTest onFinish={applyPlacement} />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/quests"
+          element={
+            <PageTransition>
+              <Quests progress={progress} onClaimQuest={claimQuest} />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/mistakes"
+          element={
+            <PageTransition>
+              <Mistakes wordStats={stats} />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/shop"
+          element={
+            <PageTransition>
+              <Shop progress={progress} onPurchase={purchaseAccessory} />
             </PageTransition>
           }
         />
@@ -110,7 +207,21 @@ function AnimatedRoutes({ progress, stats, completeLesson, unlockBadges, unlockA
 }
 
 function App() {
-  const { progress, completeLesson, unlockBadges, unlockAccessories, addXp, updateSetting, resetProgress } = useProgress();
+  const {
+    progress,
+    completeLesson,
+    unlockBadges,
+    unlockAccessories,
+    addXp,
+    spendGems,
+    repairStreak,
+    dismissStreakRepairBanner,
+    claimQuest,
+    purchaseAccessory,
+    applyPlacement,
+    updateSetting,
+    resetProgress,
+  } = useProgress();
   const { stats, introduce, record } = useWordStats();
 
   useEffect(() => {
@@ -126,6 +237,12 @@ function App() {
         unlockBadges={unlockBadges}
         unlockAccessories={unlockAccessories}
         addXp={addXp}
+        spendGems={spendGems}
+        repairStreak={repairStreak}
+        dismissStreakRepairBanner={dismissStreakRepairBanner}
+        claimQuest={claimQuest}
+        purchaseAccessory={purchaseAccessory}
+        applyPlacement={applyPlacement}
         updateSetting={updateSetting}
         resetProgress={resetProgress}
         introduce={introduce}

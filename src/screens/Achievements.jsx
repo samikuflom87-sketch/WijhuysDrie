@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { BADGES } from "../data/badges";
 import { useSound } from "../hooks/useSound";
 import StreakCalendar from "../components/StreakCalendar";
+import ShareCardButton from "../components/ShareCard";
 
 export default function Achievements({ progress }) {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function Achievements({ progress }) {
         className="sticky top-0 z-10"
         style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
       >
-        <div className="max-w-md mx-auto flex items-center gap-4 px-4 py-3">
+        <div className="max-w-md md:max-w-xl mx-auto flex items-center gap-4 px-4 py-3">
           <button
             onClick={() => {
               sound.click();
@@ -30,8 +31,10 @@ export default function Achievements({ progress }) {
         </div>
       </header>
 
-      <div className="max-w-md w-full mx-auto px-4 py-6 flex flex-col gap-3">
+      <div className="max-w-md md:max-w-xl w-full mx-auto px-4 py-6 flex flex-col gap-3">
         <StreakCalendar activeDates={progress.activeDates} />
+
+        <ShareCardButton progress={progress} />
 
         <p className="text-sm font-bold text-center" style={{ color: "var(--color-brand-ink-light)" }}>
           {unlockedCount} of {BADGES.length} unlocked

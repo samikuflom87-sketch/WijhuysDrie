@@ -67,6 +67,20 @@ export const BADGES = [
     icon: "🧊",
     check: (progress) => progress.streakFreezes >= 1,
   },
+  {
+    id: "streak-100",
+    name: "Streak Society",
+    description: "Reach a 100-day streak.",
+    icon: "💎",
+    check: (progress) => progress.streak >= 100,
+  },
+  {
+    id: "streak-365",
+    name: "Year of Habesha Steps",
+    description: "Reach a 365-day streak.",
+    icon: "🏵️",
+    check: (progress) => progress.streak >= 365,
+  },
 ];
 
 // Returns { progress: updated-if-needed, newlyUnlocked: [badge, ...] }

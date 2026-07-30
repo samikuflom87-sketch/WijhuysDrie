@@ -68,6 +68,25 @@ export function totalWordsIntroduced(stats) {
   return Object.values(stats).filter((e) => e.introduced).length;
 }
 
+// A rough, non-certified CEFR-style label based on words learned so far —
+// purely a fun progress indicator, not a real proficiency assessment.
+const CEFR_THRESHOLDS = [
+  { level: "A1", min: 0 },
+  { level: "A2", min: 15 },
+  { level: "B1", min: 30 },
+  { level: "B2", min: 50 },
+  { level: "C1", min: 75 },
+  { level: "C2", min: 100 },
+];
+
+export function estimatedCefrLevel(wordsKnown) {
+  let level = CEFR_THRESHOLDS[0].level;
+  for (const t of CEFR_THRESHOLDS) {
+    if (wordsKnown >= t.min) level = t.level;
+  }
+  return level;
+}
+
 // 1-3 star mastery rating for the word collection screen: 0 if not yet
 // introduced, 1 for a freshly-taught or still-shaky word, up to 3 once
 // accuracy and repetition both show it's stuck.
@@ -79,6 +98,19 @@ export function masteryStars(stats, id) {
   if (acc >= 0.85 && entry.seen >= 3) return 3;
   if (acc >= 0.6) return 2;
   return 1;
+}
+
+// Every word ever introduced, across all lessons, with its owning lesson id
+// attached — the pool Practice Hub's focused sessions sample from.
+export function allIntroducedWords(stats, lessons) {
+  const out = [];
+  for (const lesson of lessons) {
+    for (const word of lesson.words) {
+      const id = wordId(lesson.id, word.tigrinya);
+      if (stats[id]?.introduced) out.push({ ...word, lessonId: lesson.id });
+    }
+  }
+  return out;
 }
 
 // Builds a review session's word list across all lessons, prioritizing

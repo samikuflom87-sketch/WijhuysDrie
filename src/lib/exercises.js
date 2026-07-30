@@ -402,3 +402,37 @@ export function makeBonusRound(lesson, count = 3) {
   const words = sample(lesson.words, Math.min(count, lesson.words.length));
   return words.map((w) => makeMultipleChoice(lesson.id, w, lesson.words));
 }
+
+// A quick multiple-choice quiz sampled evenly across the whole course, from
+// earliest to latest lesson, so a brand-new learner's score reflects how
+// far they can skip ahead — the same idea as a placement test.
+export function makePlacementQuestions(lessons, count = 8) {
+  const eligible = lessons.filter((l) => l.words && l.words.length >= 4);
+  if (eligible.length === 0) return [];
+  const picks = [];
+  for (let i = 0; i < count; i++) {
+    const lessonIndex = Math.min(eligible.length - 1, Math.floor((i / count) * eligible.length));
+    const lesson = eligible[lessonIndex];
+    const word = sample(lesson.words, 1)[0];
+    picks.push(makeMultipleChoice(lesson.id, word, lesson.words));
+  }
+  return picks;
+}
+
+// Builds a focused single-type practice session from a pool of already-
+// introduced words gathered from across every lesson — the engine behind
+// Practice Hub's Listening/Speaking/Vocabulary modes.
+export function makeFocusedSession(words, mode, count = 10) {
+  const eligible = mode === "listening" ? words.filter((w) => w.audio) : words;
+  if (eligible.length === 0) return [];
+  const pool = shuffle(eligible);
+  const picks = Array.from({ length: count }, (_, i) => pool[i % pool.length]);
+  if (mode === "listening") return picks.map((w) => makeListening(w.lessonId, w, eligible));
+  if (mode === "speaking") return picks.map((w) => makeSpeakAnswer(w.lessonId, w));
+  if (mode === "vocabulary") {
+    return picks.map((w, i) =>
+      i % 2 === 0 ? makeMultipleChoice(w.lessonId, w, eligible) : makeReverseChoice(w.lessonId, w, eligible),
+    );
+  }
+  return [];
+}
