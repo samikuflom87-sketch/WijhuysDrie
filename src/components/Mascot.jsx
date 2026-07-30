@@ -15,22 +15,22 @@ function Accessory({ type, cx, cy, eyeGap }) {
       <g>
         <path
           d={`M${cx - 15} ${cy - 28} L${cx} ${cy - 52} L${cx + 15} ${cy - 28} Z`}
-          fill="#FF6B4A"
-          stroke="#4A3527"
+          fill="#B8492F"
+          stroke="#2A2019"
           strokeWidth="1.5"
           strokeLinejoin="round"
         />
-        <circle cx={cx} cy={cy - 52} r="4.5" fill="#FFC93C" />
-        <rect x={cx - 17} y={cy - 30} width="34" height="6" rx="3" fill="#FFC93C" stroke="#4A3527" strokeWidth="1" />
+        <circle cx={cx} cy={cy - 52} r="4.5" fill="#B9822C" />
+        <rect x={cx - 17} y={cy - 30} width="34" height="6" rx="3" fill="#B9822C" stroke="#2A2019" strokeWidth="1" />
       </g>
     );
   }
   if (type === "glasses") {
     return (
       <g>
-        <circle cx={cx - eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
-        <circle cx={cx + eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
-        <path d={`M${cx - eyeGap + 11} ${cy} L${cx + eyeGap - 11} ${cy}`} stroke="#4A3527" strokeWidth="2.5" />
+        <circle cx={cx - eyeGap} cy={cy} r="11" fill="none" stroke="#2A2019" strokeWidth="2.5" />
+        <circle cx={cx + eyeGap} cy={cy} r="11" fill="none" stroke="#2A2019" strokeWidth="2.5" />
+        <path d={`M${cx - eyeGap + 11} ${cy} L${cx + eyeGap - 11} ${cy}`} stroke="#2A2019" strokeWidth="2.5" />
       </g>
     );
   }
@@ -39,21 +39,21 @@ function Accessory({ type, cx, cy, eyeGap }) {
       <g>
         <path
           d={`M${cx - 24} ${cy - 26} Q${cx} ${cy - 40} ${cx + 24} ${cy - 26} L${cx + 22} ${cy - 16} Q${cx} ${cy - 28} ${cx - 22} ${cy - 16} Z`}
-          fill="#00A19D"
-          stroke="#4A3527"
+          fill="#1E6B60"
+          stroke="#2A2019"
           strokeWidth="1.5"
           strokeLinejoin="round"
         />
-        <circle cx={cx + 26} cy={cy - 20} r="4" fill="#FFC93C" />
+        <circle cx={cx + 26} cy={cy - 20} r="4" fill="#B9822C" />
       </g>
     );
   }
   if (type === "medal") {
     return (
       <g>
-        <path d={`M${cx - 6} ${cy + 32} L${cx - 2} ${cy + 20} L${cx + 2} ${cy + 20} L${cx + 6} ${cy + 32} Z`} fill="#E5484D" />
-        <circle cx={cx} cy={cy + 38} r="9" fill="#FFC93C" stroke="#B8860B" strokeWidth="1.5" />
-        <path d={`M${cx - 4} ${cy + 38} L${cx + 4} ${cy + 38} M${cx} ${cy + 34} L${cx} ${cy + 42}`} stroke="#B8860B" strokeWidth="1.5" />
+        <path d={`M${cx - 6} ${cy + 32} L${cx - 2} ${cy + 20} L${cx + 2} ${cy + 20} L${cx + 6} ${cy + 32} Z`} fill="#8B3540" />
+        <circle cx={cx} cy={cy + 38} r="9" fill="#B9822C" stroke="#8C611B" strokeWidth="1.5" />
+        <path d={`M${cx - 4} ${cy + 38} L${cx + 4} ${cy + 38} M${cx} ${cy + 34} L${cx} ${cy + 42}`} stroke="#8C611B" strokeWidth="1.5" />
       </g>
     );
   }
@@ -62,12 +62,12 @@ function Accessory({ type, cx, cy, eyeGap }) {
       <g>
         <path
           d={`M${cx - 18} ${cy - 24} L${cx - 18} ${cy - 40} L${cx - 9} ${cy - 30} L${cx} ${cy - 44} L${cx + 9} ${cy - 30} L${cx + 18} ${cy - 40} L${cx + 18} ${cy - 24} Z`}
-          fill="#FFC93C"
-          stroke="#B8860B"
+          fill="#B9822C"
+          stroke="#8C611B"
           strokeWidth="1.5"
           strokeLinejoin="round"
         />
-        <circle cx={cx} cy={cy - 44} r="3" fill="#E5484D" />
+        <circle cx={cx} cy={cy - 44} r="3" fill="#8B3540" />
       </g>
     );
   }
@@ -85,27 +85,27 @@ function Face({ mood, cx, cy, eyeGap = 13, eyeY = 0, accessories = [] }) {
         <>
           <path
             d={`M${cx - eyeGap - 8} ${cy + eyeY - 10} l10 4`}
-            stroke="#4A3527"
+            stroke="#2A2019"
             strokeWidth="3"
             strokeLinecap="round"
             fill="none"
           />
           <path
             d={`M${cx + eyeGap + 8} ${cy + eyeY - 10} l-10 4`}
-            stroke="#4A3527"
+            stroke="#2A2019"
             strokeWidth="3"
             strokeLinecap="round"
             fill="none"
           />
         </>
       )}
-      <circle cx={cx - eyeGap} cy={cy + eyeY} r={eyeR} fill="#4A3527" />
-      <circle cx={cx + eyeGap} cy={cy + eyeY} r={eyeR} fill="#4A3527" />
+      <circle cx={cx - eyeGap} cy={cy + eyeY} r={eyeR} fill="#2A2019" />
+      <circle cx={cx + eyeGap} cy={cy + eyeY} r={eyeR} fill="#2A2019" />
 
       {isHappy ? (
         <path
           d={`M${cx - 12} ${cy + eyeY + 14} Q${cx} ${cy + eyeY + 26} ${cx + 12} ${cy + eyeY + 14}`}
-          stroke="#4A3527"
+          stroke="#2A2019"
           strokeWidth="4"
           fill="none"
           strokeLinecap="round"
@@ -113,7 +113,7 @@ function Face({ mood, cx, cy, eyeGap = 13, eyeY = 0, accessories = [] }) {
       ) : isSad ? (
         <path
           d={`M${cx - 10} ${cy + eyeY + 22} Q${cx} ${cy + eyeY + 12} ${cx + 10} ${cy + eyeY + 22}`}
-          stroke="#4A3527"
+          stroke="#2A2019"
           strokeWidth="4"
           fill="none"
           strokeLinecap="round"
@@ -121,7 +121,7 @@ function Face({ mood, cx, cy, eyeGap = 13, eyeY = 0, accessories = [] }) {
       ) : (
         <path
           d={`M${cx - 9} ${cy + eyeY + 18} Q${cx} ${cy + eyeY + 22} ${cx + 9} ${cy + eyeY + 18}`}
-          stroke="#4A3527"
+          stroke="#2A2019"
           strokeWidth="4"
           fill="none"
           strokeLinecap="round"
@@ -142,8 +142,8 @@ function ZakiShape({ mood, uid, reducedMotion, accessories }) {
     <>
       <defs>
         <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#FF8163" />
-          <stop offset="1" stopColor="#FF6B4A" />
+          <stop offset="0" stopColor="#C25A3D" />
+          <stop offset="1" stopColor="#B8492F" />
         </linearGradient>
       </defs>
       {petals.map((deg) => (
@@ -160,7 +160,7 @@ function ZakiShape({ mood, uid, reducedMotion, accessories }) {
           transition={{ duration: 0.5, repeat: isHappy ? Infinity : 0, repeatType: "mirror" }}
         />
       ))}
-      <circle cx="60" cy="60" r="27" fill="#FFF6EC" />
+      <circle cx="60" cy="60" r="27" fill="#F6EEE3" />
       <Face mood={mood} cx={60} cy={60} accessories={accessories} />
     </>
   );
@@ -172,8 +172,8 @@ function NardosShape({ mood, uid, accessories }) {
     <>
       <defs>
         <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#1FC0BC" />
-          <stop offset="1" stopColor="#00A19D" />
+          <stop offset="0" stopColor="#2B8478" />
+          <stop offset="1" stopColor="#1E6B60" />
         </linearGradient>
       </defs>
       <path
@@ -182,12 +182,12 @@ function NardosShape({ mood, uid, accessories }) {
       />
       <path
         d="M60 12 C57 18 55 23 55 27"
-        stroke="#007B78"
+        stroke="#123F38"
         strokeWidth="4"
         strokeLinecap="round"
         fill="none"
       />
-      <ellipse cx="60" cy="78" rx="30" ry="26" fill="#FFF6EC" opacity="0.94" />
+      <ellipse cx="60" cy="78" rx="30" ry="26" fill="#F6EEE3" opacity="0.94" />
       <Face mood={mood} cx={60} cy={80} eyeGap={12} accessories={accessories} />
     </>
   );
@@ -201,8 +201,8 @@ function BemnetShape({ mood, uid, reducedMotion, accessories }) {
     <>
       <defs>
         <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#FFD766" />
-          <stop offset="1" stopColor="#FFC93C" />
+          <stop offset="0" stopColor="#CC9A48" />
+          <stop offset="1" stopColor="#B9822C" />
         </linearGradient>
       </defs>
       <motion.line
@@ -210,27 +210,27 @@ function BemnetShape({ mood, uid, reducedMotion, accessories }) {
         y1="28"
         x2="38"
         y2="14"
-        stroke="#E0A800"
+        stroke="#8C611B"
         strokeWidth="3"
         strokeLinecap="round"
         animate={animateLoop ? { rotate: [-8, 8, -8] } : {}}
         style={{ transformOrigin: "45px 28px" }}
         transition={{ duration: 0.5, repeat: animateLoop ? Infinity : 0, repeatType: "mirror" }}
       />
-      <circle cx="38" cy="12" r="5" fill="#FFC93C" />
+      <circle cx="38" cy="12" r="5" fill="#B9822C" />
       <motion.line
         x1="75"
         y1="28"
         x2="82"
         y2="14"
-        stroke="#E0A800"
+        stroke="#8C611B"
         strokeWidth="3"
         strokeLinecap="round"
         animate={animateLoop ? { rotate: [8, -8, 8] } : {}}
         style={{ transformOrigin: "75px 28px" }}
         transition={{ duration: 0.5, repeat: animateLoop ? Infinity : 0, repeatType: "mirror" }}
       />
-      <circle cx="82" cy="12" r="5" fill="#FFC93C" />
+      <circle cx="82" cy="12" r="5" fill="#B9822C" />
 
       <circle cx="60" cy="66" r="34" fill={`url(#${gradId})`} />
       <circle cx="30" cy="60" r="18" fill={`url(#${gradId})`} />
@@ -238,10 +238,10 @@ function BemnetShape({ mood, uid, reducedMotion, accessories }) {
       <circle cx="42" cy="42" r="14" fill={`url(#${gradId})`} />
       <circle cx="78" cy="42" r="14" fill={`url(#${gradId})`} />
 
-      <ellipse cx="60" cy="70" rx="32" ry="28" fill="#FFF6EC" opacity="0.92" />
+      <ellipse cx="60" cy="70" rx="32" ry="28" fill="#F6EEE3" opacity="0.92" />
       <Face mood={mood} cx={60} cy={68} eyeGap={14} accessories={accessories} />
       {isHappy && (
-        <ellipse cx="60" cy="94" rx="7" ry="5" fill="#FF6B4A" opacity="0.85" />
+        <ellipse cx="60" cy="94" rx="7" ry="5" fill="#B8492F" opacity="0.85" />
       )}
     </>
   );
@@ -266,8 +266,8 @@ function SabaShape({ mood, uid, accessories }) {
         strokeLinecap="round"
         fill="none"
       />
-      <ellipse cx="53" cy="14" rx="7" ry="5" fill="#00A19D" transform="rotate(-25 53 14)" />
-      <ellipse cx="67" cy="14" rx="7" ry="5" fill="#1FC0BC" transform="rotate(25 67 14)" />
+      <ellipse cx="53" cy="14" rx="7" ry="5" fill="#1E6B60" transform="rotate(-25 53 14)" />
+      <ellipse cx="67" cy="14" rx="7" ry="5" fill="#2B8478" transform="rotate(25 67 14)" />
 
       <circle cx="60" cy={cy} r="34" fill={`url(#${gradId})`} />
       <circle cx="60" cy={cy - 26} r="8" fill={`url(#${gradId})`} />
@@ -275,11 +275,11 @@ function SabaShape({ mood, uid, accessories }) {
       <Face mood={mood} cx={60} cy={cy} eyeGap={eyeGap} accessories={accessories} />
 
       {/* glasses */}
-      <circle cx={60 - eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
-      <circle cx={60 + eyeGap} cy={cy} r="11" fill="none" stroke="#4A3527" strokeWidth="2.5" />
-      <path d={`M${60 - eyeGap + 11} ${cy} L${60 + eyeGap - 11} ${cy}`} stroke="#4A3527" strokeWidth="2.5" />
-      <path d={`M${60 - eyeGap - 11} ${cy - 2} L${60 - eyeGap - 18} ${cy - 6}`} stroke="#4A3527" strokeWidth="2.5" strokeLinecap="round" />
-      <path d={`M${60 + eyeGap + 11} ${cy - 2} L${60 + eyeGap + 18} ${cy - 6}`} stroke="#4A3527" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx={60 - eyeGap} cy={cy} r="11" fill="none" stroke="#2A2019" strokeWidth="2.5" />
+      <circle cx={60 + eyeGap} cy={cy} r="11" fill="none" stroke="#2A2019" strokeWidth="2.5" />
+      <path d={`M${60 - eyeGap + 11} ${cy} L${60 + eyeGap - 11} ${cy}`} stroke="#2A2019" strokeWidth="2.5" />
+      <path d={`M${60 - eyeGap - 11} ${cy - 2} L${60 - eyeGap - 18} ${cy - 6}`} stroke="#2A2019" strokeWidth="2.5" strokeLinecap="round" />
+      <path d={`M${60 + eyeGap + 11} ${cy - 2} L${60 + eyeGap + 18} ${cy - 6}`} stroke="#2A2019" strokeWidth="2.5" strokeLinecap="round" />
     </>
   );
 }
@@ -292,7 +292,7 @@ function TesfaShape({ mood, uid, reducedMotion, accessories }) {
       <defs>
         <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#FFA98F" />
-          <stop offset="1" stopColor="#FF6B4A" />
+          <stop offset="1" stopColor="#B8492F" />
         </linearGradient>
       </defs>
       <motion.ellipse
@@ -300,7 +300,7 @@ function TesfaShape({ mood, uid, reducedMotion, accessories }) {
         cy="52"
         rx="13"
         ry="20"
-        fill="#FFE4DA"
+        fill="#F1DDD2"
         style={{ transformOrigin: "38px 46px" }}
         animate={isHappy ? { rotate: [-6, 6, -6] } : { rotate: -6 }}
         transition={{ duration: 0.7, repeat: isHappy ? Infinity : 0, repeatType: "mirror" }}
@@ -310,7 +310,7 @@ function TesfaShape({ mood, uid, reducedMotion, accessories }) {
         cy="52"
         rx="13"
         ry="20"
-        fill="#FFE4DA"
+        fill="#F1DDD2"
         style={{ transformOrigin: "82px 46px" }}
         animate={isHappy ? { rotate: [6, -6, 6] } : { rotate: 6 }}
         transition={{ duration: 0.7, repeat: isHappy ? Infinity : 0, repeatType: "mirror" }}
@@ -319,7 +319,7 @@ function TesfaShape({ mood, uid, reducedMotion, accessories }) {
         d="M60 92 C18 64 22 28 46 22 C55 20 60 30 60 38 C60 30 65 20 74 22 C98 28 102 64 60 92 Z"
         fill={`url(#${gradId})`}
       />
-      <ellipse cx="60" cy="56" rx="28" ry="24" fill="#FFF6EC" opacity="0.92" />
+      <ellipse cx="60" cy="56" rx="28" ry="24" fill="#F6EEE3" opacity="0.92" />
       <Face mood={mood} cx={60} cy={54} eyeGap={12} accessories={accessories} />
     </>
   );
@@ -345,7 +345,7 @@ export default function Mascot({ mascotId = "zaki", mood = "neutral", size = 120
   return (
     <motion.div
       className={className}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, filter: "drop-shadow(0 6px 10px rgba(42, 32, 25, 0.18))" }}
       animate={reducedMotion ? {} : BODY_ANIMATIONS[mood] || BODY_ANIMATIONS.neutral}
       transition={{ duration: 0.6, ease: "easeInOut" }}
     >

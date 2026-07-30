@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 function HeartIcon({ filled }) {
   return (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill={filled ? "#FF6B4A" : "#F0E2D3"}>
+    <svg viewBox="0 0 24 24" width="26" height="26" fill={filled ? "#B8492F" : "#E6D8C6"}>
       <path d="M12 21s-6.7-4.35-9.6-8.2C.6 10.2 1 6.8 3.7 5.1c2.2-1.4 4.9-.8 6.3 1.1.6.8 2 .8 2.6 0 1.4-1.9 4.1-2.5 6.3-1.1 2.7 1.7 3.1 5.1 1.3 7.7C18.7 16.65 12 21 12 21z" />
     </svg>
   );

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSettingsContext } from "../context/SettingsContext";
 import { DAILY_GOAL_OPTIONS } from "../lib/storage";
 import Button from "../components/Button";
+import Icon from "../components/Icon";
 import { useSound } from "../hooks/useSound";
 import { speakWithReport } from "../lib/tts";
 
@@ -43,9 +44,9 @@ const GOAL_LABELS = [
 ];
 
 const THEME_OPTIONS = [
-  { key: "system", label: "System", icon: "🌗" },
-  { key: "light", label: "Light", icon: "☀️" },
-  { key: "dark", label: "Dark", icon: "🌙" },
+  { key: "system", label: "System", icon: "circleHalf" },
+  { key: "light", label: "Light", icon: "sun" },
+  { key: "dark", label: "Dark", icon: "moon" },
 ];
 
 export default function Settings({ progress, onUpdateProgressField, onResetProgress }) {
@@ -74,7 +75,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
     <div className="min-h-screen flex flex-col app-bg">
       <header
         className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
+        style={{ background: "linear-gradient(135deg, #C25A3D, var(--color-brand-coral))" }}
       >
         <div className="max-w-md md:max-w-xl mx-auto flex items-center gap-4 px-4 py-3">
           <button
@@ -112,7 +113,7 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
                     border: `2px solid ${active ? "var(--color-brand-coral)" : "var(--color-brand-line)"}`,
                   }}
                 >
-                  <span className="text-lg leading-none">{opt.icon}</span>
+                  <Icon name={opt.icon} size={20} style={{ color: active ? "var(--color-brand-coral-dark)" : "var(--color-brand-ink-light)" }} />
                   <span className="font-extrabold text-sm" style={{ color: "var(--color-brand-ink)" }}>
                     {opt.label}
                   </span>
@@ -157,8 +158,9 @@ export default function Settings({ progress, onUpdateProgressField, onResetProgr
             </p>
           )}
           {voiceTestResult === "started" && (
-            <p className="text-sm font-bold px-1" style={{ color: "var(--color-brand-teal-dark)" }}>
-              🔊 If you just heard "selam", pronunciation is working on this device.
+            <p className="text-sm font-bold px-1 flex items-center gap-1.5" style={{ color: "var(--color-brand-teal-dark)" }}>
+              <Icon name="volume" size={16} />
+              If you just heard "selam", pronunciation is working on this device.
             </p>
           )}
           {(voiceTestResult === "no-voice" || voiceTestResult === "unsupported") && (

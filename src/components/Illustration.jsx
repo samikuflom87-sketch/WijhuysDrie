@@ -1,24 +1,54 @@
 // Illustrations for Habesha Steps, keyed by the `image` field in
 // lessons.json. Concrete, real-world concepts (food, gestures, greetings,
-// question words) use Twemoji artwork (public/icons/*.svg, CC-BY 4.0,
-// see README) for instantly recognizable pictures. Family members and
-// numbers keep custom illustrations: a handful of generic person emoji
-// can't distinguish "brother" from "boy" from "man" as clearly as the
-// hair/prop system below can, and NumberDots shows an actual countable
-// quantity rather than just a printed digit.
-const ICON_KEYS = new Set([
-  "wave", "ask-man", "ask-woman", "thumbsup", "heart", "check", "cross",
-  "chat", "smile", "bye-man", "water", "bread", "tea", "coffee", "milk",
-  "meat", "egg", "salt", "sugar", "food", "hands", "sorry", "offer",
-  "what", "pin", "clock", "price", "point", "shrug", "star",
-]);
+// question words) render as custom solid-glyph icons from Icon.jsx — the
+// same drawn icon system used for the rest of the app's chrome, instead of
+// third-party Twemoji artwork. Family members and numbers keep separate
+// custom illustrations: a handful of generic person icons can't distinguish
+// "brother" from "boy" from "man" as clearly as the hair/prop system below
+// can, and NumberDots shows an actual countable quantity rather than just a
+// printed digit.
+import Icon from "./Icon";
 
-const INK = "#4A3527";
-const CORAL = "#FF6B4A";
+const INK = "#2A2019";
+const CORAL = "#B8492F";
 const CORAL_LIGHT = "#FFD9CC";
-const TEAL = "#00A19D";
+const TEAL = "#1E6B60";
 const TEAL_LIGHT = "#BFEDEA";
-const YELLOW = "#FFC93C";
+const YELLOW = "#B9822C";
+
+// Maps each lessons.json `image` key to a drawn Icon glyph + accent color.
+const CONCEPT_ICONS = {
+  wave: ["wave", CORAL],
+  "ask-man": ["handQuestion", TEAL],
+  "ask-woman": ["handQuestion", TEAL],
+  thumbsup: ["thumbsUp", CORAL],
+  heart: ["heart", CORAL],
+  check: ["check", TEAL],
+  cross: ["cross", CORAL],
+  chat: ["chat", TEAL],
+  smile: ["smile", YELLOW],
+  "bye-man": ["wave", TEAL],
+  water: ["water", TEAL],
+  bread: ["bread", YELLOW],
+  tea: ["tea", CORAL],
+  coffee: ["coffee", INK],
+  milk: ["milk", TEAL],
+  meat: ["meat", CORAL],
+  egg: ["egg", YELLOW],
+  salt: ["salt", TEAL],
+  sugar: ["sugar", YELLOW],
+  food: ["food", CORAL],
+  hands: ["hands", TEAL],
+  sorry: ["sorry", YELLOW],
+  offer: ["offer", CORAL],
+  what: ["what", TEAL],
+  pin: ["pin", CORAL],
+  clock: ["clock", INK],
+  price: ["price", TEAL],
+  point: ["point", CORAL],
+  shrug: ["shrug", YELLOW],
+  star: ["star", YELLOW],
+};
 
 // Fixed-proportion figure drawn in a 100x100 box. Use <ScaledPerson> to
 // resize/reposition without distorting the head/body proportions.
@@ -127,17 +157,9 @@ const FAMILY_ILLUSTRATIONS = {
 export default function Illustration({ name, size = 96, className = "" }) {
   if (!name) return null;
 
-  if (ICON_KEYS.has(name)) {
-    return (
-      <img
-        src={`/icons/${name}.svg`}
-        alt=""
-        width={size}
-        height={size}
-        className={className}
-        draggable={false}
-      />
-    );
+  if (name in CONCEPT_ICONS) {
+    const [iconName, color] = CONCEPT_ICONS[name];
+    return <Icon name={iconName} size={size} className={className} style={{ color }} />;
   }
 
   if (name in NUMBER_VALUES) {

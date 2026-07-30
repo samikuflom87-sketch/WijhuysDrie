@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
 import { useSound } from "../hooks/useSound";
 import { popIn } from "../lib/motion";
+import Icon from "./Icon";
 
 export const GOALS = [
-  { id: "travel", icon: "✈️", label: "Travel & culture", blurb: "Perfect for your next trip." },
-  { id: "family", icon: "👪", label: "Family & roots", blurb: "Great for staying close to family." },
-  { id: "fun", icon: "🎉", label: "Just for fun", blurb: "Learning should be enjoyable." },
-  { id: "explore", icon: "🧭", label: "Just exploring", blurb: "Take your time, no pressure." },
+  { id: "travel", icon: "plane", label: "Travel & culture", blurb: "Perfect for your next trip." },
+  { id: "family", icon: "family", label: "Family & roots", blurb: "Great for staying close to family." },
+  { id: "fun", icon: "smile", label: "Just for fun", blurb: "Learning should be enjoyable." },
+  { id: "explore", icon: "compass", label: "Just exploring", blurb: "Take your time, no pressure." },
 ];
 
 export function goalBlurb(goalId) {
@@ -48,8 +49,11 @@ export default function OnboardingGoal({ onChoose }) {
               className="btn-3d btn-white rounded-2xl px-4 py-3 flex items-center gap-3 text-left font-extrabold"
               style={{ color: "var(--color-brand-ink)" }}
             >
-              <span className="text-xl" aria-hidden="true">
-                {g.icon}
+              <span
+                className="flex items-center justify-center rounded-full shrink-0"
+                style={{ width: 36, height: 36, background: "var(--color-brand-coral-light)", color: "var(--color-brand-coral-dark)" }}
+              >
+                <Icon name={g.icon} size={18} />
               </span>
               {g.label}
             </button>

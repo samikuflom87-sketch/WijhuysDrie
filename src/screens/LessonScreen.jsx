@@ -21,6 +21,7 @@ import { pickReviewWords, allIntroducedWords, wordId } from "../lib/wordStats";
 import TopBar from "../components/TopBar";
 import AnswerBanner from "../components/AnswerBanner";
 import Button from "../components/Button";
+import Icon from "../components/Icon";
 import Mascot from "../components/Mascot";
 import Confetti, { randomConfettiVariant } from "../components/Confetti";
 import Flashcard from "../components/Flashcard";
@@ -495,14 +496,15 @@ export default function LessonScreen({
           {canRefill && (
             <Button
               variant="yellow"
-              className="w-full uppercase tracking-wide"
+              className="w-full uppercase tracking-wide flex items-center justify-center gap-2"
               onClick={() => {
                 onSpendGems(HEART_REFILL_COST);
                 setHearts(MAX_HEARTS);
                 setPhase(preFailPhase);
               }}
             >
-              💎 Refill hearts ({HEART_REFILL_COST} gems)
+              <Icon name="gem" size={18} />
+              Refill hearts ({HEART_REFILL_COST} gems)
             </Button>
           )}
           <Button variant="coral" className="w-full uppercase tracking-wide" onClick={() => navigate(0)}>
@@ -556,10 +558,11 @@ export default function LessonScreen({
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ ...SPRING_BOUNCY, delay: 0.3 }}
-            className="text-sm font-extrabold uppercase tracking-wide px-3 py-1.5 rounded-full"
+            className="text-sm font-extrabold uppercase tracking-wide px-3 py-1.5 rounded-full flex items-center gap-1.5"
             style={{ background: "var(--color-brand-yellow-light)", color: "var(--color-brand-yellow-dark)" }}
           >
-            💯 Perfect! No hints, no mistakes.
+            <Icon name="seal" size={16} />
+            Perfect! No hints, no mistakes.
           </motion.p>
         )}
         {beatBestScore && !isPerfectLesson && (
@@ -567,10 +570,11 @@ export default function LessonScreen({
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ ...SPRING_BOUNCY, delay: 0.3 }}
-            className="text-sm font-extrabold uppercase tracking-wide px-3 py-1.5 rounded-full"
+            className="text-sm font-extrabold uppercase tracking-wide px-3 py-1.5 rounded-full flex items-center gap-1.5"
             style={{ background: "var(--color-brand-teal-light)", color: "var(--color-brand-teal-dark)" }}
           >
-            🏅 New personal best for this lesson!
+            <Icon name="medal" size={16} />
+            New personal best for this lesson!
           </motion.p>
         )}
 
@@ -611,7 +615,7 @@ export default function LessonScreen({
             className="flex items-center gap-2 font-bold"
             style={{ color: "var(--color-brand-yellow-dark)" }}
           >
-            <span>👑</span>
+            <Icon name="crown" size={20} />
             <span>Crown earned!</span>
           </motion.div>
         )}
@@ -644,14 +648,15 @@ export default function LessonScreen({
           {!bonusOffered && !practiceMode && (
             <Button
               variant="yellow"
-              className="w-full uppercase tracking-wide"
+              className="w-full uppercase tracking-wide flex items-center justify-center gap-2"
               onClick={() => {
                 setBonusOffered(true);
                 setBonusQueue(makeBonusRound(lesson));
                 setPhase("bonus");
               }}
             >
-              🎁 Bonus round (+XP)
+              <Icon name="gift" size={18} />
+              Bonus round (+XP)
             </Button>
           )}
           <Button
@@ -673,7 +678,7 @@ export default function LessonScreen({
       {phase === "teaching" && (
         <div className="max-w-md md:max-w-xl w-full mx-auto px-4 pt-3">
           <p className="text-xs font-extrabold uppercase tracking-wide text-center" style={{ color: "var(--color-brand-teal-dark)" }}>
-            📝 Quick check — no hearts at risk
+            Quick check — no hearts at risk
           </p>
         </div>
       )}
@@ -688,8 +693,9 @@ export default function LessonScreen({
 
       {phase === "bonus" && (
         <div className="max-w-md md:max-w-xl w-full mx-auto px-4 pt-3">
-          <p className="text-xs font-extrabold uppercase tracking-wide text-center" style={{ color: "var(--color-brand-yellow-dark)" }}>
-            🎁 Bonus round — no hearts at risk
+          <p className="text-xs font-extrabold uppercase tracking-wide text-center flex items-center justify-center gap-1.5" style={{ color: "var(--color-brand-yellow-dark)" }}>
+            <Icon name="gift" size={14} />
+            Bonus round — no hearts at risk
           </p>
         </div>
       )}

@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { createRecognizer, roughMatch, speechRecognitionSupported } from "../../lib/speech";
 import { useSound } from "../../hooks/useSound";
+import Icon from "../Icon";
 
 export default function SpeakAnswerExercise({ exercise, checked, onResult, shake }) {
   const sound = useSound();
@@ -54,11 +55,14 @@ export default function SpeakAnswerExercise({ exercise, checked, onResult, shake
       </div>
 
       <p
-        className="text-xs font-bold rounded-xl px-3 py-2"
+        className="text-xs font-bold rounded-xl px-3 py-2 flex items-start gap-1.5"
         style={{ background: "var(--color-brand-yellow-light)", color: "var(--color-brand-ink-light)" }}
       >
-        🎤 Speaking practice (beta) — no browser can truly check Tigrinya pronunciation yet, so this is
-        just a rough guess, never a real grade.
+        <Icon name="mic" size={14} style={{ marginTop: 1 }} />
+        <span>
+          Speaking practice (beta) — no browser can truly check Tigrinya pronunciation yet, so this is
+          just a rough guess, never a real grade.
+        </span>
       </p>
 
       <div className="flex flex-col items-center gap-3 py-2">
@@ -74,10 +78,9 @@ export default function SpeakAnswerExercise({ exercise, checked, onResult, shake
             background: status === "recording" ? "var(--color-brand-red-light)" : "var(--color-brand-coral-light)",
             boxShadow: `0 4px 0 ${status === "recording" ? "var(--color-brand-red)" : "var(--color-brand-coral)"}`,
             color: status === "recording" ? "var(--color-brand-red-dark)" : "var(--color-brand-coral-dark)",
-            fontSize: 32,
           }}
         >
-          🎤
+          <Icon name="mic" size={34} />
         </button>
         <p className="text-sm font-bold" style={{ color: "var(--color-brand-ink-light)" }}>
           {status === "recording" ? "Listening..." : status === "done" ? "Tap to try again" : "Tap and say the word"}

@@ -41,7 +41,7 @@ export default function WordCollection({ wordStats }) {
     <div className="min-h-screen flex flex-col app-bg">
       <header
         className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
+        style={{ background: "linear-gradient(135deg, #C25A3D, var(--color-brand-coral))" }}
       >
         <div className="max-w-md md:max-w-xl mx-auto flex items-center gap-4 px-4 py-3">
           <button

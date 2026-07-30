@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useSettingsContext } from "../context/SettingsContext";
 
-const COLORS = ["#FF6B4A", "#FFC93C", "#00A19D", "#FF8163", "#1FC0BC"];
+const COLORS = ["#B8492F", "#B9822C", "#1E6B60", "#C25A3D", "#2B8478"];
 const VARIANTS = ["burst", "rain", "fountain"];
 
 export function randomConfettiVariant() {

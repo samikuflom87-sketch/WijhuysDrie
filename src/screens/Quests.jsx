@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { DAILY_QUESTS, WEEKLY_QUESTS } from "../data/quests";
 import ProgressBar from "../components/ProgressBar";
 import Button from "../components/Button";
+import Icon from "../components/Icon";
 import { useSound } from "../hooks/useSound";
 
 function QuestRow({ quest, progress, onClaim, i }) {
@@ -22,7 +23,12 @@ function QuestRow({ quest, progress, onClaim, i }) {
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-xl">{quest.icon}</span>
+          <span
+            className="flex items-center justify-center rounded-full shrink-0"
+            style={{ width: 32, height: 32, background: "var(--color-brand-teal-light)", color: "var(--color-brand-teal-dark)" }}
+          >
+            <Icon name={quest.icon} size={16} />
+          </span>
           <p className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
             {quest.name}
           </p>
@@ -33,8 +39,9 @@ function QuestRow({ quest, progress, onClaim, i }) {
       </div>
       <ProgressBar value={pct} />
       <div className="flex items-center justify-between">
-        <span className="text-sm font-extrabold" style={{ color: "var(--color-brand-yellow-dark)" }}>
-          💎 {quest.reward} gems
+        <span className="text-sm font-extrabold flex items-center gap-1" style={{ color: "var(--color-brand-yellow-dark)" }}>
+          <Icon name="gem" size={14} />
+          {quest.reward} gems
         </span>
         {claimed ? (
           <span className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "var(--color-brand-teal-dark)" }}>
@@ -63,7 +70,7 @@ export default function Quests({ progress, onClaimQuest }) {
     <div className="min-h-screen flex flex-col app-bg">
       <header
         className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
+        style={{ background: "linear-gradient(135deg, #C25A3D, var(--color-brand-coral))" }}
       >
         <div className="max-w-md md:max-w-xl mx-auto flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-4">
@@ -79,7 +86,10 @@ export default function Quests({ progress, onClaimQuest }) {
             </button>
             <h1 className="font-display font-extrabold text-lg text-white">Quests</h1>
           </div>
-          <span className="text-white font-extrabold text-sm">💎 {progress.gems}</span>
+          <span className="text-white font-extrabold text-sm flex items-center gap-1">
+            <Icon name="gem" size={16} />
+            {progress.gems}
+          </span>
         </div>
       </header>
 

@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import Icon from "../components/Icon";
 import { useSound } from "../hooks/useSound";
 import { popIn } from "../lib/motion";
 
 const MODES = [
-  { id: "listening", icon: "🎧", label: "Listening", blurb: "Hear a word, pick what it means." },
-  { id: "speaking", icon: "🎤", label: "Speaking", blurb: "Say taught words out loud (beta)." },
-  { id: "vocabulary", icon: "🧠", label: "Vocabulary", blurb: "Quick-fire meaning drills." },
+  { id: "listening", icon: "headphones", label: "Listening", blurb: "Hear a word, pick what it means." },
+  { id: "speaking", icon: "mic", label: "Speaking", blurb: "Say taught words out loud (beta)." },
+  { id: "vocabulary", icon: "brain", label: "Vocabulary", blurb: "Quick-fire meaning drills." },
 ];
 
 export default function PracticeHub({ hasReviewWords }) {
@@ -17,7 +18,7 @@ export default function PracticeHub({ hasReviewWords }) {
     <div className="min-h-screen flex flex-col app-bg">
       <header
         className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
+        style={{ background: "linear-gradient(135deg, #C25A3D, var(--color-brand-coral))" }}
       >
         <div className="max-w-md md:max-w-xl mx-auto flex items-center gap-4 px-4 py-3">
           <button
@@ -45,9 +46,10 @@ export default function PracticeHub({ hasReviewWords }) {
               sound.click();
               navigate("/review");
             }}
-            className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-left"
+            className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-left flex items-center gap-2"
           >
-            🔁 Quick Review — your weakest words
+            <Icon name="refresh" size={18} />
+            Quick Review — your weakest words
           </button>
         )}
 
@@ -63,8 +65,11 @@ export default function PracticeHub({ hasReviewWords }) {
             }}
             className="rounded-2xl p-4 flex items-center gap-4 card-soft text-left"
           >
-            <span className="text-3xl" aria-hidden="true">
-              {mode.icon}
+            <span
+              className="flex items-center justify-center rounded-full shrink-0"
+              style={{ width: 48, height: 48, background: "var(--color-brand-teal-light)", color: "var(--color-brand-teal-dark)" }}
+            >
+              <Icon name={mode.icon} size={24} />
             </span>
             <div>
               <p className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>

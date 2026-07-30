@@ -1,6 +1,6 @@
 # Habesha Steps
 
-A gamified web app for learning Tigrinya (Latin transliteration — no Ge'ez script). Original visual identity: warm coral, sunny yellow, and deep teal, with five original mascots (Zaki, Nardos, Bemnet, Saba, and Tesfa). One of them accompanies you through each lesson — visible during exercises, not just after you answer — and reacts to correct/wrong answers in its own voice. Built with React, Vite, Tailwind CSS, and Framer Motion. All progress is stored in `localStorage` — there is no backend.
+A gamified web app for learning Tigrinya (Latin transliteration — no Ge'ez script). Original visual identity: a deep, earth-toned palette (terracotta, ochre, and emerald-teal, inspired by Habesha textile borders) paired with Fraunces + Work Sans, five original mascots (Zaki, Nardos, Bemnet, Saba, and Tesfa), and a fully custom-drawn icon set — no emoji or third-party icon artwork anywhere in the interface. One mascot accompanies you through each lesson — visible during exercises, not just after you answer — and reacts to correct/wrong answers in its own voice. Built with React, Vite, Tailwind CSS, and Framer Motion. All progress is stored in `localStorage` — there is no backend.
 
 ## Installing it as an app
 
@@ -121,7 +121,7 @@ All lesson content lives in `src/data/lessons.json`. Each lesson has a title, a 
 Field notes:
 
 - `audio` — path to an `.mp3` under `public/audio/`. Every speaker button plays it if the file exists; if it's missing (the default, until you record real ones), the button instead reads the word aloud using the browser's built-in text-to-speech, so sound always works. There's no Tigrinya voice in any browser, so this is a best-effort reading of the Latin spelling, not authentic pronunciation — dropping in a real recording with the matching filename automatically takes over from the synthesized voice.
-- `image` — an illustration key (e.g. `"father"`, `"water"`, `"num3"`, `"wave"`). Words with a non-null image can appear in picture-choice exercises. See `src/components/Illustration.jsx` for the full list — most concrete concepts render a Twemoji icon from `public/icons/`, while family members and numbers use the custom illustrations further down in that file. Add a new key to whichever system fits.
+- `image` — an illustration key (e.g. `"father"`, `"water"`, `"num3"`, `"wave"`). Words with a non-null image can appear in picture-choice exercises. See `src/components/Illustration.jsx` for the full list — most concrete concepts render one of the app's own drawn icons (`src/components/Icon.jsx`), while family members and numbers use the custom person/dot illustrations further down in that file. Add a new key to whichever system fits.
 - `note` — optional short usage tip shown on the word's intro flashcard. Omit it if you don't need one.
 - `verify` — marks a translation not yet confirmed by a native speaker. The app never edits, removes, or "corrects" this flag or the surrounding text — it's purely for your own tracking.
 - `sentences` — used to auto-generate build-the-sentence exercises. Leave the array empty (`[]`) to skip that exercise type for a lesson.
@@ -149,9 +149,9 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 - `src/lib/lessonTheme.js` — maps each lesson theme to an accent color for its top bar
 - `src/lib/appBadge.js` — sets/clears the installed app's home-screen icon badge (Badging API) to the current streak
 - `src/lib/ambientMusic.js` — optional soft generative ambient pad (Web Audio API) played during lessons
-- `src/components/Mascot.jsx` — the five original SVG mascots, with support for cosmetic accessories (hat, glasses)
-- `src/components/Illustration.jsx` — picture-choice illustrations: Twemoji icons for concrete concepts, custom SVGs for family members and numbers
-- `public/icons/` — the Twemoji SVG icon files referenced above
+- `src/components/Mascot.jsx` — the five original SVG mascots, with support for cosmetic accessories (hat, glasses, bandana, medal, crown)
+- `src/components/Icon.jsx` — the app's own solid-glyph icon set (nav/stat/badge chrome and lesson picture-choice concepts), replacing emoji and third-party icon artwork everywhere
+- `src/components/Illustration.jsx` — picture-choice illustrations: Icon.jsx glyphs for concrete concepts, custom SVGs for family members and numbers
 - `src/components/Flashcard.jsx` — the intro "teach before test" card
 - `src/components/HintReveal.jsx` — the in-exercise "?" hint
 - `src/components/ProgressRing.jsx` — per-lesson accuracy ring on Home
@@ -175,4 +175,4 @@ Drop `.mp3` files into `public/audio/`, named exactly as referenced by each `aud
 
 ## Attribution
 
-Picture-choice icons in `public/icons/` are from [Twemoji](https://twemoji.twitter.com/), licensed [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Every icon, illustration, and mascot in the app is original — drawn in code (SVG/canvas), not sourced from a third-party icon set. Fraunces and Work Sans are open-source (SIL Open Font License), bundled locally via `@fontsource`.

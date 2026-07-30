@@ -13,6 +13,7 @@ import Mascot from "../components/Mascot";
 import ProgressBar from "../components/ProgressBar";
 import XPCounter from "../components/XPCounter";
 import Button from "../components/Button";
+import Icon from "../components/Icon";
 import OnboardingGoal, { goalBlurb } from "../components/OnboardingGoal";
 import { useSound } from "../hooks/useSound";
 import { useSettingsContext } from "../context/SettingsContext";
@@ -47,26 +48,28 @@ export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, o
     <div className="min-h-screen flex flex-col app-bg">
       <header
         className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
+        style={{ background: "linear-gradient(135deg, #C25A3D, var(--color-brand-coral))" }}
       >
         <div className="max-w-md md:max-w-xl mx-auto flex items-center justify-between px-4 py-3">
-          <h1 className="font-display font-extrabold text-lg text-white tracking-tight">
+          <h1 className="font-display font-bold text-lg text-white tracking-tight">
             Habesha Steps
           </h1>
           <div className="flex items-center gap-3">
             <StreakFlame streak={progress.streak} color="white" />
-            {progress.streakFreezes > 0 && <StatPill icon="🧊" value={progress.streakFreezes} color="white" />}
-            <StatPill icon="⭐" value={<XPCounter value={progress.xp} />} color="white" />
-            <StatPill icon="💎" value={progress.gems} color="white" />
+            {progress.streakFreezes > 0 && (
+              <StatPill icon={<Icon name="freeze" size={18} />} value={progress.streakFreezes} color="white" />
+            )}
+            <StatPill icon={<Icon name="star" size={18} />} value={<XPCounter value={progress.xp} />} color="white" />
+            <StatPill icon={<Icon name="gem" size={18} />} value={progress.gems} color="white" />
             <button
               onClick={() => {
                 sound.click();
                 navigate("/quests");
               }}
               aria-label="Quests"
-              className="text-xl"
+              className="text-white"
             >
-              🎯
+              <Icon name="target" size={22} />
             </button>
             <button
               onClick={() => {
@@ -74,9 +77,9 @@ export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, o
                 navigate("/achievements");
               }}
               aria-label="Achievements"
-              className="text-xl"
+              className="text-white"
             >
-              🏆
+              <Icon name="trophy" size={22} />
             </button>
             <button
               onClick={() => {
@@ -84,9 +87,9 @@ export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, o
                 navigate("/settings");
               }}
               aria-label="Settings"
-              className="text-xl"
+              className="text-white"
             >
-              ⚙️
+              <Icon name="gear" size={22} />
             </button>
           </div>
         </div>
@@ -130,8 +133,8 @@ export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, o
             className="rounded-2xl p-4 flex items-center gap-3 card-soft"
             style={{ border: "2px solid var(--color-brand-coral)" }}
           >
-            <span className="text-2xl" aria-hidden="true">
-              💔
+            <span style={{ color: "var(--color-brand-coral)" }}>
+              <Icon name="heartCrack" size={26} />
             </span>
             <div className="flex-1">
               <p className="font-extrabold text-sm" style={{ color: "var(--color-brand-ink)" }}>
@@ -183,9 +186,10 @@ export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, o
               sound.click();
               navigate("/placement");
             }}
-            className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide"
+            className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide flex items-center justify-center gap-2"
           >
-            🎯 Already know some Tigrinya? Take a placement test
+            <Icon name="target" size={18} />
+            Already know some Tigrinya? Take a placement test
           </button>
         )}
 
@@ -207,9 +211,10 @@ export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, o
               sound.click();
               navigate("/review");
             }}
-            className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide"
+            className="btn-3d btn-teal rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide flex items-center justify-center gap-2"
           >
-            🔁 Review words you've missed
+            <Icon name="refresh" size={18} />
+            Review words you've missed
           </button>
         )}
 
@@ -219,36 +224,40 @@ export default function Home({ progress, wordStats, onSetGoal, onRepairStreak, o
               sound.click();
               navigate("/words");
             }}
-            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm"
+            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm flex items-center justify-center gap-2"
           >
-            📖 My Words
+            <Icon name="book" size={16} />
+            My Words
           </button>
           <button
             onClick={() => {
               sound.click();
               navigate("/mistakes");
             }}
-            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm"
+            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm flex items-center justify-center gap-2"
           >
-            📓 Mistakes
+            <Icon name="notebook" size={16} />
+            Mistakes
           </button>
           <button
             onClick={() => {
               sound.click();
               navigate("/practice");
             }}
-            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm"
+            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm flex items-center justify-center gap-2"
           >
-            🧠 Practice Hub
+            <Icon name="brain" size={16} />
+            Practice Hub
           </button>
           <button
             onClick={() => {
               sound.click();
               navigate("/shop");
             }}
-            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm"
+            className="btn-3d btn-white rounded-2xl px-4 py-3.5 font-extrabold uppercase tracking-wide text-sm flex items-center justify-center gap-2"
           >
-            🛍️ Shop
+            <Icon name="bag" size={16} />
+            Shop
           </button>
         </div>
       </div>

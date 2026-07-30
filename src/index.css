@@ -1,28 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Quicksand", system-ui, sans-serif;
-  --font-display: "Baloo 2", "Quicksand", system-ui, sans-serif;
+  --font-sans: "Work Sans", system-ui, sans-serif;
+  --font-display: "Fraunces", "Work Sans", system-ui, serif;
 
-  --color-brand-coral: #ff6b4a;
-  --color-brand-coral-dark: #e04f2f;
-  --color-brand-coral-light: #ffe4da;
-  --color-brand-yellow: #ffc93c;
-  --color-brand-yellow-dark: #e0a800;
-  --color-brand-yellow-light: #fff1c9;
-  --color-brand-teal: #00a19d;
-  --color-brand-teal-dark: #007b78;
-  --color-brand-teal-light: #d3f3f1;
-  --color-brand-red: #e5484d;
-  --color-brand-red-dark: #c53338;
-  --color-brand-red-light: #ffe1e2;
-  --color-brand-cream: #fff6ec;
-  --color-brand-line: #f0e2d3;
-  --color-brand-line-dark: #d8c4ac;
-  --color-brand-ink: #4a3527;
-  --color-brand-ink-light: #8a7461;
-  --color-brand-surface: #ffffff;
-  --color-brand-shadow: rgba(74, 53, 39, 0.12);
+  /* Deep, earth-toned palette (terracotta / ochre / emerald-teal / wine) —
+     inspired by Habesha textile borders and coffee-ceremony colors, chosen
+     to read as considered and premium rather than flat candy-app primaries. */
+  --color-brand-coral: #b8492f;
+  --color-brand-coral-dark: #8a371f;
+  --color-brand-coral-light: #f1ddd2;
+  --color-brand-yellow: #b9822c;
+  --color-brand-yellow-dark: #8c611b;
+  --color-brand-yellow-light: #f3e4c6;
+  --color-brand-teal: #1e6b60;
+  --color-brand-teal-dark: #123f38;
+  --color-brand-teal-light: #d7eae6;
+  --color-brand-red: #8b3540;
+  --color-brand-red-dark: #6b2831;
+  --color-brand-red-light: #f0dbdd;
+  --color-brand-cream: #f6eee3;
+  --color-brand-line: #e6d8c6;
+  --color-brand-line-dark: #cbb595;
+  --color-brand-ink: #2a2019;
+  --color-brand-ink-light: #6b5c4e;
+  --color-brand-surface: #fffcf7;
+  --color-brand-shadow: rgba(42, 32, 25, 0.14);
 }
 
 /* Dark palette: tokens re-derived for contrast/elevation on a dark ground,
@@ -32,68 +35,68 @@
    step lighter than the page background for a sense of elevation. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-brand-coral: #ff7c5c;
-    --color-brand-coral-dark: #ffab8f;
-    --color-brand-coral-light: #402620;
-    --color-brand-yellow: #ffd766;
-    --color-brand-yellow-dark: #ffe9a8;
-    --color-brand-yellow-light: #3d331a;
-    --color-brand-teal: #2dd4c5;
-    --color-brand-teal-dark: #7ee8db;
+    --color-brand-coral: #e0805a;
+    --color-brand-coral-dark: #f2ad8d;
+    --color-brand-coral-light: #3a2620;
+    --color-brand-yellow: #d9a857;
+    --color-brand-yellow-dark: #f0ce94;
+    --color-brand-yellow-light: #3a2e18;
+    --color-brand-teal: #4aab9e;
+    --color-brand-teal-dark: #96dccd;
     --color-brand-teal-light: #163330;
-    --color-brand-red: #ff6b6f;
-    --color-brand-red-dark: #ffabad;
-    --color-brand-red-light: #3d2224;
-    --color-brand-cream: #1c1410;
-    --color-brand-line: #43362b;
-    --color-brand-line-dark: #0a0705;
-    --color-brand-ink: #f5e9dd;
-    --color-brand-ink-light: #c7ab94;
-    --color-brand-surface: #251c15;
+    --color-brand-red: #c9707a;
+    --color-brand-red-dark: #e8a4ab;
+    --color-brand-red-light: #3a2224;
+    --color-brand-cream: #1a140f;
+    --color-brand-line: #473a2d;
+    --color-brand-line-dark: #29201a;
+    --color-brand-ink: #f2e8db;
+    --color-brand-ink-light: #c2b0a0;
+    --color-brand-surface: #251c16;
     --color-brand-shadow: rgba(0, 0, 0, 0.4);
   }
 }
 :root[data-theme="dark"] {
-  --color-brand-coral: #ff7c5c;
-  --color-brand-coral-dark: #ffab8f;
-  --color-brand-coral-light: #402620;
-  --color-brand-yellow: #ffd766;
-  --color-brand-yellow-dark: #ffe9a8;
-  --color-brand-yellow-light: #3d331a;
-  --color-brand-teal: #2dd4c5;
-  --color-brand-teal-dark: #7ee8db;
+  --color-brand-coral: #e0805a;
+  --color-brand-coral-dark: #f2ad8d;
+  --color-brand-coral-light: #3a2620;
+  --color-brand-yellow: #d9a857;
+  --color-brand-yellow-dark: #f0ce94;
+  --color-brand-yellow-light: #3a2e18;
+  --color-brand-teal: #4aab9e;
+  --color-brand-teal-dark: #96dccd;
   --color-brand-teal-light: #163330;
-  --color-brand-red: #ff6b6f;
-  --color-brand-red-dark: #ffabad;
-  --color-brand-red-light: #3d2224;
-  --color-brand-cream: #1c1410;
-  --color-brand-line: #43362b;
-  --color-brand-line-dark: #0a0705;
-  --color-brand-ink: #f5e9dd;
-  --color-brand-ink-light: #c7ab94;
-  --color-brand-surface: #251c15;
+  --color-brand-red: #c9707a;
+  --color-brand-red-dark: #e8a4ab;
+  --color-brand-red-light: #3a2224;
+  --color-brand-cream: #1a140f;
+  --color-brand-line: #473a2d;
+  --color-brand-line-dark: #29201a;
+  --color-brand-ink: #f2e8db;
+  --color-brand-ink-light: #c2b0a0;
+  --color-brand-surface: #251c16;
   --color-brand-shadow: rgba(0, 0, 0, 0.4);
 }
 :root[data-theme="light"] {
-  --color-brand-coral: #ff6b4a;
-  --color-brand-coral-dark: #e04f2f;
-  --color-brand-coral-light: #ffe4da;
-  --color-brand-yellow: #ffc93c;
-  --color-brand-yellow-dark: #e0a800;
-  --color-brand-yellow-light: #fff1c9;
-  --color-brand-teal: #00a19d;
-  --color-brand-teal-dark: #007b78;
-  --color-brand-teal-light: #d3f3f1;
-  --color-brand-red: #e5484d;
-  --color-brand-red-dark: #c53338;
-  --color-brand-red-light: #ffe1e2;
-  --color-brand-cream: #fff6ec;
-  --color-brand-line: #f0e2d3;
-  --color-brand-line-dark: #d8c4ac;
-  --color-brand-ink: #4a3527;
-  --color-brand-ink-light: #8a7461;
-  --color-brand-surface: #ffffff;
-  --color-brand-shadow: rgba(74, 53, 39, 0.12);
+  --color-brand-coral: #b8492f;
+  --color-brand-coral-dark: #8a371f;
+  --color-brand-coral-light: #f1ddd2;
+  --color-brand-yellow: #b9822c;
+  --color-brand-yellow-dark: #8c611b;
+  --color-brand-yellow-light: #f3e4c6;
+  --color-brand-teal: #1e6b60;
+  --color-brand-teal-dark: #123f38;
+  --color-brand-teal-light: #d7eae6;
+  --color-brand-red: #8b3540;
+  --color-brand-red-dark: #6b2831;
+  --color-brand-red-light: #f0dbdd;
+  --color-brand-cream: #f6eee3;
+  --color-brand-line: #e6d8c6;
+  --color-brand-line-dark: #cbb595;
+  --color-brand-ink: #2a2019;
+  --color-brand-ink-light: #6b5c4e;
+  --color-brand-surface: #fffcf7;
+  --color-brand-shadow: rgba(42, 32, 25, 0.14);
 }
 
 * {
@@ -120,8 +123,8 @@ body {
   /* A faint diamond lattice (a nod to habesha textile borders) so the
      background reads as designed, not a flat AI-default cream fill. */
   background-image:
-    linear-gradient(45deg, rgba(255, 107, 74, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 107, 74, 0.05) 75%),
-    linear-gradient(45deg, rgba(0, 161, 157, 0.045) 25%, transparent 25%, transparent 75%, rgba(0, 161, 157, 0.045) 75%);
+    linear-gradient(45deg, rgba(184, 73, 47, 0.05) 25%, transparent 25%, transparent 75%, rgba(184, 73, 47, 0.05) 75%),
+    linear-gradient(45deg, rgba(30, 107, 96, 0.045) 25%, transparent 25%, transparent 75%, rgba(30, 107, 96, 0.045) 75%);
   background-size: 26px 26px;
   background-position: 0 0, 13px 13px;
 }
@@ -151,18 +154,19 @@ button {
   font-family: inherit;
 }
 
-/* Chunky pressable button: bottom shadow edge that collapses on click */
+/* Refined pressable button: soft elevation + a gentle scale-down on press,
+   instead of the thick flat-color drop-shadow "chunky candy" look — reads
+   as considered elevation rather than a skeuomorphic game button. */
 .btn-3d {
   position: relative;
   border: none;
   cursor: pointer;
-  transform: translateY(0);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s ease;
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.15s ease, filter 0.15s ease;
   will-change: transform;
 }
 
 .btn-3d:active:not(:disabled) {
-  transform: translateY(4px);
+  transform: scale(0.97);
 }
 
 .btn-3d:disabled {
@@ -175,108 +179,79 @@ button {
    hover state left over after a tap. */
 @media (hover: hover) and (pointer: fine) {
   .btn-3d:not(:disabled):hover {
-    transform: translateY(-2px);
-    filter: brightness(1.04);
-  }
-  .btn-3d:not(:disabled):active:hover {
-    transform: translateY(4px);
-    filter: brightness(1);
+    filter: brightness(1.06);
+    box-shadow: 0 6px 18px var(--color-brand-shadow);
   }
 }
 
 .btn-coral {
-  background: linear-gradient(160deg, #ff8163, var(--color-brand-coral));
-  box-shadow: 0 4px 0 var(--color-brand-coral-dark);
-  color: white;
-}
-.btn-coral:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-brand-coral-dark);
+  background: var(--color-brand-coral);
+  box-shadow: 0 2px 6px var(--color-brand-shadow);
+  color: #fffaf6;
 }
 
 .btn-teal {
-  background: linear-gradient(160deg, #1fc0bc, var(--color-brand-teal));
-  box-shadow: 0 4px 0 var(--color-brand-teal-dark);
-  color: white;
-}
-.btn-teal:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-brand-teal-dark);
+  background: var(--color-brand-teal);
+  box-shadow: 0 2px 6px var(--color-brand-shadow);
+  color: #fffaf6;
 }
 
 .btn-yellow {
-  background: linear-gradient(160deg, #ffd766, var(--color-brand-yellow));
-  box-shadow: 0 4px 0 var(--color-brand-yellow-dark);
-  color: var(--color-brand-ink);
-}
-.btn-yellow:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-brand-yellow-dark);
+  background: var(--color-brand-yellow);
+  box-shadow: 0 2px 6px var(--color-brand-shadow);
+  color: #2a2019;
 }
 
 .btn-red {
-  background: linear-gradient(160deg, #ee6a6e, var(--color-brand-red));
-  box-shadow: 0 4px 0 var(--color-brand-red-dark);
-  color: white;
-}
-.btn-red:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-brand-red-dark);
+  background: var(--color-brand-red);
+  box-shadow: 0 2px 6px var(--color-brand-shadow);
+  color: #fffaf6;
 }
 
 .btn-white {
   background: var(--color-brand-surface);
   color: var(--color-brand-coral-dark);
-  box-shadow: 0 4px 0 var(--color-brand-line-dark);
-  border: 2px solid var(--color-brand-line);
-}
-.btn-white:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-brand-line-dark);
+  box-shadow: 0 1px 3px var(--color-brand-shadow);
+  border: 1.5px solid var(--color-brand-line);
 }
 
 .btn-outline {
   background: var(--color-brand-surface);
-  box-shadow: 0 4px 0 var(--color-brand-line);
-  border: 2px solid var(--color-brand-line);
+  box-shadow: 0 1px 3px var(--color-brand-shadow);
+  border: 1.5px solid var(--color-brand-line);
   color: var(--color-brand-ink);
-}
-.btn-outline:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-brand-line);
 }
 
 .btn-outline.selected {
   background: var(--color-brand-coral-light);
   border-color: var(--color-brand-coral);
   color: var(--color-brand-coral-dark);
-  box-shadow: 0 4px 0 var(--color-brand-coral);
-}
-.btn-outline.selected:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--color-brand-coral);
 }
 
 .btn-outline.correct {
   background: var(--color-brand-teal-light);
   border-color: var(--color-brand-teal);
   color: var(--color-brand-teal-dark);
-  box-shadow: 0 4px 0 var(--color-brand-teal);
 }
 
 .btn-outline.wrong {
   background: var(--color-brand-red-light);
   border-color: var(--color-brand-red);
   color: var(--color-brand-red-dark);
-  box-shadow: 0 4px 0 var(--color-brand-red);
 }
 
 .btn-outline.golden {
   background: var(--color-brand-yellow-light);
   border-color: var(--color-brand-yellow-dark);
   color: var(--color-brand-yellow-dark);
-  box-shadow: 0 4px 0 var(--color-brand-yellow-dark);
 }
 
 /* Soft-elevated card: subtle shadow + hairline border instead of a flat
    border-only outline, so surfaces read as lifted rather than flat. */
 .card-soft {
   background: var(--color-brand-surface);
-  border: 2px solid var(--color-brand-line);
-  box-shadow: 0 2px 10px var(--color-brand-shadow);
+  border: 1.5px solid var(--color-brand-line);
+  box-shadow: 0 1px 2px var(--color-brand-shadow), 0 6px 16px var(--color-brand-shadow);
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
@@ -286,27 +261,11 @@ button {
 .app-bg {
   background-color: var(--color-brand-cream);
   background-image:
-    linear-gradient(45deg, rgba(255, 107, 74, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 107, 74, 0.05) 75%),
-    linear-gradient(45deg, rgba(0, 161, 157, 0.045) 25%, transparent 25%, transparent 75%, rgba(0, 161, 157, 0.045) 75%);
+    linear-gradient(45deg, rgba(184, 73, 47, 0.05) 25%, transparent 25%, transparent 75%, rgba(184, 73, 47, 0.05) 75%),
+    linear-gradient(45deg, rgba(30, 107, 96, 0.045) 25%, transparent 25%, transparent 75%, rgba(30, 107, 96, 0.045) 75%);
   background-size: 26px 26px;
   background-position: 0 0, 13px 13px;
   transition: background-color 0.25s ease;
-}
-
-/* Glossy top highlight on chunky 3D buttons for a more tactile, premium
-   feel than a flat gradient fill. */
-.btn-3d::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 55%);
-  pointer-events: none;
-}
-
-.btn-white.btn-3d::before,
-.btn-outline.btn-3d::before {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 60%);
 }
 
 /* scrollbar tidy */

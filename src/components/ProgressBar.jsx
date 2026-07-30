@@ -13,7 +13,7 @@ export default function ProgressBar({ value }) {
     >
       <motion.div
         className="h-full rounded-full"
-        style={{ background: "linear-gradient(90deg, #1FC0BC, var(--color-brand-teal))" }}
+        style={{ background: "linear-gradient(90deg, #2B8478, var(--color-brand-teal))" }}
         initial={{ width: 0 }}
         animate={{ width: `${pct}%` }}
         transition={{ type: "spring", stiffness: 120, damping: 20 }}

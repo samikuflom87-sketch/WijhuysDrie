@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import Button from "../Button";
 import SpeakerButton from "../SpeakerButton";
 import Illustration from "../Illustration";
+import Icon from "../Icon";
 
 export default function ChoiceExercise({ exercise, selectedId, checked, onSelect, shake }) {
   const isPicture = exercise.type === "picture-choice";
@@ -54,10 +55,11 @@ export default function ChoiceExercise({ exercise, selectedId, checked, onSelect
 
       {checked && exercise.isGoldenQuestion && (
         <p
-          className="text-sm font-extrabold text-center -mt-2"
+          className="text-sm font-extrabold text-center -mt-2 flex items-center justify-center gap-1.5"
           style={{ color: "var(--color-brand-yellow-dark)" }}
         >
-          ✨ Golden question — bonus XP!
+          <Icon name="sparkle" size={16} />
+          Golden question — bonus XP!
         </p>
       )}
 

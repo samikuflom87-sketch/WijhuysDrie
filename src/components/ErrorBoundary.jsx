@@ -1,4 +1,5 @@
 import { Component } from "react";
+import Icon from "./Icon";
 
 // Deliberately has zero dependencies on SettingsContext (no <Mascot>, no
 // useSound) — this boundary sits outside <App>, so if App itself is what
@@ -23,7 +24,7 @@ export default class ErrorBoundary extends Component {
         className="min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center app-bg"
         style={{ background: "var(--color-brand-cream)" }}
       >
-        <span style={{ fontSize: 72, lineHeight: 1 }}>🙂</span>
+        <Icon name="smile" size={64} style={{ color: "var(--color-brand-coral)" }} />
         <h1 className="text-2xl font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
           Something went wrong
         </h1>

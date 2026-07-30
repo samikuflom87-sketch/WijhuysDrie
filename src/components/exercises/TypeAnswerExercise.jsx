@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SpeakerButton from "../SpeakerButton";
+import Icon from "../Icon";
 
 export default function TypeAnswerExercise({ exercise, checked, isCorrect, onChange, shake, showRetryHint }) {
   const [value, setValue] = useState("");
@@ -79,10 +80,11 @@ export default function TypeAnswerExercise({ exercise, checked, isCorrect, onCha
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="text-sm font-bold mt-2"
+              className="text-sm font-bold mt-2 flex items-center gap-1.5"
               style={{ color: "var(--color-brand-yellow-dark)" }}
             >
-              ✏️ Not quite — double-check your spelling and try again!
+              <Icon name="pencil" size={14} />
+              Not quite — double-check your spelling and try again!
             </motion.p>
           )}
         </AnimatePresence>

@@ -23,7 +23,7 @@ function StarIcon() {
 
 function LockIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="#D8C4AC">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="#CBB595">
       <path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 5a3 3 0 016 0v3H9V7zm3 8a2 2 0 110 4 2 2 0 010-4z" />
     </svg>
   );
@@ -38,15 +38,15 @@ export default function LessonBubble({ lesson, status, index, accuracy, onClick 
   const isCurrent = status === "current";
 
   const bg = isCompleted
-    ? "linear-gradient(160deg, #FFD766, #FFC93C)"
+    ? "linear-gradient(160deg, #CC9A48, #B9822C)"
     : isCurrent
-    ? "linear-gradient(160deg, #FF8163, #FF6B4A)"
+    ? "linear-gradient(160deg, #C25A3D, #B8492F)"
     : "#EFE3D3";
   const shadow = isCompleted
-    ? "#E0A800"
+    ? "#8C611B"
     : isCurrent
-    ? "#E04F2F"
-    : "#D8C4AC";
+    ? "#8A371F"
+    : "#CBB595";
 
   const showRing = accuracy !== null && accuracy !== undefined;
   const ringColor = accuracy >= 0.8 ? "var(--color-brand-teal)" : accuracy >= 0.5 ? "var(--color-brand-yellow-dark)" : "var(--color-brand-coral)";

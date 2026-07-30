@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import Illustration from "./Illustration";
 import SpeakerButton from "./SpeakerButton";
 import Button from "./Button";
+import Icon from "./Icon";
 
 export default function Flashcard({ word, index, total, onGotIt }) {
   return (
@@ -39,10 +40,11 @@ export default function Flashcard({ word, index, total, onGotIt }) {
 
       {word.note && (
         <p
-          className="text-sm font-bold max-w-xs rounded-2xl px-4 py-3"
+          className="text-sm font-bold max-w-xs rounded-2xl px-4 py-3 flex items-center gap-2"
           style={{ background: "var(--color-brand-yellow-light)", color: "var(--color-brand-ink)" }}
         >
-          💡 {word.note}
+          <Icon name="bulb" size={16} style={{ color: "var(--color-brand-yellow-dark)" }} />
+          {word.note}
         </p>
       )}
 

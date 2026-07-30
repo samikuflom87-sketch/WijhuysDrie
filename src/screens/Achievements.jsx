@@ -4,6 +4,7 @@ import { BADGES } from "../data/badges";
 import { useSound } from "../hooks/useSound";
 import StreakCalendar from "../components/StreakCalendar";
 import ShareCardButton from "../components/ShareCard";
+import Icon from "../components/Icon";
 
 export default function Achievements({ progress }) {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Achievements({ progress }) {
     <div className="min-h-screen flex flex-col app-bg">
       <header
         className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(135deg, #FF8163, var(--color-brand-coral))" }}
+        style={{ background: "linear-gradient(135deg, #C25A3D, var(--color-brand-coral))" }}
       >
         <div className="max-w-md md:max-w-xl mx-auto flex items-center gap-4 px-4 py-3">
           <button
@@ -56,7 +57,17 @@ export default function Achievements({ progress }) {
                 opacity: unlocked ? 1 : 0.65,
               }}
             >
-              <span className="text-3xl">{unlocked ? badge.icon : "🔒"}</span>
+              <span
+                className="flex items-center justify-center rounded-full shrink-0"
+                style={{
+                  width: 44,
+                  height: 44,
+                  background: unlocked ? "var(--color-brand-yellow-light)" : "var(--color-brand-line)",
+                  color: unlocked ? "var(--color-brand-yellow-dark)" : "var(--color-brand-ink-light)",
+                }}
+              >
+                <Icon name={unlocked ? badge.icon : "lock"} size={22} />
+              </span>
               <div>
                 <p className="font-extrabold" style={{ color: "var(--color-brand-ink)" }}>
                   {badge.name}

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import ProgressBar from "./ProgressBar";
 import Hearts from "./Hearts";
+import Icon from "./Icon";
 import { useSound } from "../hooks/useSound";
 
 export default function TopBar({ progressPct, hearts, combo = 0, onExit, accentColor }) {
@@ -38,7 +39,8 @@ export default function TopBar({ progressPct, hearts, combo = 0, onExit, accentC
               className="flex items-center gap-0.5 font-extrabold text-sm shrink-0"
               style={{ color: "var(--color-brand-coral-dark)" }}
             >
-              🔥{combo}
+              <Icon name="flame" size={16} />
+              {combo}
             </motion.div>
           )}
         </AnimatePresence>

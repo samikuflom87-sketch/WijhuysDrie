@@ -6,14 +6,14 @@ export const ACCESSORIES = [
   {
     id: "hat",
     name: "Party Hat",
-    icon: "🎉",
+    icon: "hat",
     description: "Reach a 7-day streak.",
     check: (progress) => progress.streak >= 7,
   },
   {
     id: "glasses",
     name: "Smart Glasses",
-    icon: "🤓",
+    icon: "glasses",
     description: "Get taught 50 words.",
     check: (progress, wordStats) => totalWordsIntroduced(wordStats) >= 50,
   },
@@ -23,9 +23,9 @@ export const ACCESSORIES = [
 // a milestone. Same visual system (Mascot.jsx renders them), different
 // unlock path.
 export const SHOP_ACCESSORIES = [
-  { id: "bandana", name: "Bandana", icon: "🧣", cost: 40 },
-  { id: "medal", name: "Champion Medal", icon: "🥇", cost: 60 },
-  { id: "crown", name: "Golden Crown", icon: "👑", cost: 100 },
+  { id: "bandana", name: "Bandana", icon: "scarf", cost: 40 },
+  { id: "medal", name: "Champion Medal", icon: "medal", cost: 60 },
+  { id: "crown", name: "Golden Crown", icon: "crown", cost: 100 },
 ];
 
 // Returns { progress: updated-if-needed, newlyUnlocked: [accessory, ...] }
