@@ -1,0 +1,26 @@
+import { motion } from "framer-motion";
+
+export default function ProgressBar({ value }) {
+  const pct = Math.min(100, Math.max(0, value));
+  return (
+    <div
+      role="progressbar"
+      aria-valuenow={Math.round(pct)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      className="h-4 w-full rounded-full overflow-hidden"
+      style={{ background: "var(--color-brand-line)" }}
+    >
+      <motion.div
+        className="h-full rounded-full"
+        style={{
+          background:
+            "linear-gradient(90deg, color-mix(in srgb, var(--color-brand-teal) 100%, black 8%), var(--color-brand-teal) 55%, color-mix(in srgb, var(--color-brand-teal) 100%, white 18%))",
+        }}
+        initial={{ width: 0 }}
+        animate={{ width: `${pct}%` }}
+        transition={{ type: "spring", stiffness: 120, damping: 20 }}
+      />
+    </div>
+  );
+}

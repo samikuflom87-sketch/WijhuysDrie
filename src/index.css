@@ -1,0 +1,365 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Work Sans", system-ui, sans-serif;
+  --font-display: "Fraunces", "Work Sans", system-ui, serif;
+
+  /* Deep, earth-toned palette (terracotta / ochre / emerald-teal / wine) —
+     inspired by Habesha textile borders and coffee-ceremony colors, chosen
+     to read as considered and premium rather than flat candy-app primaries. */
+  --color-brand-coral: #b8492f;
+  --color-brand-coral-dark: #8a371f;
+  --color-brand-coral-light: #f1ddd2;
+  --color-brand-yellow: #b9822c;
+  --color-brand-yellow-dark: #8c611b;
+  --color-brand-yellow-light: #f3e4c6;
+  --color-brand-teal: #1e6b60;
+  --color-brand-teal-dark: #123f38;
+  --color-brand-teal-light: #d7eae6;
+  --color-brand-red: #8b3540;
+  --color-brand-red-dark: #6b2831;
+  --color-brand-red-light: #f0dbdd;
+  --color-brand-cream: #f6eee3;
+  --color-brand-line: #e6d8c6;
+  --color-brand-line-dark: #cbb595;
+  --color-brand-ink: #2a2019;
+  --color-brand-ink-light: #6b5c4e;
+  --color-brand-surface: #fffcf7;
+  --color-brand-shadow: rgba(42, 32, 25, 0.14);
+
+  /* Dedicated header-bar tones, independent of --color-brand-coral: that
+     token is reused as a light readable-text tint in dark mode, so deriving
+     the header background from it there would wash the bar out to a pale
+     peach. These stay deep and rich in both themes. */
+  --color-brand-header-from: #8a371f;
+  --color-brand-header-to: #b8492f;
+}
+
+/* A soft ambient gradient-mesh backdrop — three large, barely-there color
+   washes instead of a small tiled pattern (which reads as visual noise at
+   normal viewing distance). Built from color-mix() against the live brand
+   tokens, so it re-tints itself automatically for dark mode with no
+   separate per-theme block needed. */
+:root {
+  --app-ambient-glow:
+    radial-gradient(ellipse 640px 420px at 8% -8%, color-mix(in srgb, var(--color-brand-coral) 14%, transparent), transparent 68%),
+    radial-gradient(ellipse 760px 560px at 108% 6%, color-mix(in srgb, var(--color-brand-teal) 12%, transparent), transparent 68%),
+    radial-gradient(ellipse 680px 520px at -8% 104%, color-mix(in srgb, var(--color-brand-yellow) 10%, transparent), transparent 68%);
+}
+
+/* Dark palette: tokens re-derived for contrast/elevation on a dark ground,
+   not a naive invert — "-dark" text tokens go lighter (they're used as
+   high-contrast text on a surface), "-light" tint tokens go to deep muted
+   fills (they're used as background washes), and the card surface sits one
+   step lighter than the page background for a sense of elevation. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-brand-coral: #e0805a;
+    --color-brand-coral-dark: #f2ad8d;
+    --color-brand-coral-light: #3a2620;
+    --color-brand-yellow: #d9a857;
+    --color-brand-yellow-dark: #f0ce94;
+    --color-brand-yellow-light: #3a2e18;
+    --color-brand-teal: #4aab9e;
+    --color-brand-teal-dark: #96dccd;
+    --color-brand-teal-light: #163330;
+    --color-brand-red: #c9707a;
+    --color-brand-red-dark: #e8a4ab;
+    --color-brand-red-light: #3a2224;
+    --color-brand-cream: #1a140f;
+    --color-brand-line: #473a2d;
+    --color-brand-line-dark: #29201a;
+    --color-brand-ink: #f2e8db;
+    --color-brand-ink-light: #c2b0a0;
+    --color-brand-surface: #251c16;
+    --color-brand-shadow: rgba(0, 0, 0, 0.4);
+    --color-brand-header-from: #48200f;
+    --color-brand-header-to: #6b2f19;
+  }
+}
+:root[data-theme="dark"] {
+  --color-brand-coral: #e0805a;
+  --color-brand-coral-dark: #f2ad8d;
+  --color-brand-coral-light: #3a2620;
+  --color-brand-yellow: #d9a857;
+  --color-brand-yellow-dark: #f0ce94;
+  --color-brand-yellow-light: #3a2e18;
+  --color-brand-teal: #4aab9e;
+  --color-brand-teal-dark: #96dccd;
+  --color-brand-teal-light: #163330;
+  --color-brand-red: #c9707a;
+  --color-brand-red-dark: #e8a4ab;
+  --color-brand-red-light: #3a2224;
+  --color-brand-cream: #1a140f;
+  --color-brand-line: #473a2d;
+  --color-brand-line-dark: #29201a;
+  --color-brand-ink: #f2e8db;
+  --color-brand-ink-light: #c2b0a0;
+  --color-brand-surface: #251c16;
+  --color-brand-shadow: rgba(0, 0, 0, 0.4);
+  --color-brand-header-from: #48200f;
+  --color-brand-header-to: #6b2f19;
+}
+:root[data-theme="light"] {
+  --color-brand-coral: #b8492f;
+  --color-brand-coral-dark: #8a371f;
+  --color-brand-coral-light: #f1ddd2;
+  --color-brand-yellow: #b9822c;
+  --color-brand-yellow-dark: #8c611b;
+  --color-brand-yellow-light: #f3e4c6;
+  --color-brand-teal: #1e6b60;
+  --color-brand-teal-dark: #123f38;
+  --color-brand-teal-light: #d7eae6;
+  --color-brand-red: #8b3540;
+  --color-brand-red-dark: #6b2831;
+  --color-brand-red-light: #f0dbdd;
+  --color-brand-cream: #f6eee3;
+  --color-brand-line: #e6d8c6;
+  --color-brand-line-dark: #cbb595;
+  --color-brand-ink: #2a2019;
+  --color-brand-ink-light: #6b5c4e;
+  --color-brand-surface: #fffcf7;
+  --color-brand-shadow: rgba(42, 32, 25, 0.14);
+  --color-brand-header-from: #8a371f;
+  --color-brand-header-to: #b8492f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-brand-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Left at the browser default (rather than "none") so iOS Safari's
+     native elastic bounce at scroll edges still happens — that little
+     rubber-band give is a native-app feel a website usually lacks. */
+  background-color: var(--color-brand-cream);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  background-image: var(--app-ambient-glow);
+}
+
+/* A whisper-quiet film-grain layer over the entire app — the texture that
+   separates a "flat fill" screen from one that feels tactile/crafted.
+   Fixed + pointer-events:none so it never intercepts taps, and blended with
+   "overlay" so the same grain reads correctly on both light and dark
+   surfaces without a separate dark-mode value. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+@media (prefers-contrast: more) {
+  body::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
+/* Branded keyboard-focus ring instead of the default browser blue —
+   :focus-visible so mouse/touch clicks never show it, only real keyboard
+   navigation does. */
+:focus-visible {
+  outline: 3px solid var(--color-brand-teal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Refined pressable button: soft elevation + a gentle scale-down on press,
+   instead of the thick flat-color drop-shadow "chunky candy" look — reads
+   as considered elevation rather than a skeuomorphic game button. */
+.btn-3d {
+  position: relative;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.15s ease, filter 0.15s ease;
+  will-change: transform;
+}
+
+.btn-3d:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn-3d:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* A whisper of top-edge gloss — subtle enough to read as glass/light
+   rather than the old cartoon-candy sheen. */
+.btn-3d::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+
+/* Hover only on devices that actually have a pointer that can hover
+   (real mice/trackpads) — guarded so touchscreens never get a "sticky"
+   hover state left over after a tap. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-3d:not(:disabled):hover {
+    filter: brightness(1.06);
+    box-shadow: 0 6px 18px var(--color-brand-shadow);
+  }
+}
+
+.btn-coral {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-brand-coral) 100%, white 14%), var(--color-brand-coral));
+  box-shadow: 0 1px 2px var(--color-brand-shadow), 0 4px 12px var(--color-brand-shadow);
+  color: #fffaf6;
+}
+
+.btn-teal {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-brand-teal) 100%, white 14%), var(--color-brand-teal));
+  box-shadow: 0 1px 2px var(--color-brand-shadow), 0 4px 12px var(--color-brand-shadow);
+  color: #fffaf6;
+}
+
+.btn-yellow {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-brand-yellow) 100%, white 18%), var(--color-brand-yellow));
+  box-shadow: 0 1px 2px var(--color-brand-shadow), 0 4px 12px var(--color-brand-shadow);
+  color: #2a2019;
+}
+
+.btn-red {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-brand-red) 100%, white 14%), var(--color-brand-red));
+  box-shadow: 0 1px 2px var(--color-brand-shadow), 0 4px 12px var(--color-brand-shadow);
+  color: #fffaf6;
+}
+
+.btn-white {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-brand-surface) 100%, white 6%), var(--color-brand-surface));
+  color: var(--color-brand-coral-dark);
+  box-shadow: 0 1px 3px var(--color-brand-shadow);
+  border: 1.5px solid var(--color-brand-line);
+}
+
+.btn-outline {
+  background: var(--color-brand-surface);
+  box-shadow: 0 1px 3px var(--color-brand-shadow);
+  border: 1.5px solid var(--color-brand-line);
+  color: var(--color-brand-ink);
+}
+
+.btn-outline.selected {
+  background: var(--color-brand-coral-light);
+  border-color: var(--color-brand-coral);
+  color: var(--color-brand-coral-dark);
+}
+
+.btn-outline.correct {
+  background: var(--color-brand-teal-light);
+  border-color: var(--color-brand-teal);
+  color: var(--color-brand-teal-dark);
+}
+
+.btn-outline.wrong {
+  background: var(--color-brand-red-light);
+  border-color: var(--color-brand-red);
+  color: var(--color-brand-red-dark);
+}
+
+.btn-outline.golden {
+  background: var(--color-brand-yellow-light);
+  border-color: var(--color-brand-yellow-dark);
+  color: var(--color-brand-yellow-dark);
+}
+
+/* Soft-elevated card: a barely-there top-to-bottom gradient (glass rather
+   than a flat fill) + hairline border tinted from the ink token instead of
+   a flat line color, so surfaces read as lifted glass rather than a plain
+   rectangle. */
+.card-soft {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-brand-surface) 100%, white 3%), var(--color-brand-surface));
+  border: 1.5px solid color-mix(in srgb, var(--color-brand-ink) 12%, transparent);
+  box-shadow: 0 1px 2px var(--color-brand-shadow), 0 6px 16px var(--color-brand-shadow);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Dimensional icon badge: replaces a flat solid-tint circle with a subtle
+   gradient + inset shading, so icon containers read as gently domed glass
+   rather than a plain colored disc. Set `--badge-tint` inline to recolor. */
+.icon-badge {
+  --badge-tint: var(--color-brand-teal-light);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--badge-tint) 100%, white 30%), var(--badge-tint));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.06);
+}
+
+/* Shared screen background: cream fill + the same soft ambient glow as
+   <body>, used instead of a flat inline background color so every
+   full-screen view reads as designed rather than a flat fill. */
+.app-bg {
+  background-color: var(--color-brand-cream);
+  background-image: var(--app-ambient-glow);
+  background-repeat: no-repeat;
+  transition: background-color 0.25s ease;
+}
+
+/* Premium app-bar header: a richer three-stop diagonal gradient derived
+   entirely from the live coral token via color-mix(), plus a soft top-left
+   gloss highlight — replaces a flat two-stop gradient that was anchored to
+   a hardcoded hex, which meant it went pale/washed-out instead of deeper in
+   dark mode (dark mode's coral token is a lighter tint, used for text). */
+.header-premium {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-header-from),
+    var(--color-brand-header-to) 60%,
+    color-mix(in srgb, var(--color-brand-header-to) 100%, white 14%)
+  );
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 4px 14px var(--color-brand-shadow);
+}
+
+.header-premium::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 220px 70px at 12% -40%, rgba(255, 255, 255, 0.18), transparent 70%);
+  pointer-events: none;
+}
+
+/* scrollbar tidy */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-line-dark);
+  border-radius: 8px;
+}
