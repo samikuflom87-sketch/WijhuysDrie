@@ -1,0 +1,273 @@
+/*
+Theme Name: Wijnhuys Drie
+Theme URI: https://wijnhuysdrie.nl
+Author: Wijnhuys Drie
+Description: Custom WooCommerce-thema voor Wijnhuys Drie, wijnhandel.
+Version: 0.1.0
+Requires at least: 6.4
+Requires PHP: 8.0
+Text Domain: wijnhuysdrie
+*/
+
+:root {
+  --ink: #14171b;
+  --surface: #1c2019;
+  --surface-2: #242a22;
+  --rule: #333a30;
+  --paper: #ede7d9;
+  --paper-soft: #b9b2a0;
+  --paper-faint: #83806f;
+  --accent: #7a2331;
+  --accent-hi: #9c2e40;
+  --accent-soft: rgba(122, 35, 49, 0.18);
+
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+h1, h2, h3 {
+  font-family: var(--serif);
+  line-height: 1.15;
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+
+.content-boundary {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* header */
+
+.site-header {
+  border-bottom: 1px solid var(--rule);
+  background: var(--ink);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header .bar {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  color: var(--paper);
+}
+
+.primary-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+}
+
+.primary-nav a {
+  font-size: 14.5px;
+  text-decoration: none;
+  color: var(--paper-soft);
+}
+.primary-nav a:hover { color: var(--paper); }
+
+.header-actions .cart-link {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--paper);
+  text-decoration: none;
+  border: 1px solid var(--rule);
+  border-radius: 100px;
+  padding: 8px 16px;
+}
+.header-actions .cart-link:hover { border-color: var(--accent); }
+
+/* hero */
+
+.hero {
+  padding: 90px 24px 70px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.hero-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  margin: 0 0 16px;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 6vw, 56px);
+}
+
+.hero .lede {
+  font-size: 18px;
+  color: var(--paper-soft);
+  margin: 18px 0 32px;
+}
+
+.btn {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--paper);
+  background: var(--accent);
+  border: 0;
+  border-radius: 8px;
+  padding: 13px 26px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.btn:hover { background: var(--accent-hi); }
+
+/* featured products */
+
+.featured {
+  padding: 64px 24px;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.featured h2 {
+  font-size: 26px;
+  margin-bottom: 28px;
+}
+
+.featured .notice {
+  color: var(--paper-faint);
+  font-size: 15px;
+}
+
+ul.products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.products li.product {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+ul.products li.product img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  background: var(--surface-2);
+}
+
+ul.products li.product .woocommerce-loop-product__title {
+  font-family: var(--serif);
+  font-size: 17px;
+  margin: 0 0 6px;
+}
+
+ul.products li.product .price {
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--paper);
+}
+
+/* single product / shop wrapper baseline so WooCommerce's own templates read correctly */
+
+.wc-main {
+  padding: 48px 0 80px;
+}
+
+.woocommerce-message,
+.woocommerce-error,
+.woocommerce-info {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 14px 18px;
+  list-style: none;
+}
+
+/* footer */
+
+.site-footer {
+  border-top: 1px solid var(--rule);
+  background: var(--surface);
+  padding: 48px 24px;
+}
+
+.footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.footer-brand {
+  font-family: var(--serif);
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.footer-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-nav a {
+  font-size: 13.5px;
+  color: var(--paper-soft);
+  text-decoration: none;
+}
+
+@media (max-width: 720px) {
+  .site-header .bar { flex-wrap: wrap; gap: 12px; }
+  .primary-nav ul { gap: 18px; flex-wrap: wrap; }
+  ul.products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero { padding: 64px 20px 48px; }
+}

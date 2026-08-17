@@ -1,0 +1,65 @@
+.whd-age-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 12, 10, 0.92);
+  padding: 24px;
+}
+
+.whd-age-gate__panel {
+  max-width: 420px;
+  width: 100%;
+  background: #1c2019;
+  color: #ede7d9;
+  border: 1px solid #333a30;
+  border-radius: 12px;
+  padding: 32px 28px;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.whd-age-gate__title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.whd-age-gate__body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 15px;
+  color: #b9b2a0;
+  line-height: 1.5;
+  margin: 0 0 22px;
+}
+
+.whd-age-gate__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.whd-age-gate__yes {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ede7d9;
+  background: #7a2331;
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+.whd-age-gate__yes:hover { background: #9c2e40; }
+
+.whd-age-gate__no {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 13px;
+  color: #83806f;
+  text-decoration: underline;
+}
+
+html.whd-age-gate-open {
+  overflow: hidden;
+}
